@@ -10,3 +10,8 @@ export interface WorkspaceState {
   codingRows: CodingRow[];
   exportFormats: ExportFormat[];
 }
+
+export type PersistedWorkspaceState = Pick<
+  WorkspaceState,
+  "importText" | "samples" | "selectedTemplateId" | "selectedSampleId" | "codingRows"
+>;

@@ -29,7 +29,10 @@ By default, FrameLab uses local mock suggestions for this feature.
 If a user enables optional real AI mode with their own API key:
 
 - selected sample text is sent to the configured AI provider
+- `.env.local` should stay local and must not be committed
 - API usage may incur costs on the user's own account
+- providers may occasionally return temporary high-demand or unavailable errors
+- FrameLab may retry once and then fall back to mock suggestions for continuity
 - the output should still be treated as tentative and editable
 
 ## Responsibility for Research Quality

@@ -9,7 +9,7 @@ import {
 } from "@/features/ai/providers/types";
 
 function getGeminiModel() {
-  return process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash";
+  return process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash-lite";
 }
 
 function getErrorString(value: unknown) {
@@ -59,6 +59,48 @@ function classifyGeminiError(error: unknown): SuggestionErrorCode {
   return "unknown_error";
 }
 
+function shouldRetryGeminiError(error: unknown, errorCode: SuggestionErrorCode) {
+  if (
+    errorCode === "invalid_api_key" ||
+    errorCode === "model_not_found" ||
+    errorCode === "provider_config_error"
+  ) {
+    return false;
+  }
+
+  if (!error || typeof error !== "object") {
+    return false;
+  }
+
+  const candidate = error as Record<string, unknown>;
+  const status = getErrorNumber(candidate.status);
+  const code = getErrorString(candidate.code)?.toLowerCase();
+  const message = getErrorString(candidate.message)?.toLowerCase() ?? "";
+
+  return (
+    status === 503 ||
+    code === "unavailable" ||
+    code === "service_unavailable" ||
+    message.includes("high demand") ||
+    message.includes("temporarily unavailable") ||
+    message.includes("service unavailable") ||
+    message.includes("overloaded")
+  );
+}
+
+function logGeminiRetryAttempt(model: string, errorCode: SuggestionErrorCode) {
+  if (process.env.NODE_ENV === "production") {
+    return;
+  }
+
+  console.info("[FrameLab Gemini Retry]", {
+    retryAttempted: true,
+    provider: "gemini",
+    model,
+    errorCode
+  });
+}
+
 function logGeminiProviderError(error: unknown, model: string) {
   if (process.env.NODE_ENV === "production") {
     return;
@@ -76,6 +118,14 @@ function logGeminiProviderError(error: unknown, model: string) {
   });
 }
 
+function getRetryDelayMs() {
+  return 800 + Math.floor(Math.random() * 401);
+}
+
+function sleep(delayMs: number) {
+  return new Promise((resolve) => setTimeout(resolve, delayMs));
+}
+
 export async function getGeminiSuggestions(input: ProviderSuggestionInput): Promise<ProviderSuggestionResult> {
   const model = getGeminiModel();
   const client = new GoogleGenAI({
@@ -83,16 +133,32 @@ export async function getGeminiSuggestions(input: ProviderSuggestionInput): Prom
   });
 
   try {
-    const response = await client.models.generateContent({
+    const prompt = buildProviderSuggestionPrompt(input.sample, input.template, input.currentValues, input.locale);
+    const request = {
       model,
-      contents: buildProviderSuggestionPrompt(input.sample, input.template, input.currentValues, input.locale),
+      contents: prompt,
       config: {
         responseMimeType: "application/json",
         temperature: 0.2
       }
-    });
+    } as const;
 
-    return normalizeProviderSuggestions(input.template, response.text || "");
+    try {
+      const response = await client.models.generateContent(request);
+      return normalizeProviderSuggestions(input.template, response.text || "");
+    } catch (error) {
+      const errorCode = classifyGeminiError(error);
+
+      if (!shouldRetryGeminiError(error, errorCode)) {
+        throw error;
+      }
+
+      logGeminiRetryAttempt(model, errorCode);
+      await sleep(getRetryDelayMs());
+
+      const response = await client.models.generateContent(request);
+      return normalizeProviderSuggestions(input.template, response.text || "");
+    }
   } catch (error) {
     logGeminiProviderError(error, model);
     throw new SuggestionProviderError("Gemini suggestion request failed.", classifyGeminiError(error));

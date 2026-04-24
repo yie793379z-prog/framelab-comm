@@ -9,7 +9,7 @@ import { buildMarkdownExport } from "@/features/export/utils/export-markdown";
 import { downloadTextFile } from "@/lib/utils/download-file";
 import { analysisTemplates } from "@/features/templates/data/templates";
 import { useLanguage } from "@/i18n/context";
-import { formatMessage, getLocalizedText } from "@/i18n/utils";
+import { formatLocaleDate, formatMessage, getLocalizedText } from "@/i18n/utils";
 import type { ExportFormat } from "@/types/export";
 
 const EXPORT_FILENAMES: Record<ExportFormat, string> = {
@@ -25,7 +25,7 @@ const EXPORT_MIME_TYPES: Record<ExportFormat, string> = {
 };
 
 export function ExportPanel() {
-  const { state, dispatch } = useWorkspace();
+  const { state, dispatch, autosave } = useWorkspace();
   const { locale, messages } = useLanguage();
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [projectJsonInput, setProjectJsonInput] = useState("");
@@ -103,6 +103,11 @@ export function ExportPanel() {
     setStatusMessage(messages.exportPanel.loadSuccess);
   }
 
+  function handleClearLocalAutosave() {
+    autosave.clearLocalAutosave();
+    setStatusMessage(messages.exportPanel.localAutosaveCleared);
+  }
+
   async function handleFileSelection(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
 
@@ -144,6 +149,31 @@ export function ExportPanel() {
           <p className="mt-2 text-base font-semibold tracking-tight text-ink">
             {selectedTemplate ? getLocalizedText(selectedTemplate.name, locale) : messages.common.noTemplateSelected}
           </p>
+        </div>
+      </div>
+
+      <div className="mt-6 surface-panel p-5">
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          <div className="space-y-2">
+            <h4 className="text-lg font-semibold tracking-tight text-ink">{messages.exportPanel.localAutosaveTitle}</h4>
+            <p className="text-sm leading-7 text-muted">{messages.exportPanel.localAutosaveDescription}</p>
+            <p className="text-sm leading-7 text-muted">
+              {autosave.lastSavedAt
+                ? formatMessage(messages.exportPanel.lastSavedLocally, {
+                    savedAt: formatLocaleDate(new Date(autosave.lastSavedAt), locale)
+                  })
+                : messages.exportPanel.noLocalAutosave}
+            </p>
+          </div>
+
+          <button
+            type="button"
+            onClick={handleClearLocalAutosave}
+            disabled={!autosave.lastSavedAt}
+            className="button-secondary px-4 py-2.5"
+          >
+            {messages.exportPanel.clearLocalAutosave}
+          </button>
         </div>
       </div>
 

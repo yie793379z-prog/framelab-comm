@@ -50,6 +50,13 @@ export const appDictionary = {
       title: "Research coding workflow",
       description:
         "Work sample by sample: import texts, choose a communication-oriented template, review editable coding suggestions, and export or reload the project locally.",
+      autosaveEyebrow: "Local autosave",
+      restorePromptTitle: "Restore previous workspace?",
+      restorePromptDescription:
+        "FrameLab found a locally saved workspace from {savedAt}. Restore it or start fresh.",
+      restoreAction: "Restore previous workspace",
+      startFreshAction: "Start fresh",
+      lastSavedLocally: "Last saved locally: {savedAt}",
       step1Eyebrow: "Step 1",
       step1Title: "Import",
       step1Description: "Paste a small text corpus directly into the browser and separate samples with blank lines.",
@@ -131,7 +138,8 @@ export const appDictionary = {
       openAiMissingKeyMessage: "OpenAI mode was requested, but no OPENAI_API_KEY was found. Using mock suggestions instead.",
       geminiMissingKeyMessage: "Gemini mode was requested, but no GEMINI_API_KEY was found. Using mock suggestions instead.",
       openAiErrorFallbackMessage: "OpenAI suggestions were unavailable, so FrameLab used mock suggestions instead.",
-      geminiErrorFallbackMessage: "Gemini suggestions were unavailable, so FrameLab used mock suggestions instead.",
+      geminiErrorFallbackMessage:
+        "Gemini was temporarily unavailable, so FrameLab used mock suggestions instead. Existing edits were left unchanged. Try again later or use another Gemini model.",
       openAiNoValidFieldsFallbackMessage:
         "OpenAI returned output, but no valid fields matched the active template. FrameLab used mock suggestions instead.",
       geminiNoValidFieldsFallbackMessage:
@@ -164,6 +172,13 @@ export const appDictionary = {
       workflowNote:
         "Export downloads a copy of the current workspace. Loading a saved project JSON replaces the current workspace after confirmation.",
       noProjectYet: "No workspace data is loaded yet. You can still import a saved project JSON below.",
+      localAutosaveTitle: "Local autosave",
+      localAutosaveDescription:
+        "FrameLab can keep a browser-local snapshot of your current workspace so a refresh does not erase your progress.",
+      lastSavedLocally: "Last saved locally: {savedAt}",
+      noLocalAutosave: "No local autosave snapshot is stored right now.",
+      clearLocalAutosave: "Clear local autosave",
+      localAutosaveCleared: "Local autosave cleared.",
       exportCsv: "Export CSV",
       exportJson: "Export JSON",
       exportMarkdown: "Export Markdown",
@@ -257,6 +272,12 @@ export const appDictionary = {
       eyebrow: "工作区",
       title: "研究编码工作流",
       description: "按照样本逐条处理：导入文本、选择传播研究模板、查看可编辑建议，并在本地导出或重新载入项目。",
+      autosaveEyebrow: "本地自动保存",
+      restorePromptTitle: "恢复上次工作区？",
+      restorePromptDescription: "FrameLab 发现了一个保存在本地的工作区快照，保存时间为 {savedAt}。你可以恢复它，或重新开始。",
+      restoreAction: "恢复上次工作区",
+      startFreshAction: "重新开始",
+      lastSavedLocally: "最近一次本地保存：{savedAt}",
       step1Eyebrow: "步骤 1",
       step1Title: "导入",
       step1Description: "直接在浏览器中粘贴小型文本语料，并用空行分隔不同样本。",
@@ -333,7 +354,8 @@ export const appDictionary = {
       openAiMissingKeyMessage: "已请求启用 OpenAI，但未检测到 OPENAI_API_KEY，因此改为使用模拟建议。",
       geminiMissingKeyMessage: "已请求启用 Gemini，但未检测到 GEMINI_API_KEY，因此改为使用模拟建议。",
       openAiErrorFallbackMessage: "OpenAI 建议暂时不可用，FrameLab 已自动改用模拟建议。",
-      geminiErrorFallbackMessage: "Gemini 建议暂时不可用，FrameLab 已自动改用模拟建议。",
+      geminiErrorFallbackMessage:
+        "Gemini 暂时不可用，FrameLab 已自动改用模拟建议。已有编辑内容不会被覆盖。你可以稍后重试，或改用其他 Gemini 模型。",
       openAiNoValidFieldsFallbackMessage:
         "OpenAI 已返回内容，但没有任何字段通过当前模板校验，因此 FrameLab 改用模拟建议。",
       geminiNoValidFieldsFallbackMessage:
@@ -363,6 +385,12 @@ export const appDictionary = {
       description: "v0.1 的导出完全在浏览器中完成。CSV 用于平铺编码数据，JSON 保留工作区结构，Markdown 生成便于课堂展示的分析摘要。",
       workflowNote: "导出会下载当前工作区的副本；载入已保存的项目 JSON 会在确认后替换当前工作区。",
       noProjectYet: "当前还没有载入工作区数据，但你仍然可以在下方导入已保存的项目 JSON。",
+      localAutosaveTitle: "本地自动保存",
+      localAutosaveDescription: "FrameLab 可以在当前浏览器中保存工作区快照，这样刷新页面时不容易丢失进度。",
+      lastSavedLocally: "最近一次本地保存：{savedAt}",
+      noLocalAutosave: "当前没有保存任何本地自动保存快照。",
+      clearLocalAutosave: "清除本地自动保存",
+      localAutosaveCleared: "本地自动保存已清除。",
       exportCsv: "导出 CSV",
       exportJson: "导出 JSON",
       exportMarkdown: "导出 Markdown",

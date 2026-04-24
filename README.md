@@ -27,6 +27,12 @@ Communication and media studies students often sit between two unsatisfying opti
 
 FrameLab is positioned in the middle. It is not a replacement for careful methodology, and it is not a fully automated research tool. It is a lightweight, student-friendly workspace for trying a codebook, generating editable starting points, and exporting clear outputs for class discussion or early project organization.
 
+## Why not just use ChatGPT or Gemini?
+
+Direct LLM chat is useful for one-off analysis, brainstorming, or getting a quick first reading of a text. FrameLab is meant for a different job: structured, repeatable communication research workflows.
+
+FrameLab does not claim to be smarter than ChatGPT or Gemini. Its value is in giving students a clearer workflow: built-in templates, consistent fields, editable coding forms, CSV/JSON/Markdown export, project reload, bilingual UI, and human-in-the-loop review. AI suggestions are optional and always editable. The main benefit is structure, reproducibility, and better usability for coursework and small research projects.
+
 ## Key Features
 
 - Import multiple text samples into a local workspace
@@ -122,7 +128,7 @@ AI_PROVIDER=mock
 OPENAI_API_KEY=
 OPENAI_MODEL=gpt-4.1-mini
 GEMINI_API_KEY=
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-2.5-flash-lite
 ```
 
 Notes:
@@ -130,7 +136,13 @@ Notes:
 - `AI_PROVIDER=mock` keeps suggestions local
 - `AI_PROVIDER=openai` uses the configured OpenAI API key and model
 - `AI_PROVIDER=gemini` uses the configured Gemini API key and model
+- mock mode remains the default
+- users must provide their own provider API key in `.env.local`
+- `.env.local` should not be committed to the repository
+- `gemini-2.5-flash-lite` is the recommended Gemini test model for FrameLab
 - if the chosen provider is missing a key or the real AI request fails, FrameLab falls back to mock suggestions
+- Gemini and other providers may occasionally return temporary high-demand or unavailable errors
+- FrameLab retries Gemini once for temporary unavailable errors, then falls back to mock suggestions if needed
 - for backward compatibility, `AI_SUGGESTION_MODE=real` still maps to OpenAI when `AI_PROVIDER` is unset
 - API keys must stay server-side and must not be committed to the repository
 - real AI mode sends the selected sample text to the configured AI provider
@@ -155,7 +167,7 @@ OPENAI_MODEL=gpt-4.1-mini
 # Gemini
 AI_PROVIDER=gemini
 GEMINI_API_KEY=your_key_here
-GEMINI_MODEL=gemini-2.5-flash
+GEMINI_MODEL=gemini-2.5-flash-lite
 ```
 
 ## Project Structure

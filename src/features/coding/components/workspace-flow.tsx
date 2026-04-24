@@ -8,22 +8,32 @@ import { CodingForm } from "@/features/coding/components/coding-form";
 import { CodingPreview } from "@/features/coding/components/coding-preview";
 import { ExportPanel } from "@/features/export/components/export-panel";
 import { useWorkspace } from "@/features/coding/state/workspace-context";
+import { LocalAutosaveBanner } from "@/features/project/components/local-autosave-banner";
 import { analysisTemplates } from "@/features/templates/data/templates";
 import { useLanguage } from "@/i18n/context";
-import { getLocalizedText } from "@/i18n/utils";
+import { formatLocaleDate, formatMessage, getLocalizedText } from "@/i18n/utils";
 
 export function WorkspaceFlow() {
-  const { state } = useWorkspace();
+  const { state, autosave } = useWorkspace();
   const { locale, messages } = useLanguage();
   const activeTemplate = analysisTemplates.find((template) => template.id === state.selectedTemplateId);
   const activeSample = state.samples.find((sample) => sample.id === state.selectedSampleId);
 
   return (
     <div className="space-y-12">
+      <LocalAutosaveBanner />
+
       <section className="surface-card space-y-5 rounded-[2rem] p-8 md:p-10">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted">{messages.workspace.eyebrow}</p>
         <h1 className="text-4xl font-semibold tracking-tight text-ink md:text-[2.8rem]">{messages.workspace.title}</h1>
         <p className="max-w-3xl text-base leading-8 text-muted">{messages.workspace.description}</p>
+        {autosave.lastSavedAt && (
+          <p className="text-sm leading-7 text-muted">
+            {formatMessage(messages.workspace.lastSavedLocally, {
+              savedAt: formatLocaleDate(new Date(autosave.lastSavedAt), locale)
+            })}
+          </p>
+        )}
         <div className="grid gap-4 md:grid-cols-3">
           <div className="metric-card">
             <p className="text-sm text-muted">{messages.common.samples}</p>

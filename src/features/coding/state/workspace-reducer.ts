@@ -1,6 +1,6 @@
 import { parseTextInput } from "@/features/import/utils/parse-text-input";
 import type { CodingFieldValue } from "@/types/coding";
-import type { WorkspaceState } from "@/types/workspace";
+import type { PersistedWorkspaceState, WorkspaceState } from "@/types/workspace";
 
 type WorkspaceAction =
   | { type: "SET_IMPORT_TEXT"; payload: string }
@@ -24,6 +24,10 @@ type WorkspaceAction =
         templateId: string;
         values: Record<string, CodingFieldValue>;
       };
+    }
+  | {
+      type: "RESTORE_WORKSPACE";
+      payload: PersistedWorkspaceState;
     }
   | {
       type: "LOAD_PROJECT";
@@ -136,6 +140,17 @@ export const initialWorkspaceState: WorkspaceState = {
   exportFormats: ["csv", "json", "markdown"]
 };
 
+function restoreWorkspaceState(payload: PersistedWorkspaceState): WorkspaceState {
+  return {
+    ...initialWorkspaceState,
+    importText: payload.importText,
+    samples: payload.samples,
+    selectedTemplateId: payload.selectedTemplateId,
+    selectedSampleId: payload.selectedSampleId,
+    codingRows: payload.codingRows
+  };
+}
+
 export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction): WorkspaceState {
   switch (action.type) {
     case "SET_IMPORT_TEXT":
@@ -197,14 +212,17 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
         )
       };
 
+    case "RESTORE_WORKSPACE":
+      return restoreWorkspaceState(action.payload);
+
     case "LOAD_PROJECT":
-      return {
-        ...initialWorkspaceState,
+      return restoreWorkspaceState({
+        importText: "",
         samples: action.payload.samples,
         selectedTemplateId: action.payload.selectedTemplateId,
         selectedSampleId: action.payload.selectedSampleId,
         codingRows: action.payload.codingRows
-      };
+      });
 
     case "RESET_WORKSPACE":
       return initialWorkspaceState;
