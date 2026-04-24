@@ -1,3 +1,115 @@
 # Examples
 
-Sample text sets, template examples, and exported outputs can be added here as the project grows.
+This folder contains fictional example materials for trying FrameLab quickly. The files are short on purpose, but varied enough for classroom demos, onboarding, and small communication analysis exercises.
+
+## Files
+
+### [news_sample.csv](/Users/zhangchengjia/Desktop/Codex/framelab-comm/examples/news_sample.csv)
+
+Best template:
+
+- `News Framing Analysis`
+
+What it contains:
+
+- short fictional news items in English and Chinese
+- issue framing variation around transport, student life, public policy, and labor concerns
+
+What to try:
+
+- compare `Primary Frame` across samples
+- write short `Problem Definition` notes for each item
+- test whether AI suggestions pick plausible remedies without replacing your judgment
+
+How to import right now:
+
+- open the CSV
+- copy one or more `text` cells
+- paste them into FrameLab separated by blank lines
+
+### [social_posts.csv](/Users/zhangchengjia/Desktop/Codex/framelab-comm/examples/social_posts.csv)
+
+Best template:
+
+- `Social Media Content Analysis`
+
+What it contains:
+
+- fictional posts from student groups, city departments, NGOs, creators, and brands
+- variation in tone, format cues, hashtags, questions, and calls to action
+
+What to try:
+
+- compare `Tone` across institutional and creator posts
+- track `Engagement Cues` such as hashtags, questions, and direct calls to action
+- switch UI language and confirm exported CSV labels follow the selected language
+
+How to import right now:
+
+- open the CSV
+- copy the `text` column values you want to test
+- paste them into FrameLab with blank lines between posts
+
+### [interview_sample.txt](/Users/zhangchengjia/Desktop/Codex/framelab-comm/examples/interview_sample.txt)
+
+Best template:
+
+- `Interview Pre-coding`
+
+What it contains:
+
+- fictional interview excerpts from students, editors, and community media participants
+- both English and Chinese excerpts
+- good starter material for pre-coding roles, topic areas, and notable quotes
+
+What to try:
+
+- identify how speaker role affects interpretation
+- compare `Topic Area` across student and newsroom perspectives
+- edit the AI-generated `Notable Quote` if the mock suggestion is too broad
+
+How to import right now:
+
+- copy the full file contents
+- paste directly into FrameLab
+- each paragraph block is already separated for multi-sample import
+
+### [crisis_comm_sample.txt](/Users/zhangchengjia/Desktop/Codex/framelab-comm/examples/crisis_comm_sample.txt)
+
+Best template:
+
+- `Crisis Communication Scan`
+
+What it contains:
+
+- fictional public statements about outages, event management, and delivery safety
+- variation in apology, denial, partial responsibility, and corrective action
+
+What to try:
+
+- compare `Response Posture` across statements
+- track `Responsibility Level`
+- review which `Reputation Repair Signals` appear explicitly and which are missing
+
+How to import right now:
+
+- copy the full file contents
+- paste directly into FrameLab
+- the statements are already separated by blank lines
+
+## Quick Demo Path
+
+1. Start with `news_sample.csv` or `interview_sample.txt`.
+2. Paste 3 to 4 items into the workspace.
+3. Select the suggested template for that file type.
+4. Code one sample manually first.
+5. Use `Generate Suggestions` on the next sample.
+6. Export the result as Markdown for class discussion or lab notes.
+
+## Note on Import Format
+
+Current MVP import is paste-based. FrameLab does not yet parse CSV files directly in the browser, so the quickest workflow is:
+
+1. open an example file
+2. copy the relevant text entries
+3. paste them into FrameLab with blank lines between items
