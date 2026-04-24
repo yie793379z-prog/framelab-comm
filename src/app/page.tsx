@@ -11,7 +11,7 @@ export default function HomePage() {
 
   return (
     <PageShell className="space-y-16 py-16">
-      <section className="grid gap-10 rounded-[2rem] border border-line/80 bg-white/80 p-8 shadow-soft backdrop-blur md:grid-cols-[1.3fr_0.9fr] md:p-12">
+      <section className="surface-card grid gap-10 rounded-[2rem] p-8 md:grid-cols-[1.3fr_0.9fr] md:p-12">
         <div className="space-y-6">
           <div className="inline-flex rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-sm font-medium text-accent">
             {messages.landing.badge}
@@ -25,37 +25,31 @@ export default function HomePage() {
             </p>
           </div>
           <div className="flex flex-wrap gap-4">
-            <Link
-              href="/workspace"
-              className="rounded-full bg-ink px-5 py-3 text-sm font-medium text-white hover:bg-ink/90"
-            >
+            <Link href="/workspace" className="button-primary">
               {messages.landing.openWorkspace}
             </Link>
-            <a
-              href="#templates"
-              className="rounded-full border border-line bg-white px-5 py-3 text-sm font-medium text-ink hover:border-ink/40"
-            >
+            <a href="#templates" className="button-secondary">
               {messages.landing.viewTemplates}
             </a>
           </div>
         </div>
 
-        <div className="space-y-4 rounded-[1.5rem] border border-line bg-[#fffdf8] p-6">
+        <div className="surface-panel space-y-4 p-6">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted">{messages.landing.flowTitle}</p>
           <ol className="space-y-4 text-sm text-muted">
-            <li className="rounded-2xl border border-line bg-white p-4">
+            <li className="surface-card rounded-2xl p-4 shadow-none">
               <span className="mb-2 block text-base font-semibold text-ink">{messages.landing.flowImportTitle}</span>
               {messages.landing.flowImportBody}
             </li>
-            <li className="rounded-2xl border border-line bg-white p-4">
+            <li className="surface-card rounded-2xl p-4 shadow-none">
               <span className="mb-2 block text-base font-semibold text-ink">{messages.landing.flowTemplateTitle}</span>
               {messages.landing.flowTemplateBody}
             </li>
-            <li className="rounded-2xl border border-line bg-white p-4">
+            <li className="surface-card rounded-2xl p-4 shadow-none">
               <span className="mb-2 block text-base font-semibold text-ink">{messages.landing.flowEditTitle}</span>
               {messages.landing.flowEditBody}
             </li>
-            <li className="rounded-2xl border border-line bg-white p-4">
+            <li className="surface-card rounded-2xl p-4 shadow-none">
               <span className="mb-2 block text-base font-semibold text-ink">{messages.landing.flowExportTitle}</span>
               {messages.landing.flowExportBody}
             </li>

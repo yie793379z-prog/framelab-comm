@@ -49,30 +49,34 @@ export const appDictionary = {
       eyebrow: "Workspace",
       title: "Research coding workflow",
       description:
-        "This first batch keeps the workflow explicit: import source texts, choose a communication-oriented template, preview the coding structure, and prepare for local export.",
+        "Work sample by sample: import texts, choose a communication-oriented template, review editable coding suggestions, and export or reload the project locally.",
       step1Eyebrow: "Step 1",
       step1Title: "Import",
-      step1Description: "Paste a small text corpus directly into the browser. For the MVP, local state is enough.",
+      step1Description: "Paste a small text corpus directly into the browser and separate samples with blank lines.",
       step2Eyebrow: "Step 2",
       step2Title: "Choose a template",
-      step2Description: "Start with a communication-specific schema rather than a generic blank coding table.",
+      step2Description: "Choose the communication template that best matches your coursework question or small research task.",
       step3Eyebrow: "Step 3",
       step3Title: "Select a sample",
       step3Description: "Choose the sample you want to code. The editor and preview follow the current sample selection.",
       step4Eyebrow: "Step 4",
       step4Title: "Code the selected sample",
-      step4Description: "The form is generated from the active template, and every edit is stored in local reducer state.",
+      step4Description: "The form follows the active template. Mock AI suggestions can help with first-pass coding, but every field stays editable.",
       step5Eyebrow: "Step 5",
       step5Title: "Live preview",
-      step5Description: "Review the current sample's coded values as a compact summary while you work.",
+      step5Description: "Use the live preview as a quick reading aid while you refine the coding form.",
       step6Eyebrow: "Step 6",
       step6Title: "Export",
-      step6Description: "Exports stay local in v1. The UI placeholder is already aligned with CSV, JSON, and Markdown output."
+      step6Description: "Export downloads your current workspace. Loading a saved JSON project restores the workspace locally."
     },
     importPanel: {
       title: "Import text samples",
-      description: "Paste one or more text samples. Separate items with a blank line to create multiple entries.",
+      description: "Paste one or more text samples into the workspace. Use one blank line between items to split them into separate samples.",
+      textareaLabel: "Text samples",
       placeholder: "Paste article excerpts, posts, or interview passages here...",
+      helperBlankLines: "Tip: one blank line creates a new sample card after import.",
+      helperLoad: "Use “Load into workspace” when the sample count looks right. You can revise the pasted text before loading.",
+      helperFormats: "Short news excerpts, social posts, interview passages, and short statements all work well here.",
       samplesDetected: "{count} {sampleWord} detected",
       samplesLoaded: "{count} {sampleWord} currently loaded into the workspace.",
       load: "Load into workspace",
@@ -82,10 +86,16 @@ export const appDictionary = {
       emptyTitle: "No samples loaded yet",
       emptyDescription:
         "Paste text into the import panel and load it into the workspace to start selecting and coding samples.",
-      sampleBadge: "Sample {index}"
+      helper: "Select a sample card to focus the editor and live preview on that text item.",
+      sampleBadge: "Sample {index}",
+      selectAction: "Select sample {index}: {title}"
     },
     templatePicker: {
-      fieldCount: "{count} fields"
+      description:
+        "Templates define the coding form. Choose the option that best matches your research task; you can switch templates without changing the imported texts.",
+      helper: "Changing the template updates the coding form and preview for the currently selected sample.",
+      fieldCount: "{count} fields",
+      selectAction: "Use template: {title}"
     },
     codingForm: {
       emptyTemplateTitle: "Choose a template first",
@@ -97,8 +107,11 @@ export const appDictionary = {
       unavailableDescription: "The current sample or template could not be loaded. Re-select them to continue.",
       currentlyCoding: "Currently coding",
       sampleText: "Sample text",
+      sampleTextHelper: "Review the source text here while you code. Manual edits always take priority over generated suggestions.",
       aiEyebrow: "Mock AI suggestions",
       aiDisclaimer: "Suggestions are editable starting points, not final research judgments.",
+      aiHowItWorks: "Suggestions use the current sample text and active template to propose plausible first-pass values.",
+      aiEditableNote: "Review every suggestion carefully. FrameLab is designed for human-in-the-loop coding, not automated final decisions.",
       aiOnlyEmptyFields: "Only empty fields are filled. Existing edits stay unchanged.",
       generate: "Generate Suggestions",
       generating: "Generating suggestions...",
@@ -113,7 +126,8 @@ export const appDictionary = {
       unavailableTitle: "Preview unavailable",
       unavailableDescription: "The selected sample or template could not be loaded. Re-select them to continue.",
       title: "Live coding preview",
-      description: "Current values for the selected sample update as you edit the form."
+      description: "Current values for the selected sample update as you edit the form.",
+      helper: "Use this panel to quickly scan the current coding state before exporting or moving to another sample."
     },
     exportPanel: {
       emptyTitle: "Export actions will appear here",
@@ -122,6 +136,8 @@ export const appDictionary = {
       title: "Export workspace analysis",
       description:
         "Export stays entirely in the browser for v0.1. CSV flattens coded rows, JSON preserves workspace structure, and Markdown creates a classroom-ready analysis summary.",
+      workflowNote:
+        "Export downloads a copy of the current workspace. Loading a saved project JSON replaces the current workspace after confirmation.",
       noProjectYet: "No workspace data is loaded yet. You can still import a saved project JSON below.",
       exportCsv: "Export CSV",
       exportJson: "Export JSON",
@@ -132,9 +148,11 @@ export const appDictionary = {
       downloaded: "Downloaded {filename}.",
       loadTitle: "Load Project JSON",
       loadDescription: "Upload or paste a previously exported FrameLab project file to continue editing locally.",
+      chooseFileHelp: "Choose a previously exported framelab-project.json file from your computer.",
       chooseFile: "Choose JSON File",
       pasteLabel: "Paste project JSON",
       pastePlaceholder: "Paste a previously exported framelab-project.json here...",
+      pasteHelp: "If you already have the JSON text open, paste it here instead of selecting a file.",
       loadFromPaste: "Load From Pasted JSON",
       replaceConfirm:
         "Replace the current workspace with the loaded project? Unsaved current changes will be lost.",
@@ -213,30 +231,34 @@ export const appDictionary = {
     workspace: {
       eyebrow: "工作区",
       title: "研究编码工作流",
-      description: "当前版本保持流程清晰直接：导入文本、选择传播研究模板、查看编码结构，并为本地导出做好准备。",
+      description: "按照样本逐条处理：导入文本、选择传播研究模板、查看可编辑建议，并在本地导出或重新载入项目。",
       step1Eyebrow: "步骤 1",
       step1Title: "导入",
-      step1Description: "直接在浏览器中粘贴小型文本语料。对 MVP 来说，本地状态已经足够。",
+      step1Description: "直接在浏览器中粘贴小型文本语料，并用空行分隔不同样本。",
       step2Eyebrow: "步骤 2",
       step2Title: "选择模板",
-      step2Description: "先从传播研究导向的分析模板开始，而不是空白编码表。",
+      step2Description: "选择最贴合课程问题或小型研究任务的传播研究模板。",
       step3Eyebrow: "步骤 3",
       step3Title: "选择样本",
       step3Description: "选择要编码的样本。编辑区和预览区都会跟随当前样本切换。",
       step4Eyebrow: "步骤 4",
       step4Title: "编码当前样本",
-      step4Description: "表单会根据当前模板自动生成，所有编辑都会保存在本地 reducer 状态中。",
+      step4Description: "表单会跟随当前模板生成。模拟 AI 建议可帮助完成初步编码，但所有字段都可以手动修改。",
       step5Eyebrow: "步骤 5",
       step5Title: "实时预览",
-      step5Description: "在编码过程中随时查看当前样本的编码摘要。",
+      step5Description: "把实时预览当作快速核对工具，边编码边检查当前状态。",
       step6Eyebrow: "步骤 6",
       step6Title: "导出",
-      step6Description: "v1 中导出保持本地进行，当前界面已经对应 CSV、JSON 和 Markdown 三种输出。"
+      step6Description: "导出会下载当前工作区；载入已保存的 JSON 项目可在本地恢复工作区。"
     },
     importPanel: {
       title: "导入文本样本",
-      description: "可粘贴一个或多个文本样本。使用空行分隔不同样本。",
+      description: "将一个或多个文本样本粘贴到工作区中。用一个空行分隔条目，即可拆分为多个样本。",
+      textareaLabel: "文本样本",
       placeholder: "在此粘贴新闻文本、帖子内容或访谈片段……",
+      helperBlankLines: "提示：一个空行就会在导入后生成新的样本卡片。",
+      helperLoad: "当检测到的样本数符合预期时，再点击“载入工作区”。载入前仍可继续修改粘贴内容。",
+      helperFormats: "这里适合粘贴新闻摘录、社交媒体帖子、访谈片段或简短声明。",
       samplesDetected: "检测到 {count} 条{sampleWord}",
       samplesLoaded: "当前工作区已载入 {count} 条{sampleWord}。",
       load: "载入工作区",
@@ -245,10 +267,15 @@ export const appDictionary = {
     sampleList: {
       emptyTitle: "尚未载入样本",
       emptyDescription: "先在导入面板中粘贴文本并载入工作区，然后就可以开始选择和编码样本。",
-      sampleBadge: "样本 {index}"
+      helper: "点击样本卡片即可让编辑区和实时预览聚焦到该文本。",
+      sampleBadge: "样本 {index}",
+      selectAction: "选择样本 {index}：{title}"
     },
     templatePicker: {
-      fieldCount: "{count} 个字段"
+      description: "模板决定编码表单的结构。请选择最适合当前研究任务的模板；切换模板不会改变已导入的原始文本。",
+      helper: "切换模板后，当前样本对应的编码表单和预览会同步更新。",
+      fieldCount: "{count} 个字段",
+      selectAction: "使用模板：{title}"
     },
     codingForm: {
       emptyTemplateTitle: "请先选择模板",
@@ -259,8 +286,11 @@ export const appDictionary = {
       unavailableDescription: "当前样本或模板无法加载，请重新选择后继续。",
       currentlyCoding: "当前正在编码",
       sampleText: "样本文本",
+      sampleTextHelper: "编码时可在这里回看原始文本。手动修改始终优先于生成建议。",
       aiEyebrow: "模拟 AI 建议",
       aiDisclaimer: "建议仅是可编辑的起点，不应被视为最终研究判断。",
+      aiHowItWorks: "建议会结合当前样本文本和所选模板，生成适合演示的一轮初步字段值。",
+      aiEditableNote: "请逐项审查建议内容。FrameLab 采用“人在回路中”的编码流程，而不是自动给出最终结论。",
       aiOnlyEmptyFields: "系统只会填充空字段，已有编辑内容不会被覆盖。",
       generate: "生成建议",
       generating: "正在生成建议……",
@@ -275,13 +305,15 @@ export const appDictionary = {
       unavailableTitle: "预览不可用",
       unavailableDescription: "当前样本或模板无法加载，请重新选择后继续。",
       title: "实时编码预览",
-      description: "编辑表单时，当前样本的编码值会在这里同步更新。"
+      description: "编辑表单时，当前样本的编码值会在这里同步更新。",
+      helper: "在导出或切换样本之前，可先在这里快速核对当前编码状态。"
     },
     exportPanel: {
       emptyTitle: "导出功能将在这里显示",
       emptyDescription: "载入样本并产生编码结果后，就可以在不改变整体架构的情况下导出 CSV、JSON 和 Markdown。",
       title: "导出工作区分析结果",
       description: "v0.1 的导出完全在浏览器中完成。CSV 用于平铺编码数据，JSON 保留工作区结构，Markdown 生成便于课堂展示的分析摘要。",
+      workflowNote: "导出会下载当前工作区的副本；载入已保存的项目 JSON 会在确认后替换当前工作区。",
       noProjectYet: "当前还没有载入工作区数据，但你仍然可以在下方导入已保存的项目 JSON。",
       exportCsv: "导出 CSV",
       exportJson: "导出 JSON",
@@ -292,9 +324,11 @@ export const appDictionary = {
       downloaded: "已下载 {filename}。",
       loadTitle: "载入项目 JSON",
       loadDescription: "上传或粘贴之前导出的 FrameLab 项目文件，以便继续在本地编辑。",
+      chooseFileHelp: "从电脑中选择之前导出的 framelab-project.json 文件。",
       chooseFile: "选择 JSON 文件",
       pasteLabel: "粘贴项目 JSON",
       pastePlaceholder: "在此粘贴之前导出的 framelab-project.json 内容……",
+      pasteHelp: "如果你已经打开了 JSON 文本，也可以直接粘贴到这里，无需重新选文件。",
       loadFromPaste: "从粘贴内容载入",
       replaceConfirm: "是否用导入的项目替换当前工作区？当前未保存的修改将会丢失。",
       loadSuccess: "项目载入成功。",

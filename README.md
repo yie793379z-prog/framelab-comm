@@ -47,12 +47,14 @@ FrameLab is positioned in the middle. It is not a replacement for careful method
 
 ## Screenshots
 
-When screenshots are available, place them here:
+Place release screenshots here:
 
 - `public/screenshots/landing.png`
 - `public/screenshots/workspace-en.png`
 - `public/screenshots/workspace-zh.png`
 - `public/screenshots/export-panel.png`
+
+Use [docs/demo-script.md](/Users/zhangchengjia/Desktop/Codex/framelab-comm/docs/demo-script.md) as the capture checklist.
 
 Suggested future README image blocks:
 

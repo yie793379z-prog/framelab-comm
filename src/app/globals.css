@@ -14,6 +14,7 @@ body {
   @apply min-h-screen bg-paper text-ink antialiased;
   background-image:
     radial-gradient(circle at top, rgba(199, 107, 61, 0.14), transparent 32%),
+    radial-gradient(circle at 80% 12%, rgba(43, 64, 86, 0.08), transparent 18%),
     linear-gradient(180deg, #fcfaf5 0%, #f8f4ec 100%);
 }
 
@@ -23,4 +24,46 @@ a {
 
 ::selection {
   background: rgba(199, 107, 61, 0.22);
+}
+
+@layer components {
+  .surface-card {
+    @apply rounded-[1.5rem] border border-line/80 bg-white/90 shadow-soft backdrop-blur;
+  }
+
+  .surface-panel {
+    @apply rounded-[1.25rem] border border-line bg-[#fffdf8];
+  }
+
+  .surface-muted {
+    @apply rounded-[1.25rem] border border-dashed border-line bg-[#fffdf8];
+  }
+
+  .metric-card {
+    @apply rounded-[1.25rem] border border-line bg-[#fffdf8] p-5;
+  }
+
+  .button-primary {
+    @apply inline-flex items-center justify-center rounded-full bg-ink px-5 py-3 text-sm font-medium text-white transition hover:bg-ink/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/20 disabled:cursor-not-allowed disabled:bg-ink/40;
+  }
+
+  .button-secondary {
+    @apply inline-flex items-center justify-center rounded-full border border-line bg-white px-5 py-3 text-sm font-medium text-ink transition hover:border-ink/40 hover:bg-[#fffdf8] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/15 disabled:cursor-not-allowed disabled:text-muted;
+  }
+
+  .button-quiet {
+    @apply inline-flex items-center justify-center rounded-full border border-transparent bg-paper px-4 py-2 text-sm font-medium text-ink transition hover:border-line hover:bg-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/15;
+  }
+
+  .field-control {
+    @apply w-full rounded-[1rem] border border-line bg-[#fffdf8] px-4 py-3 text-sm text-ink outline-none ring-0 placeholder:text-muted transition focus:border-ink/40 focus:bg-white;
+  }
+
+  .field-textarea {
+    @apply field-control min-h-28 leading-7;
+  }
+
+  .helper-note {
+    @apply rounded-[1rem] border border-accent/20 bg-accent/10 px-4 py-3 text-sm leading-7 text-ink;
+  }
 }

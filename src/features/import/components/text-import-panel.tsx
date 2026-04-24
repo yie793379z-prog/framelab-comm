@@ -7,6 +7,7 @@ import { formatMessage, getCountWord } from "@/i18n/utils";
 export function TextImportPanel() {
   const { state, dispatch } = useWorkspace();
   const { locale, messages } = useLanguage();
+  const textareaId = "workspace-import-text";
 
   const previewCount = state.importText
     .split(/\n\s*\n/g)
@@ -17,20 +18,40 @@ export function TextImportPanel() {
   const loadedSampleWord = getCountWord(locale, state.samples.length, "sample", "samples", "样本");
 
   return (
-    <section className="rounded-[1.5rem] border border-line bg-white p-6 shadow-soft">
+    <section className="surface-card p-6 md:p-7">
       <div className="space-y-2">
         <h3 className="text-xl font-semibold tracking-tight text-ink">{messages.importPanel.title}</h3>
         <p className="text-sm leading-7 text-muted">{messages.importPanel.description}</p>
       </div>
 
-      <div className="mt-5 space-y-4">
-        <textarea
-          value={state.importText}
-          onChange={(event) => dispatch({ type: "SET_IMPORT_TEXT", payload: event.target.value })}
-          placeholder={messages.importPanel.placeholder}
-          className="min-h-48 w-full rounded-[1.25rem] border border-line bg-[#fffdf8] px-4 py-3 text-sm text-ink outline-none ring-0 placeholder:text-muted focus:border-ink/40"
-        />
+      <div className="mt-5 grid gap-4 md:grid-cols-[1.4fr_0.6fr]">
+        <div className="space-y-4">
+          <label htmlFor={textareaId} className="block text-sm font-semibold text-ink">
+            {messages.importPanel.textareaLabel}
+          </label>
+          <textarea
+            id={textareaId}
+            value={state.importText}
+            onChange={(event) => dispatch({ type: "SET_IMPORT_TEXT", payload: event.target.value })}
+            placeholder={messages.importPanel.placeholder}
+            className="field-textarea min-h-56"
+          />
+        </div>
 
+        <div className="space-y-3">
+          <div className="surface-panel p-4">
+            <p className="text-sm font-semibold text-ink">{messages.importPanel.helperBlankLines}</p>
+          </div>
+          <div className="surface-panel p-4">
+            <p className="text-sm leading-7 text-muted">{messages.importPanel.helperLoad}</p>
+          </div>
+          <div className="surface-panel p-4">
+            <p className="text-sm leading-7 text-muted">{messages.importPanel.helperFormats}</p>
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-5 space-y-4">
         <div className="flex flex-wrap items-center justify-between gap-4">
           <p className="text-sm text-muted">
             {formatMessage(messages.importPanel.samplesDetected, { count: previewCount, sampleWord })}
@@ -40,14 +61,14 @@ export function TextImportPanel() {
               type="button"
               onClick={() => dispatch({ type: "LOAD_SAMPLES_FROM_IMPORT" })}
               disabled={!previewCount}
-              className="rounded-full bg-ink px-4 py-2 text-sm font-medium text-white hover:bg-ink/90 disabled:cursor-not-allowed disabled:bg-ink/40"
+              className="button-primary px-4 py-2.5"
             >
               {messages.importPanel.load}
             </button>
             <button
               type="button"
               onClick={() => dispatch({ type: "RESET_IMPORT_TEXT" })}
-              className="rounded-full border border-line bg-white px-4 py-2 text-sm font-medium text-ink hover:border-ink/40"
+              className="button-secondary px-4 py-2.5"
             >
               {messages.importPanel.clear}
             </button>
@@ -55,12 +76,14 @@ export function TextImportPanel() {
         </div>
 
         {!!state.samples.length && (
-          <p className="text-sm text-muted">
-            {formatMessage(messages.importPanel.samplesLoaded, {
-              count: state.samples.length,
-              sampleWord: loadedSampleWord
-            })}
-          </p>
+          <div className="surface-panel px-4 py-3">
+            <p className="text-sm text-muted">
+              {formatMessage(messages.importPanel.samplesLoaded, {
+                count: state.samples.length,
+                sampleWord: loadedSampleWord
+              })}
+            </p>
+          </div>
         )}
       </div>
     </section>

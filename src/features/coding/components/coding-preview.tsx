@@ -69,28 +69,29 @@ export function CodingPreview() {
   );
 
   return (
-    <div className="space-y-4 rounded-[1.5rem] border border-line bg-white p-6 shadow-soft">
+    <div className="surface-card space-y-5 p-6 md:p-7">
       <div className="space-y-2">
         <h3 className="text-xl font-semibold tracking-tight text-ink">{messages.codingPreview.title}</h3>
         <p className="text-sm leading-7 text-muted">{messages.codingPreview.description}</p>
       </div>
+      <div className="helper-note">{messages.codingPreview.helper}</div>
 
-      <div className="rounded-[1.25rem] border border-line bg-[#fffdf8] p-5">
+      <div className="surface-panel p-5">
         <p className="text-sm text-muted">{messages.common.sample}</p>
         <p className="mt-1 text-base font-semibold text-ink">{sample.title}</p>
         <p className="mt-4 text-sm text-muted">{messages.common.template}</p>
         <p className="mt-1 text-base font-semibold text-ink">{getLocalizedText(template.name, locale)}</p>
       </div>
 
-      <div className="space-y-3">
+      <div className="grid gap-3">
         {template.fields.map((field) => {
           const rawValue = codingRow?.values[field.id];
           const displayValue = formatFieldValue(field, rawValue ?? null, locale, messages.common.notCodedYet);
 
           return (
-            <div key={field.id} className="rounded-[1.25rem] border border-line bg-[#fffdf8] p-4">
+            <div key={field.id} className="surface-panel p-4">
               <p className="text-sm font-medium text-muted">{getLocalizedText(field.label, locale)}</p>
-              <p className="mt-2 text-base text-ink">{displayValue}</p>
+              <p className="mt-2 whitespace-pre-wrap text-[15px] leading-7 text-ink">{displayValue}</p>
             </div>
           );
         })}

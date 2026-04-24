@@ -7,7 +7,7 @@ import { WorkspaceProvider } from "@/features/coding/state/workspace-context";
 export default function WorkspacePage() {
   return (
     <WorkspaceProvider>
-      <PageShell className="py-12">
+      <PageShell className="py-12 md:py-14">
         <WorkspaceFlow />
       </PageShell>
     </WorkspaceProvider>

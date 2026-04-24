@@ -19,23 +19,23 @@ export function WorkspaceFlow() {
   const activeSample = state.samples.find((sample) => sample.id === state.selectedSampleId);
 
   return (
-    <div className="space-y-10">
-      <section className="space-y-4 rounded-[2rem] border border-line/80 bg-white/80 p-8 shadow-soft backdrop-blur">
+    <div className="space-y-12">
+      <section className="surface-card space-y-5 rounded-[2rem] p-8 md:p-10">
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted">{messages.workspace.eyebrow}</p>
-        <h1 className="text-4xl font-semibold tracking-tight text-ink">{messages.workspace.title}</h1>
+        <h1 className="text-4xl font-semibold tracking-tight text-ink md:text-[2.8rem]">{messages.workspace.title}</h1>
         <p className="max-w-3xl text-base leading-8 text-muted">{messages.workspace.description}</p>
         <div className="grid gap-4 md:grid-cols-3">
-          <div className="rounded-[1.5rem] border border-line bg-[#fffdf8] p-5">
+          <div className="metric-card">
             <p className="text-sm text-muted">{messages.common.samples}</p>
             <p className="mt-2 text-3xl font-semibold tracking-tight text-ink">{state.samples.length}</p>
           </div>
-          <div className="rounded-[1.5rem] border border-line bg-[#fffdf8] p-5">
+          <div className="metric-card">
             <p className="text-sm text-muted">{messages.common.selectedTemplate}</p>
             <p className="mt-2 text-lg font-semibold tracking-tight text-ink">
               {activeTemplate ? getLocalizedText(activeTemplate.name, locale) : messages.common.noneYet}
             </p>
           </div>
-          <div className="rounded-[1.5rem] border border-line bg-[#fffdf8] p-5">
+          <div className="metric-card">
             <p className="text-sm text-muted">{messages.common.activeSample}</p>
             <p className="mt-2 text-lg font-semibold tracking-tight text-ink">
               {activeSample ? activeSample.title : messages.common.noneYet}
@@ -44,7 +44,7 @@ export function WorkspaceFlow() {
         </div>
       </section>
 
-      <div className="space-y-4">
+      <div className="space-y-5">
         <SectionHeading
           eyebrow={messages.workspace.step1Eyebrow}
           title={messages.workspace.step1Title}
@@ -53,7 +53,7 @@ export function WorkspaceFlow() {
         <TextImportPanel />
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-5">
         <SectionHeading
           eyebrow={messages.workspace.step2Eyebrow}
           title={messages.workspace.step2Title}
@@ -62,7 +62,7 @@ export function WorkspaceFlow() {
         <TemplatePicker />
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-5">
         <SectionHeading
           eyebrow={messages.workspace.step3Eyebrow}
           title={messages.workspace.step3Title}
@@ -72,7 +72,7 @@ export function WorkspaceFlow() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="space-y-4">
+        <div className="space-y-5">
           <SectionHeading
             eyebrow={messages.workspace.step4Eyebrow}
             title={messages.workspace.step4Title}
@@ -81,7 +81,7 @@ export function WorkspaceFlow() {
           <CodingForm />
         </div>
 
-        <div className="space-y-4">
+        <div className="space-y-5">
           <SectionHeading
             eyebrow={messages.workspace.step5Eyebrow}
             title={messages.workspace.step5Title}
@@ -91,7 +91,7 @@ export function WorkspaceFlow() {
         </div>
       </div>
 
-      <div className="space-y-4">
+      <div className="space-y-5">
         <SectionHeading
           eyebrow={messages.workspace.step6Eyebrow}
           title={messages.workspace.step6Title}

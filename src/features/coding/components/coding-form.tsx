@@ -13,6 +13,7 @@ import type { TemplateField } from "@/types/template";
 type FieldInputProps = {
   field: TemplateField;
   value: CodingFieldValue;
+  inputId: string;
   onChange: (value: CodingFieldValue) => void;
 };
 
@@ -20,16 +21,17 @@ function isEmptyCodingValue(value: CodingFieldValue | undefined) {
   return value === null || value === undefined || value === "" || (Array.isArray(value) && value.length === 0);
 }
 
-function FieldInput({ field, value, onChange }: FieldInputProps) {
+function FieldInput({ field, value, inputId, onChange }: FieldInputProps) {
   const { locale, messages } = useLanguage();
 
   if (field.type === "text") {
     return (
       <textarea
+        id={inputId}
         value={typeof value === "string" ? value : ""}
         onChange={(event) => onChange(event.target.value)}
         placeholder={getLocalizedText(field.placeholder, locale)}
-        className="min-h-28 w-full rounded-[1rem] border border-line bg-[#fffdf8] px-4 py-3 text-sm text-ink outline-none focus:border-ink/40"
+        className="field-textarea"
       />
     );
   }
@@ -37,11 +39,12 @@ function FieldInput({ field, value, onChange }: FieldInputProps) {
   if (field.type === "number") {
     return (
       <input
+        id={inputId}
         type="number"
         value={typeof value === "number" ? value : ""}
         onChange={(event) => onChange(event.target.value === "" ? null : Number(event.target.value))}
         placeholder={getLocalizedText(field.placeholder, locale)}
-        className="w-full rounded-[1rem] border border-line bg-[#fffdf8] px-4 py-3 text-sm text-ink outline-none focus:border-ink/40"
+        className="field-control"
       />
     );
   }
@@ -59,7 +62,8 @@ function FieldInput({ field, value, onChange }: FieldInputProps) {
             key={option.label}
             type="button"
             onClick={() => onChange(option.value)}
-            className={`rounded-full border px-4 py-2 text-sm font-medium ${
+            aria-pressed={currentValue === option.value}
+            className={`rounded-full border px-4 py-2 text-sm font-medium transition focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ink/15 ${
               currentValue === option.value
                 ? "border-ink bg-ink text-white"
                 : "border-line bg-white text-ink hover:border-ink/40"
@@ -71,7 +75,7 @@ function FieldInput({ field, value, onChange }: FieldInputProps) {
         <button
           type="button"
           onClick={() => onChange(null)}
-          className="rounded-full border border-line bg-white px-4 py-2 text-sm font-medium text-ink hover:border-ink/40"
+          className="button-secondary px-4 py-2"
         >
           {messages.common.clear}
         </button>
@@ -82,9 +86,10 @@ function FieldInput({ field, value, onChange }: FieldInputProps) {
   if (field.type === "single-select") {
     return (
       <select
+        id={inputId}
         value={typeof value === "string" ? value : ""}
         onChange={(event) => onChange(event.target.value)}
-        className="w-full rounded-[1rem] border border-line bg-[#fffdf8] px-4 py-3 text-sm text-ink outline-none focus:border-ink/40"
+        className="field-control"
       >
         <option value="">{messages.common.selectOption}</option>
         {field.options?.map((option) => (
@@ -107,7 +112,7 @@ function FieldInput({ field, value, onChange }: FieldInputProps) {
           return (
             <label
               key={option.value}
-              className="flex items-start gap-3 rounded-[1rem] border border-line bg-[#fffdf8] px-4 py-3 text-sm text-ink"
+              className="flex items-start gap-3 rounded-[1rem] border border-line bg-[#fffdf8] px-4 py-3 text-sm text-ink transition hover:border-ink/20"
             >
               <input
                 type="checkbox"
@@ -168,8 +173,11 @@ export function CodingForm() {
     );
   }
 
+  const activeTemplate = template;
+  const activeSample = sample;
+
   const codingRow = state.codingRows.find(
-    (row) => row.sampleId === sample.id && row.templateId === template.id
+    (row) => row.sampleId === activeSample.id && row.templateId === activeTemplate.id
   );
   const currentValues = codingRow?.values ?? {};
 
@@ -179,8 +187,8 @@ export function CodingForm() {
 
     try {
       const suggestions = await generateSuggestions({
-        sample,
-        template,
+        sample: activeSample,
+        template: activeTemplate,
         currentValues,
         locale
       });
@@ -192,8 +200,8 @@ export function CodingForm() {
       dispatch({
         type: "APPLY_SUGGESTIONS",
         payload: {
-          sampleId: sample.id,
-          templateId: template.id,
+          sampleId: activeSample.id,
+          templateId: activeTemplate.id,
           values: suggestions
         }
       });
@@ -215,16 +223,17 @@ export function CodingForm() {
   }
 
   return (
-    <section className="space-y-5 rounded-[1.5rem] border border-line bg-white p-6 shadow-soft">
-      <div className="rounded-[1.25rem] border border-line bg-[#fffdf8] p-5">
+    <section className="surface-card space-y-5 p-6 md:p-7">
+      <div className="surface-panel p-5">
         <p className="text-sm text-muted">{messages.codingForm.currentlyCoding}</p>
-        <h3 className="mt-1 text-xl font-semibold tracking-tight text-ink">{sample.title}</h3>
-        <p className="mt-2 text-sm leading-7 text-muted">{getLocalizedText(template.name, locale)}</p>
+        <h3 className="mt-1 text-xl font-semibold tracking-tight text-ink">{activeSample.title}</h3>
+        <p className="mt-2 text-sm leading-7 text-muted">{getLocalizedText(activeTemplate.name, locale)}</p>
       </div>
 
-      <div className="rounded-[1.25rem] border border-line bg-[#fffdf8] p-5">
-        <p className="text-sm text-muted">{messages.codingForm.sampleText}</p>
-        <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-ink">{sample.text}</p>
+      <div className="surface-panel p-5">
+        <p className="text-sm font-medium text-muted">{messages.codingForm.sampleText}</p>
+        <p className="mt-2 text-sm leading-7 text-muted">{messages.codingForm.sampleTextHelper}</p>
+        <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-ink">{activeSample.text}</p>
       </div>
 
       <div className="rounded-[1.25rem] border border-accent/30 bg-accent/10 p-5">
@@ -232,47 +241,56 @@ export function CodingForm() {
           <div className="space-y-2">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">{messages.codingForm.aiEyebrow}</p>
             <p className="text-sm leading-7 text-ink">{messages.codingForm.aiDisclaimer}</p>
+            <p className="text-sm leading-7 text-muted">{messages.codingForm.aiHowItWorks}</p>
+            <p className="text-sm leading-7 text-muted">{messages.codingForm.aiEditableNote}</p>
             <p className="text-sm leading-7 text-muted">{messages.codingForm.aiOnlyEmptyFields}</p>
           </div>
           <button
             type="button"
             onClick={handleGenerateSuggestions}
             disabled={isGeneratingSuggestions}
-            className="rounded-full bg-ink px-5 py-3 text-sm font-medium text-white hover:bg-ink/90 disabled:cursor-not-allowed disabled:bg-ink/40"
+            className="button-primary"
           >
             {isGeneratingSuggestions ? messages.codingForm.generating : messages.codingForm.generate}
           </button>
         </div>
 
-        {suggestionMessage && <p className="mt-4 text-sm text-muted">{suggestionMessage}</p>}
+        {suggestionMessage && <p className="mt-4 text-sm leading-7 text-muted">{suggestionMessage}</p>}
       </div>
 
       <div className="space-y-4">
-        {template.fields.map((field) => (
-          <div key={field.id} className="rounded-[1.25rem] border border-line bg-white p-5">
-            <div className="space-y-2">
-              <label className="block text-base font-semibold text-ink">{getLocalizedText(field.label, locale)}</label>
-              <p className="text-sm leading-7 text-muted">{getLocalizedText(field.description, locale)}</p>
+        {activeTemplate.fields.map((field) => {
+          const inputId = `${activeTemplate.id}-${activeSample.id}-${field.id}`;
+
+          return (
+            <div key={field.id} className="surface-panel p-5">
+              <div className="space-y-2">
+                <label htmlFor={inputId} className="block text-base font-semibold text-ink">
+                  {getLocalizedText(field.label, locale)}
+                </label>
+                <p className="text-sm leading-7 text-muted">{getLocalizedText(field.description, locale)}</p>
+              </div>
+              <div className="mt-4">
+                <FieldInput
+                  field={field}
+                  value={currentValues[field.id] ?? null}
+                  inputId={inputId}
+                  onChange={(value) =>
+                    dispatch({
+                      type: "UPDATE_CODING_VALUE",
+                      payload: {
+                        sampleId: activeSample.id,
+                        templateId: activeTemplate.id,
+                        fieldId: field.id,
+                        value
+                      }
+                    })
+                  }
+                />
+              </div>
             </div>
-            <div className="mt-4">
-              <FieldInput
-                field={field}
-                value={currentValues[field.id] ?? null}
-                onChange={(value) =>
-                  dispatch({
-                    type: "UPDATE_CODING_VALUE",
-                    payload: {
-                      sampleId: sample.id,
-                      templateId: template.id,
-                      fieldId: field.id,
-                      value
-                    }
-                  })
-                }
-              />
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
