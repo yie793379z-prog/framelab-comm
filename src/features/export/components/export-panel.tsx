@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
-import { EmptyState } from "@/components/shared/empty-state";
+import { useRef, useState, type ChangeEvent } from "react";
 import { useWorkspace } from "@/features/coding/state/workspace-context";
+import { importProjectJson, type LoadProjectErrorKey } from "@/features/export/utils/import-project-json";
 import { buildCsvExport } from "@/features/export/utils/export-csv";
 import { buildJsonExport } from "@/features/export/utils/export-json";
 import { buildMarkdownExport } from "@/features/export/utils/export-markdown";
@@ -25,21 +25,42 @@ const EXPORT_MIME_TYPES: Record<ExportFormat, string> = {
 };
 
 export function ExportPanel() {
-  const { state } = useWorkspace();
+  const { state, dispatch } = useWorkspace();
   const { locale, messages } = useLanguage();
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
+  const [projectJsonInput, setProjectJsonInput] = useState("");
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const selectedTemplate = analysisTemplates.find((template) => template.id === state.selectedTemplateId) ?? null;
+  const hasWorkspaceData = state.samples.length > 0;
 
-  if (!state.samples.length) {
-    return (
-      <EmptyState
-        title={messages.exportPanel.emptyTitle}
-        description={messages.exportPanel.emptyDescription}
-      />
-    );
+  function getLoadErrorMessage(errorKey: LoadProjectErrorKey) {
+    switch (errorKey) {
+      case "empty":
+        return messages.exportPanel.emptyError;
+      case "invalidJson":
+        return messages.exportPanel.invalidJsonError;
+      case "invalidRoot":
+        return messages.exportPanel.invalidRootError;
+      case "invalidSamples":
+        return messages.exportPanel.invalidSamplesError;
+      case "invalidTemplate":
+        return messages.exportPanel.invalidTemplateError;
+      case "invalidCodingResults":
+        return messages.exportPanel.invalidCodingResultsError;
+      case "inconsistentCodingResults":
+        return messages.exportPanel.inconsistentCodingResultsError;
+      case "wrongFormat":
+        return messages.exportPanel.wrongFormatError;
+      default:
+        return messages.exportPanel.invalidJsonError;
+    }
   }
 
   function handleExport(format: ExportFormat) {
+    if (!hasWorkspaceData) {
+      return;
+    }
+
     let content = "";
 
     if (format === "csv") {
@@ -58,12 +79,54 @@ export function ExportPanel() {
     setStatusMessage(formatMessage(messages.exportPanel.downloaded, { filename: EXPORT_FILENAMES[format] }));
   }
 
+  function applyProjectJson(rawInput: string) {
+    const result = importProjectJson(rawInput);
+
+    if (!result.success) {
+      setStatusMessage(getLoadErrorMessage(result.errorKey));
+      return;
+    }
+
+    const shouldReplace = window.confirm(messages.exportPanel.replaceConfirm);
+
+    if (!shouldReplace) {
+      return;
+    }
+
+    dispatch({
+      type: "LOAD_PROJECT",
+      payload: result.data
+    });
+
+    setProjectJsonInput("");
+    setStatusMessage(messages.exportPanel.loadSuccess);
+  }
+
+  async function handleFileSelection(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    const content = await file.text();
+    setProjectJsonInput(content);
+    applyProjectJson(content);
+    event.target.value = "";
+  }
+
   return (
     <section className="rounded-[1.5rem] border border-line bg-white p-6 shadow-soft">
       <div className="space-y-2">
         <h3 className="text-xl font-semibold tracking-tight text-ink">{messages.exportPanel.title}</h3>
         <p className="text-sm leading-7 text-muted">{messages.exportPanel.description}</p>
       </div>
+
+      {!hasWorkspaceData && (
+        <div className="mt-5 rounded-[1.25rem] border border-dashed border-line bg-[#fffdf8] p-4">
+          <p className="text-sm leading-7 text-muted">{messages.exportPanel.noProjectYet}</p>
+        </div>
+      )}
 
       <div className="mt-5 grid gap-4 md:grid-cols-3">
         <div className="rounded-[1.25rem] border border-line bg-[#fffdf8] p-4">
@@ -98,7 +161,8 @@ export function ExportPanel() {
             <button
               type="button"
               onClick={() => handleExport(format)}
-              className="mt-4 rounded-full bg-ink px-4 py-2 text-sm font-medium text-white hover:bg-ink/90"
+              disabled={!hasWorkspaceData}
+              className="mt-4 rounded-full bg-ink px-4 py-2 text-sm font-medium text-white hover:bg-ink/90 disabled:cursor-not-allowed disabled:bg-ink/40"
             >
               {format === "csv" && messages.exportPanel.exportCsv}
               {format === "json" && messages.exportPanel.exportJson}
@@ -106,6 +170,47 @@ export function ExportPanel() {
             </button>
           </div>
         ))}
+      </div>
+
+      <div className="mt-6 rounded-[1.25rem] border border-line bg-[#fffdf8] p-5">
+        <div className="space-y-2">
+          <h4 className="text-lg font-semibold tracking-tight text-ink">{messages.exportPanel.loadTitle}</h4>
+          <p className="text-sm leading-7 text-muted">{messages.exportPanel.loadDescription}</p>
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-3">
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="application/json,.json"
+            onChange={handleFileSelection}
+            className="hidden"
+          />
+          <button
+            type="button"
+            onClick={() => fileInputRef.current?.click()}
+            className="rounded-full bg-ink px-4 py-2 text-sm font-medium text-white hover:bg-ink/90"
+          >
+            {messages.exportPanel.chooseFile}
+          </button>
+        </div>
+
+        <div className="mt-4 space-y-3">
+          <label className="block text-sm font-medium text-ink">{messages.exportPanel.pasteLabel}</label>
+          <textarea
+            value={projectJsonInput}
+            onChange={(event) => setProjectJsonInput(event.target.value)}
+            placeholder={messages.exportPanel.pastePlaceholder}
+            className="min-h-40 w-full rounded-[1rem] border border-line bg-white px-4 py-3 text-sm text-ink outline-none focus:border-ink/40"
+          />
+          <button
+            type="button"
+            onClick={() => applyProjectJson(projectJsonInput)}
+            className="rounded-full border border-line bg-white px-4 py-2 text-sm font-medium text-ink hover:border-ink/40"
+          >
+            {messages.exportPanel.loadFromPaste}
+          </button>
+        </div>
       </div>
 
       {statusMessage && <p className="mt-5 text-sm text-muted">{statusMessage}</p>}

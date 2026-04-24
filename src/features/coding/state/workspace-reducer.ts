@@ -25,6 +25,10 @@ type WorkspaceAction =
         values: Record<string, CodingFieldValue>;
       };
     }
+  | {
+      type: "LOAD_PROJECT";
+      payload: Pick<WorkspaceState, "samples" | "selectedTemplateId" | "selectedSampleId" | "codingRows">;
+    }
   | { type: "RESET_WORKSPACE" };
 
 function isEmptyCodingValue(value: CodingFieldValue | undefined) {
@@ -191,6 +195,15 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
           action.payload.templateId,
           action.payload.values
         )
+      };
+
+    case "LOAD_PROJECT":
+      return {
+        ...initialWorkspaceState,
+        samples: action.payload.samples,
+        selectedTemplateId: action.payload.selectedTemplateId,
+        selectedSampleId: action.payload.selectedSampleId,
+        codingRows: action.payload.codingRows
       };
 
     case "RESET_WORKSPACE":
