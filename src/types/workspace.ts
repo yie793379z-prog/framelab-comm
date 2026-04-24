@@ -6,6 +6,7 @@ export interface WorkspaceState {
   importText: string;
   samples: SampleRecord[];
   selectedTemplateId: string | null;
+  selectedSampleId: string | null;
   codingRows: CodingRow[];
   exportFormats: ExportFormat[];
 }

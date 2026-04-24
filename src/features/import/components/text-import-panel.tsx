@@ -35,7 +35,8 @@ export function TextImportPanel() {
             <button
               type="button"
               onClick={() => dispatch({ type: "LOAD_SAMPLES_FROM_IMPORT" })}
-              className="rounded-full bg-ink px-4 py-2 text-sm font-medium text-white hover:bg-ink/90"
+              disabled={!previewCount}
+              className="rounded-full bg-ink px-4 py-2 text-sm font-medium text-white hover:bg-ink/90 disabled:cursor-not-allowed disabled:bg-ink/40"
             >
               Load into workspace
             </button>
@@ -48,6 +49,12 @@ export function TextImportPanel() {
             </button>
           </div>
         </div>
+
+        {!!state.samples.length && (
+          <p className="text-sm text-muted">
+            {state.samples.length} sample{state.samples.length === 1 ? "" : "s"} currently loaded into the workspace.
+          </p>
+        )}
       </div>
     </section>
   );
