@@ -1,63 +1,52 @@
 import { analysisTemplates } from "@/features/templates/data/templates";
+import { getMessages, getLocalizedText, formatLocaleDate } from "@/i18n/utils";
+import type { Locale } from "@/i18n/types";
 import type { CodingFieldValue } from "@/types/coding";
 import type { WorkspaceState } from "@/types/workspace";
 import type { TemplateField } from "@/types/template";
 
-const PROJECT_TITLE = "FrameLab Analysis Project";
-const AI_DISCLAIMER =
-  "AI suggestions are editable aids and should not be treated as final academic judgments.";
-
-function formatDate(value: Date) {
-  return new Intl.DateTimeFormat(undefined, {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-    hour: "2-digit",
-    minute: "2-digit"
-  }).format(value);
-}
-
-function formatFieldValue(field: TemplateField, value: CodingFieldValue) {
+function formatFieldValue(field: TemplateField, value: CodingFieldValue, locale: Locale, notCodedText: string) {
   if (value === null || value === undefined || value === "" || (Array.isArray(value) && value.length === 0)) {
-    return "Not coded";
+    return notCodedText;
   }
 
   if (field.type === "single-select" && typeof value === "string") {
-    return field.options?.find((option) => option.value === value)?.label ?? value;
+    return getLocalizedText(field.options?.find((option) => option.value === value)?.label, locale) ?? value;
   }
 
   if (field.type === "multi-select" && Array.isArray(value)) {
     return value
-      .map((item) => field.options?.find((option) => option.value === item)?.label ?? item)
+      .map((item) => getLocalizedText(field.options?.find((option) => option.value === item)?.label, locale) ?? item)
       .join(", ");
   }
 
   return String(value);
 }
 
-export function buildMarkdownExport(workspace: WorkspaceState) {
+export function buildMarkdownExport(workspace: WorkspaceState, locale: Locale) {
+  const messages = getMessages(locale);
   const selectedTemplate = analysisTemplates.find((template) => template.id === workspace.selectedTemplateId) ?? null;
   const generatedAt = new Date();
   const lines: string[] = [
-    `# ${PROJECT_TITLE}`,
+    `# ${messages.exportReport.projectTitle}`,
     "",
-    `- Project title: ${PROJECT_TITLE}`,
-    `- Generated date: ${formatDate(generatedAt)}`,
-    `- Selected template: ${selectedTemplate?.name ?? "No template selected"}`,
-    `- Number of samples: ${workspace.samples.length}`,
+    `- ${locale === "zh-CN" ? "项目标题" : "Project title"}: ${messages.exportReport.projectTitle}`,
+    `- ${messages.exportReport.generatedDate}: ${formatLocaleDate(generatedAt, locale)}`,
+    `- ${messages.exportReport.selectedTemplate}: ${selectedTemplate ? getLocalizedText(selectedTemplate.name, locale) : messages.common.noTemplateSelected}`,
+    `- ${messages.exportReport.numberOfSamples}: ${workspace.samples.length}`,
     "",
-    "## Methodology Note",
+    `## ${messages.exportReport.methodologyNote}`,
     "",
-    "This report was generated from a local FrameLab workspace. Coding values may include user-entered judgments and mock AI-assisted suggestions that remain fully editable during the research workflow.",
+    messages.exportReport.methodologyBody,
     "",
-    `> ${AI_DISCLAIMER}`,
+    `> ${messages.exportReport.aiDisclaimer}`,
     "",
-    "## Sample Coding Summary",
+    `## ${messages.exportReport.sampleCodingSummary}`,
     ""
   ];
 
   if (!workspace.samples.length) {
-    lines.push("No samples were available at export time.");
+    lines.push(messages.exportReport.noSamples);
     return lines.join("\n");
   }
 
@@ -70,25 +59,25 @@ export function buildMarkdownExport(workspace: WorkspaceState) {
 
     lines.push(`### ${sample.title}`);
     lines.push("");
-    lines.push(`**Source**: ${sample.source ?? "Unknown"}`);
+    lines.push(`**${messages.exportReport.source}**: ${sample.source ?? messages.common.sourceUnknown}`);
     lines.push("");
-    lines.push("**Text excerpt**");
+    lines.push(`**${messages.exportReport.textExcerpt}**`);
     lines.push("");
     lines.push(sample.text);
     lines.push("");
 
     if (!selectedTemplate) {
-      lines.push("No template was selected when this report was generated.");
+      lines.push(messages.exportReport.noTemplate);
       lines.push("");
       continue;
     }
 
-    lines.push("**Coding summary**");
+    lines.push(`**${messages.exportReport.codingSummary}**`);
     lines.push("");
 
     for (const field of selectedTemplate.fields) {
-      const formattedValue = formatFieldValue(field, codingRow?.values[field.id] ?? null);
-      lines.push(`- ${field.label}: ${formattedValue}`);
+      const formattedValue = formatFieldValue(field, codingRow?.values[field.id] ?? null, locale, messages.common.notCoded);
+      lines.push(`- ${getLocalizedText(field.label, locale)}: ${formattedValue}`);
     }
 
     lines.push("");

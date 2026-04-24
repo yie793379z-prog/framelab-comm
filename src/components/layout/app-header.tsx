@@ -1,7 +1,13 @@
+"use client";
+
 import Link from "next/link";
 import { appNavigation } from "@/lib/constants/app";
+import { useLanguage } from "@/i18n/context";
+import type { Locale } from "@/i18n/types";
 
 export function AppHeader() {
+  const { locale, setLocale, messages } = useLanguage();
+
   return (
     <header className="border-b border-line/80 bg-white/70 backdrop-blur">
       <div className="mx-auto flex w-full max-w-6xl items-center justify-between px-6 py-4">
@@ -15,12 +21,33 @@ export function AppHeader() {
           </div>
         </Link>
 
-        <nav className="flex items-center gap-6 text-sm font-medium text-muted">
+        <nav className="flex items-center gap-4 text-sm font-medium text-muted">
           {appNavigation.map((item) => (
             <Link key={item.href} href={item.href} className="hover:text-ink">
-              {item.label}
+              {messages.nav[item.labelKey]}
             </Link>
           ))}
+
+          <div className="flex items-center gap-2 rounded-full border border-line bg-[#fffdf8] p-1">
+            <span className="px-2 text-xs font-semibold uppercase tracking-[0.14em] text-muted">
+              {messages.nav.languageLabel}
+            </span>
+            {[
+              { value: "en", label: "EN" },
+              { value: "zh-CN", label: "简中" }
+            ].map((option: { value: Locale; label: string }) => (
+              <button
+                key={option.value}
+                type="button"
+                onClick={() => setLocale(option.value)}
+                className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                  locale === option.value ? "bg-ink text-white" : "text-ink hover:bg-paper"
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
         </nav>
       </div>
     </header>

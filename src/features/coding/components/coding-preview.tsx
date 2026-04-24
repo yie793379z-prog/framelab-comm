@@ -3,25 +3,27 @@
 import { EmptyState } from "@/components/shared/empty-state";
 import { analysisTemplates } from "@/features/templates/data/templates";
 import { useWorkspace } from "@/features/coding/state/workspace-context";
+import { useLanguage } from "@/i18n/context";
+import { getLocalizedText } from "@/i18n/utils";
 import type { CodingFieldValue } from "@/types/coding";
 import type { TemplateField } from "@/types/template";
 
-function formatFieldValue(field: TemplateField, value: CodingFieldValue) {
+function formatFieldValue(field: TemplateField, value: CodingFieldValue, locale: "en" | "zh-CN", notCodedText: string) {
   if (value === null || value === undefined || value === "") {
-    return "Not coded yet";
+    return notCodedText;
   }
 
   if (field.type === "single-select" && typeof value === "string") {
-    return field.options?.find((option) => option.value === value)?.label ?? value;
+    return getLocalizedText(field.options?.find((option) => option.value === value)?.label, locale) ?? value;
   }
 
   if (field.type === "multi-select" && Array.isArray(value)) {
     if (!value.length) {
-      return "Not coded yet";
+      return notCodedText;
     }
 
     return value
-      .map((item) => field.options?.find((option) => option.value === item)?.label ?? item)
+      .map((item) => getLocalizedText(field.options?.find((option) => option.value === item)?.label, locale) ?? item)
       .join(", ");
   }
 
@@ -30,12 +32,13 @@ function formatFieldValue(field: TemplateField, value: CodingFieldValue) {
 
 export function CodingPreview() {
   const { state } = useWorkspace();
+  const { locale, messages } = useLanguage();
 
   if (!state.selectedTemplateId) {
     return (
       <EmptyState
-        title="Choose a template to start coding"
-        description="The coding workspace will render editable rows after a template is selected."
+        title={messages.codingPreview.emptyTemplateTitle}
+        description={messages.codingPreview.emptyTemplateDescription}
       />
     );
   }
@@ -43,8 +46,8 @@ export function CodingPreview() {
   if (!state.selectedSampleId) {
     return (
       <EmptyState
-        title="Select a sample to review coded values"
-        description="Once a sample is selected, its current coding values will appear here in a simple live preview."
+        title={messages.codingPreview.emptySampleTitle}
+        description={messages.codingPreview.emptySampleDescription}
       />
     );
   }
@@ -55,8 +58,8 @@ export function CodingPreview() {
   if (!template || !sample) {
     return (
       <EmptyState
-        title="Preview unavailable"
-        description="The selected sample or template could not be loaded. Re-select them to continue."
+        title={messages.codingPreview.unavailableTitle}
+        description={messages.codingPreview.unavailableDescription}
       />
     );
   }
@@ -68,27 +71,25 @@ export function CodingPreview() {
   return (
     <div className="space-y-4 rounded-[1.5rem] border border-line bg-white p-6 shadow-soft">
       <div className="space-y-2">
-        <h3 className="text-xl font-semibold tracking-tight text-ink">Live coding preview</h3>
-        <p className="text-sm leading-7 text-muted">
-          Current values for the selected sample update as you edit the form.
-        </p>
+        <h3 className="text-xl font-semibold tracking-tight text-ink">{messages.codingPreview.title}</h3>
+        <p className="text-sm leading-7 text-muted">{messages.codingPreview.description}</p>
       </div>
 
       <div className="rounded-[1.25rem] border border-line bg-[#fffdf8] p-5">
-        <p className="text-sm text-muted">Sample</p>
+        <p className="text-sm text-muted">{messages.common.sample}</p>
         <p className="mt-1 text-base font-semibold text-ink">{sample.title}</p>
-        <p className="mt-4 text-sm text-muted">Template</p>
-        <p className="mt-1 text-base font-semibold text-ink">{template.name}</p>
+        <p className="mt-4 text-sm text-muted">{messages.common.template}</p>
+        <p className="mt-1 text-base font-semibold text-ink">{getLocalizedText(template.name, locale)}</p>
       </div>
 
       <div className="space-y-3">
         {template.fields.map((field) => {
           const rawValue = codingRow?.values[field.id];
-          const displayValue = formatFieldValue(field, rawValue ?? null);
+          const displayValue = formatFieldValue(field, rawValue ?? null, locale, messages.common.notCodedYet);
 
           return (
             <div key={field.id} className="rounded-[1.25rem] border border-line bg-[#fffdf8] p-4">
-              <p className="text-sm font-medium text-muted">{field.label}</p>
+              <p className="text-sm font-medium text-muted">{getLocalizedText(field.label, locale)}</p>
               <p className="mt-2 text-base text-ink">{displayValue}</p>
             </div>
           );

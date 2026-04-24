@@ -2,9 +2,12 @@
 
 import { analysisTemplates } from "@/features/templates/data/templates";
 import { useWorkspace } from "@/features/coding/state/workspace-context";
+import { useLanguage } from "@/i18n/context";
+import { formatMessage, getLocalizedText } from "@/i18n/utils";
 
 export function TemplatePicker() {
   const { state, dispatch } = useWorkspace();
+  const { locale, messages } = useLanguage();
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -24,17 +27,17 @@ export function TemplatePicker() {
           >
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-4">
-                <h3 className="text-lg font-semibold tracking-tight">{template.name}</h3>
+                <h3 className="text-lg font-semibold tracking-tight">{getLocalizedText(template.name, locale)}</h3>
                 <span
                   className={`rounded-full px-3 py-1 text-xs font-medium ${
                     isSelected ? "bg-white/15 text-white" : "bg-paper text-muted"
                   }`}
                 >
-                  {template.fields.length} fields
+                  {formatMessage(messages.templatePicker.fieldCount, { count: template.fields.length })}
                 </span>
               </div>
               <p className={`text-sm leading-7 ${isSelected ? "text-white/80" : "text-muted"}`}>
-                {template.shortDescription}
+                {getLocalizedText(template.shortDescription, locale)}
               </p>
             </div>
           </button>

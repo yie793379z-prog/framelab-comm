@@ -1,9 +1,11 @@
+import { getLocalizedText } from "@/i18n/utils";
+import type { Locale, LocalizedText } from "@/i18n/types";
 import type { CodingFieldValue } from "@/types/coding";
 import type { TemplateField, TemplateFieldOption } from "@/types/template";
 import type { GenerateSuggestionsInput, SuggestedCodingValues } from "@/features/ai/types";
 
 type TopicProfile = {
-  label: string;
+  label: LocalizedText;
   keywords: string[];
 };
 
@@ -14,17 +16,18 @@ type SuggestionContext = {
   sentenceCount: number;
   firstSentence: string;
   topic: string;
+  locale: Locale;
 };
 
 const TOPIC_PROFILES: TopicProfile[] = [
-  { label: "a crisis response issue", keywords: ["crisis", "apology", "incident", "response", "statement", "safety"] },
-  { label: "a policy or governance issue", keywords: ["policy", "government", "law", "regulation", "minister", "public"] },
-  { label: "an economic or business issue", keywords: ["market", "company", "business", "price", "cost", "investment"] },
-  { label: "a health communication issue", keywords: ["health", "hospital", "medical", "patient", "care", "pandemic"] },
-  { label: "an education issue", keywords: ["school", "university", "student", "teacher", "campus", "classroom"] },
-  { label: "a platform or social media issue", keywords: ["platform", "social", "post", "hashtag", "creator", "viral"] },
-  { label: "an identity or community issue", keywords: ["community", "identity", "representation", "gender", "culture", "race"] },
-  { label: "an environmental issue", keywords: ["climate", "environment", "carbon", "pollution", "sustainability", "green"] }
+  { label: { en: "a crisis response issue", "zh-CN": "一个危机回应议题" }, keywords: ["crisis", "apology", "incident", "response", "statement", "safety"] },
+  { label: { en: "a policy or governance issue", "zh-CN": "一个政策或治理议题" }, keywords: ["policy", "government", "law", "regulation", "minister", "public"] },
+  { label: { en: "an economic or business issue", "zh-CN": "一个经济或商业议题" }, keywords: ["market", "company", "business", "price", "cost", "investment"] },
+  { label: { en: "a health communication issue", "zh-CN": "一个健康传播议题" }, keywords: ["health", "hospital", "medical", "patient", "care", "pandemic"] },
+  { label: { en: "an education issue", "zh-CN": "一个教育议题" }, keywords: ["school", "university", "student", "teacher", "campus", "classroom"] },
+  { label: { en: "a platform or social media issue", "zh-CN": "一个平台或社交媒体议题" }, keywords: ["platform", "social", "post", "hashtag", "creator", "viral"] },
+  { label: { en: "an identity or community issue", "zh-CN": "一个身份或社群议题" }, keywords: ["community", "identity", "representation", "gender", "culture", "race"] },
+  { label: { en: "an environmental issue", "zh-CN": "一个环境议题" }, keywords: ["climate", "environment", "carbon", "pollution", "sustainability", "green"] }
 ];
 
 function delay(ms: number) {
@@ -51,8 +54,8 @@ function extractFirstSentence(text: string) {
   return sentence.length > 160 ? `${sentence.slice(0, 157)}...` : sentence;
 }
 
-function detectTopic(text: string) {
-  let bestMatch = "a public communication issue";
+function detectTopic(text: string, locale: Locale) {
+  let bestMatch = locale === "zh-CN" ? "一个公共传播议题" : "a public communication issue";
   let bestScore = 0;
 
   for (const profile of TOPIC_PROFILES) {
@@ -60,7 +63,7 @@ function detectTopic(text: string) {
 
     if (score > bestScore) {
       bestScore = score;
-      bestMatch = profile.label;
+      bestMatch = getLocalizedText(profile.label, locale);
     }
   }
 
@@ -221,42 +224,58 @@ function inferReputationRepairSignals(context: SuggestionContext, options: Templ
 
 function inferSpeakerRole(context: SuggestionContext) {
   if (includesAny(context.normalizedText, ["student", "undergraduate", "graduate"])) {
-    return "Student participant discussing the issue from a learner perspective.";
+    return context.locale === "zh-CN"
+      ? "受访者以学生或学习者视角讨论这一议题。"
+      : "Student participant discussing the issue from a learner perspective.";
   }
 
   if (includesAny(context.normalizedText, ["editor", "journalist", "reporter", "newsroom"])) {
-    return "Media practitioner reflecting on professional routines and editorial judgment.";
+    return context.locale === "zh-CN"
+      ? "受访者以媒体从业者身份讨论专业流程与编辑判断。"
+      : "Media practitioner reflecting on professional routines and editorial judgment.";
   }
 
   if (includesAny(context.normalizedText, ["spokesperson", "official", "minister", "agency"])) {
-    return "Institutional spokesperson addressing the issue from an official role.";
+    return context.locale === "zh-CN"
+      ? "受访者以机构发言人或官方身份回应这一议题。"
+      : "Institutional spokesperson addressing the issue from an official role.";
   }
 
   if (includesAny(context.normalizedText, ["creator", "influencer", "content"])) {
-    return "Platform content producer speaking from a creator perspective.";
+    return context.locale === "zh-CN"
+      ? "受访者以内容创作者视角讨论这一议题。"
+      : "Platform content producer speaking from a creator perspective.";
   }
 
-  return `Participant discussing ${context.topic}.`;
+  return context.locale === "zh-CN" ? `受访者围绕${context.topic}进行讨论。` : `Participant discussing ${context.topic}.`;
 }
 
 function inferProblemDefinition(context: SuggestionContext) {
-  return `The sample frames ${context.topic} as a salient issue that requires attention or response.`;
+  return context.locale === "zh-CN"
+    ? `该样本将${context.topic}呈现为一个值得关注并需要回应的问题。`
+    : `The sample frames ${context.topic} as a salient issue that requires attention or response.`;
 }
 
 function inferSuggestedRemedy(context: SuggestionContext) {
   if (includesAny(context.normalizedText, ["policy", "regulation", "government", "authority"])) {
-    return "The implied remedy is stronger institutional action, clearer rules, or public accountability.";
+    return context.locale === "zh-CN"
+      ? "文本暗示的解决路径是更明确的制度行动、更清晰的规则或更强的公共问责。"
+      : "The implied remedy is stronger institutional action, clearer rules, or public accountability.";
   }
 
   if (includesAny(context.normalizedText, ["apology", "incident", "response", "safety"])) {
-    return "The implied remedy is corrective action, clearer communication, and visible follow-through.";
+    return context.locale === "zh-CN"
+      ? "文本暗示的解决路径是纠正性行动、更清晰的沟通以及可见的后续落实。"
+      : "The implied remedy is corrective action, clearer communication, and visible follow-through.";
   }
 
-  return "The text points toward clearer action, coordination, or support as the next step.";
+  return context.locale === "zh-CN"
+    ? "文本指向更明确的行动、协调或支持作为下一步。"
+    : "The text points toward clearer action, coordination, or support as the next step.";
 }
 
 function inferNotableQuote(context: SuggestionContext) {
-  return context.firstSentence || "No standout quote detected from the current sample.";
+  return context.firstSentence || (context.locale === "zh-CN" ? "当前样本中未识别出明显的代表性引文。" : "No standout quote detected from the current sample.");
 }
 
 function generateTextSuggestion(field: TemplateField, context: SuggestionContext) {
@@ -276,7 +295,9 @@ function generateTextSuggestion(field: TemplateField, context: SuggestionContext
     return inferNotableQuote(context);
   }
 
-  return `Initial coding note: the sample appears to focus on ${context.topic}.`;
+  return context.locale === "zh-CN"
+    ? `初步编码备注：该样本似乎聚焦于${context.topic}。`
+    : `Initial coding note: the sample appears to focus on ${context.topic}.`;
 }
 
 function generateNumberSuggestion(context: SuggestionContext) {
@@ -327,7 +348,7 @@ function generateMultiSelectSuggestion(field: TemplateField, templateId: string,
   return field.options?.[0] ? [field.options[0].value] : [];
 }
 
-function buildSuggestionContext(text: string): SuggestionContext {
+function buildSuggestionContext(text: string, locale: Locale): SuggestionContext {
   const normalizedText = normalizeText(text);
   const cleanedText = text.trim();
 
@@ -337,7 +358,8 @@ function buildSuggestionContext(text: string): SuggestionContext {
     wordCount: cleanedText.split(/\s+/).filter(Boolean).length,
     sentenceCount: cleanedText.split(/[.!?]+/).map((item) => item.trim()).filter(Boolean).length || 1,
     firstSentence: extractFirstSentence(cleanedText),
-    topic: detectTopic(normalizedText)
+    topic: detectTopic(normalizedText, locale),
+    locale
   };
 }
 
@@ -368,9 +390,10 @@ function generateFieldSuggestion(field: TemplateField, templateId: string, conte
 export async function generateSuggestions({
   sample,
   template,
-  currentValues
+  currentValues,
+  locale
 }: GenerateSuggestionsInput): Promise<SuggestedCodingValues> {
-  const context = buildSuggestionContext(sample.text);
+  const context = buildSuggestionContext(sample.text, locale);
   const suggestions: SuggestedCodingValues = {};
 
   for (const field of template.fields) {

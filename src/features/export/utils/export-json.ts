@@ -1,31 +1,37 @@
 import { analysisTemplates } from "@/features/templates/data/templates";
+import { localizeTemplate } from "@/i18n/utils";
+import type { Locale } from "@/i18n/types";
 import type { ExportMetadata, ExportFormat } from "@/types/export";
 import type { WorkspaceState } from "@/types/workspace";
 
-const PROJECT_TITLE = "FrameLab Analysis Project";
+const PROJECT_TITLES = {
+  en: "FrameLab Analysis Project",
+  "zh-CN": "FrameLab 分析项目"
+} as const;
 
-function buildExportMetadata(workspace: WorkspaceState, format: ExportFormat): ExportMetadata {
+function buildExportMetadata(workspace: WorkspaceState, format: ExportFormat, locale: Locale): ExportMetadata {
   const selectedTemplate = analysisTemplates.find((template) => template.id === workspace.selectedTemplateId);
 
   return {
-    projectTitle: PROJECT_TITLE,
+    projectTitle: PROJECT_TITLES[locale],
     generatedAt: new Date().toISOString(),
     sampleCount: workspace.samples.length,
     selectedTemplateId: workspace.selectedTemplateId,
-    selectedTemplateName: selectedTemplate?.name ?? null,
-    format
+    selectedTemplateName: selectedTemplate ? localizeTemplate(selectedTemplate, locale).name : null,
+    format,
+    language: locale
   };
 }
 
-export function buildJsonExport(workspace: WorkspaceState) {
+export function buildJsonExport(workspace: WorkspaceState, locale: Locale) {
   const selectedTemplate = analysisTemplates.find((template) => template.id === workspace.selectedTemplateId) ?? null;
 
   return JSON.stringify(
     {
       samples: workspace.samples,
-      selectedTemplate,
+      selectedTemplate: selectedTemplate ? localizeTemplate(selectedTemplate, locale) : null,
       codingResults: workspace.codingRows,
-      exportMetadata: buildExportMetadata(workspace, "json")
+      exportMetadata: buildExportMetadata(workspace, "json", locale)
     },
     null,
     2

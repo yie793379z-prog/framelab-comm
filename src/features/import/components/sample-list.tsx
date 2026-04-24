@@ -2,15 +2,18 @@
 
 import { EmptyState } from "@/components/shared/empty-state";
 import { useWorkspace } from "@/features/coding/state/workspace-context";
+import { useLanguage } from "@/i18n/context";
+import { formatMessage } from "@/i18n/utils";
 
 export function SampleList() {
   const { state, dispatch } = useWorkspace();
+  const { messages } = useLanguage();
 
   if (!state.samples.length) {
     return (
       <EmptyState
-        title="No samples loaded yet"
-        description="Paste text into the import panel and load it into the workspace to start selecting and coding samples."
+        title={messages.sampleList.emptyTitle}
+        description={messages.sampleList.emptyDescription}
       />
     );
   }
@@ -40,7 +43,7 @@ export function SampleList() {
                     isSelected ? "bg-white/15 text-white" : "bg-paper text-muted"
                   }`}
                 >
-                  Sample {index + 1}
+                  {formatMessage(messages.sampleList.sampleBadge, { index: index + 1 })}
                 </span>
               </div>
               <p className={`text-sm leading-7 ${isSelected ? "text-white/80" : "text-muted"}`}>{previewText}</p>

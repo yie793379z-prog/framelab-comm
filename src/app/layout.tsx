@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AppHeader } from "@/components/layout/app-header";
+import { LanguageProvider } from "@/i18n/context";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -15,8 +16,10 @@ export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="en">
       <body>
-        <AppHeader />
-        {children}
+        <LanguageProvider>
+          <AppHeader />
+          {children}
+        </LanguageProvider>
       </body>
     </html>
   );

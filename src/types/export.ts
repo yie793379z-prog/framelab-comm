@@ -1,3 +1,5 @@
+import type { Locale } from "@/i18n/types";
+
 export type ExportFormat = "csv" | "json" | "markdown";
 
 export interface ExportMetadata {
@@ -7,4 +9,5 @@ export interface ExportMetadata {
   selectedTemplateId: string | null;
   selectedTemplateName: string | null;
   format: ExportFormat;
+  language: Locale;
 }

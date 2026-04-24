@@ -1,10 +1,10 @@
 export const appNavigation = [
   {
-    label: "Home",
+    labelKey: "home",
     href: "/"
   },
   {
-    label: "Workspace",
+    labelKey: "workspace",
     href: "/workspace"
   }
-];
+] as const;

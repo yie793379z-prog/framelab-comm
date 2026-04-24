@@ -1,0 +1,291 @@
+export const appDictionary = {
+  en: {
+    nav: {
+      home: "Home",
+      workspace: "Workspace",
+      languageLabel: "Language"
+    },
+    common: {
+      useCase: "Use case:",
+      fields: "{count} fields",
+      selectOption: "Select an option",
+      yes: "Yes",
+      no: "No",
+      clear: "Clear",
+      sample: "Sample",
+      template: "Template",
+      samples: "Samples",
+      codedRows: "Coded rows",
+      selectedTemplate: "Selected template",
+      activeSample: "Active sample",
+      noneYet: "None yet",
+      noTemplateSelected: "No template selected",
+      sourceUnknown: "Unknown",
+      notCodedYet: "Not coded yet",
+      notCoded: "Not coded"
+    },
+    landing: {
+      badge: "Communication research workflow for students",
+      title: "FrameLab helps students move from raw texts to editable analysis workspaces.",
+      description:
+        "Import text samples, choose a communication-oriented template, review initial coding structure, and export classroom-ready outputs without the overhead of a large qualitative suite.",
+      openWorkspace: "Open workspace",
+      viewTemplates: "View templates",
+      flowTitle: "MVP flow",
+      flowImportTitle: "1. Import text samples",
+      flowImportBody: "Paste or load a small text corpus for coursework or thesis preparation.",
+      flowTemplateTitle: "2. Choose a template",
+      flowTemplateBody: "Start with a communication-specific schema rather than a generic AI prompt.",
+      flowEditTitle: "3. Edit coding results",
+      flowEditBody: "Keep researchers in control with fully editable fields and notes.",
+      flowExportTitle: "4. Export results",
+      flowExportBody: "Produce CSV, JSON, or Markdown outputs for classroom use.",
+      templatesEyebrow: "Included templates",
+      templatesTitle: "Start with four communication-oriented workflows",
+      templatesDescription:
+        "The initial scaffold includes templates for framing, social media coding, interview pre-coding, and crisis communication scanning."
+    },
+    workspace: {
+      eyebrow: "Workspace",
+      title: "Research coding workflow",
+      description:
+        "This first batch keeps the workflow explicit: import source texts, choose a communication-oriented template, preview the coding structure, and prepare for local export.",
+      step1Eyebrow: "Step 1",
+      step1Title: "Import",
+      step1Description: "Paste a small text corpus directly into the browser. For the MVP, local state is enough.",
+      step2Eyebrow: "Step 2",
+      step2Title: "Choose a template",
+      step2Description: "Start with a communication-specific schema rather than a generic blank coding table.",
+      step3Eyebrow: "Step 3",
+      step3Title: "Select a sample",
+      step3Description: "Choose the sample you want to code. The editor and preview follow the current sample selection.",
+      step4Eyebrow: "Step 4",
+      step4Title: "Code the selected sample",
+      step4Description: "The form is generated from the active template, and every edit is stored in local reducer state.",
+      step5Eyebrow: "Step 5",
+      step5Title: "Live preview",
+      step5Description: "Review the current sample's coded values as a compact summary while you work.",
+      step6Eyebrow: "Step 6",
+      step6Title: "Export",
+      step6Description: "Exports stay local in v1. The UI placeholder is already aligned with CSV, JSON, and Markdown output."
+    },
+    importPanel: {
+      title: "Import text samples",
+      description: "Paste one or more text samples. Separate items with a blank line to create multiple entries.",
+      placeholder: "Paste article excerpts, posts, or interview passages here...",
+      samplesDetected: "{count} {sampleWord} detected",
+      samplesLoaded: "{count} {sampleWord} currently loaded into the workspace.",
+      load: "Load into workspace",
+      clear: "Clear"
+    },
+    sampleList: {
+      emptyTitle: "No samples loaded yet",
+      emptyDescription:
+        "Paste text into the import panel and load it into the workspace to start selecting and coding samples.",
+      sampleBadge: "Sample {index}"
+    },
+    templatePicker: {
+      fieldCount: "{count} fields"
+    },
+    codingForm: {
+      emptyTemplateTitle: "Choose a template first",
+      emptyTemplateDescription:
+        "The coding form is generated from the active template, so select a template before editing any sample.",
+      emptySampleTitle: "Choose a sample first",
+      emptySampleDescription: "Load and select a sample to open the coding form for that text item.",
+      unavailableTitle: "Coding form unavailable",
+      unavailableDescription: "The current sample or template could not be loaded. Re-select them to continue.",
+      currentlyCoding: "Currently coding",
+      sampleText: "Sample text",
+      aiEyebrow: "Mock AI suggestions",
+      aiDisclaimer: "Suggestions are editable starting points, not final research judgments.",
+      aiOnlyEmptyFields: "Only empty fields are filled. Existing edits stay unchanged.",
+      generate: "Generate Suggestions",
+      generating: "Generating suggestions...",
+      noFieldsUpdated: "No empty fields were updated. Existing edits were left unchanged.",
+      fieldsUpdated: "Filled {count} empty {fieldWord}. Existing edits were left unchanged."
+    },
+    codingPreview: {
+      emptyTemplateTitle: "Choose a template to start coding",
+      emptyTemplateDescription: "The coding workspace will render editable rows after a template is selected.",
+      emptySampleTitle: "Select a sample to review coded values",
+      emptySampleDescription: "Once a sample is selected, its current coding values will appear here in a simple live preview.",
+      unavailableTitle: "Preview unavailable",
+      unavailableDescription: "The selected sample or template could not be loaded. Re-select them to continue.",
+      title: "Live coding preview",
+      description: "Current values for the selected sample update as you edit the form."
+    },
+    exportPanel: {
+      emptyTitle: "Export actions will appear here",
+      emptyDescription:
+        "Once samples are loaded and coding results exist, CSV, JSON, and Markdown export actions can be added without changing the overall architecture.",
+      title: "Export workspace analysis",
+      description:
+        "Export stays entirely in the browser for v0.1. CSV flattens coded rows, JSON preserves workspace structure, and Markdown creates a classroom-ready analysis summary.",
+      exportCsv: "Export CSV",
+      exportJson: "Export JSON",
+      exportMarkdown: "Export Markdown",
+      csvDescription: "Flatten coded rows by sample, template, and field values.",
+      jsonDescription: "Preserve samples, selected template, coding results, and export metadata.",
+      markdownDescription: "Build a readable report with methodology note, AI disclaimer, and per-sample summary.",
+      downloaded: "Downloaded {filename}."
+    },
+    exportReport: {
+      projectTitle: "FrameLab Analysis Project",
+      generatedDate: "Generated date",
+      selectedTemplate: "Selected template",
+      numberOfSamples: "Number of samples",
+      methodologyNote: "Methodology Note",
+      methodologyBody:
+        "This report was generated from a local FrameLab workspace. Coding values may include user-entered judgments and mock AI-assisted suggestions that remain fully editable during the research workflow.",
+      aiDisclaimer: "AI suggestions are editable aids and should not be treated as final academic judgments.",
+      sampleCodingSummary: "Sample Coding Summary",
+      noSamples: "No samples were available at export time.",
+      source: "Source",
+      textExcerpt: "Text excerpt",
+      codingSummary: "Coding summary",
+      noTemplate: "No template was selected when this report was generated."
+    }
+  },
+  "zh-CN": {
+    nav: {
+      home: "首页",
+      workspace: "工作区",
+      languageLabel: "语言"
+    },
+    common: {
+      useCase: "使用场景：",
+      fields: "{count} 个字段",
+      selectOption: "请选择",
+      yes: "是",
+      no: "否",
+      clear: "清除",
+      sample: "样本",
+      template: "模板",
+      samples: "样本数",
+      codedRows: "编码记录",
+      selectedTemplate: "当前模板",
+      activeSample: "当前样本",
+      noneYet: "尚未选择",
+      noTemplateSelected: "未选择模板",
+      sourceUnknown: "未知",
+      notCodedYet: "尚未编码",
+      notCoded: "未编码"
+    },
+    landing: {
+      badge: "面向学生的传播学研究工作流",
+      title: "FrameLab 帮助学生从原始文本快速进入可编辑的分析工作区。",
+      description:
+        "导入文本样本、选择传播研究模板、查看初步编码结构，并导出适合课堂或论文准备的结果，不必承担大型定性研究软件的复杂度。",
+      openWorkspace: "打开工作区",
+      viewTemplates: "查看模板",
+      flowTitle: "MVP 流程",
+      flowImportTitle: "1. 导入文本样本",
+      flowImportBody: "粘贴或载入适用于课程作业、论文准备的小型文本语料。",
+      flowTemplateTitle: "2. 选择模板",
+      flowTemplateBody: "从传播学导向的分析模板开始，而不是面对一个空白的 AI 提示框。",
+      flowEditTitle: "3. 编辑编码结果",
+      flowEditBody: "保留研究者主导权，所有字段和说明都可以手动修改。",
+      flowExportTitle: "4. 导出结果",
+      flowExportBody: "导出 CSV、JSON 或 Markdown，便于课堂展示和后续整理。",
+      templatesEyebrow: "内置模板",
+      templatesTitle: "从四种传播学导向工作流开始",
+      templatesDescription: "当前脚手架内置新闻框架分析、社交媒体内容分析、访谈预编码和危机传播扫描四种模板。"
+    },
+    workspace: {
+      eyebrow: "工作区",
+      title: "研究编码工作流",
+      description: "当前版本保持流程清晰直接：导入文本、选择传播研究模板、查看编码结构，并为本地导出做好准备。",
+      step1Eyebrow: "步骤 1",
+      step1Title: "导入",
+      step1Description: "直接在浏览器中粘贴小型文本语料。对 MVP 来说，本地状态已经足够。",
+      step2Eyebrow: "步骤 2",
+      step2Title: "选择模板",
+      step2Description: "先从传播研究导向的分析模板开始，而不是空白编码表。",
+      step3Eyebrow: "步骤 3",
+      step3Title: "选择样本",
+      step3Description: "选择要编码的样本。编辑区和预览区都会跟随当前样本切换。",
+      step4Eyebrow: "步骤 4",
+      step4Title: "编码当前样本",
+      step4Description: "表单会根据当前模板自动生成，所有编辑都会保存在本地 reducer 状态中。",
+      step5Eyebrow: "步骤 5",
+      step5Title: "实时预览",
+      step5Description: "在编码过程中随时查看当前样本的编码摘要。",
+      step6Eyebrow: "步骤 6",
+      step6Title: "导出",
+      step6Description: "v1 中导出保持本地进行，当前界面已经对应 CSV、JSON 和 Markdown 三种输出。"
+    },
+    importPanel: {
+      title: "导入文本样本",
+      description: "可粘贴一个或多个文本样本。使用空行分隔不同样本。",
+      placeholder: "在此粘贴新闻文本、帖子内容或访谈片段……",
+      samplesDetected: "检测到 {count} 条{sampleWord}",
+      samplesLoaded: "当前工作区已载入 {count} 条{sampleWord}。",
+      load: "载入工作区",
+      clear: "清空"
+    },
+    sampleList: {
+      emptyTitle: "尚未载入样本",
+      emptyDescription: "先在导入面板中粘贴文本并载入工作区，然后就可以开始选择和编码样本。",
+      sampleBadge: "样本 {index}"
+    },
+    templatePicker: {
+      fieldCount: "{count} 个字段"
+    },
+    codingForm: {
+      emptyTemplateTitle: "请先选择模板",
+      emptyTemplateDescription: "编码表单会根据当前模板生成，因此请先选择模板再编辑样本。",
+      emptySampleTitle: "请先选择样本",
+      emptySampleDescription: "载入并选择一个样本后，才能打开对应的编码表单。",
+      unavailableTitle: "编码表单不可用",
+      unavailableDescription: "当前样本或模板无法加载，请重新选择后继续。",
+      currentlyCoding: "当前正在编码",
+      sampleText: "样本文本",
+      aiEyebrow: "模拟 AI 建议",
+      aiDisclaimer: "建议仅是可编辑的起点，不应被视为最终研究判断。",
+      aiOnlyEmptyFields: "系统只会填充空字段，已有编辑内容不会被覆盖。",
+      generate: "生成建议",
+      generating: "正在生成建议……",
+      noFieldsUpdated: "没有空字段被更新，已有编辑内容保持不变。",
+      fieldsUpdated: "已填充 {count} 个空字段，已有编辑内容保持不变。"
+    },
+    codingPreview: {
+      emptyTemplateTitle: "请选择模板后开始编码",
+      emptyTemplateDescription: "选择模板后，这里会显示可编辑的编码结果预览。",
+      emptySampleTitle: "请选择样本以查看编码值",
+      emptySampleDescription: "选择样本后，这里会显示该样本当前的编码结果摘要。",
+      unavailableTitle: "预览不可用",
+      unavailableDescription: "当前样本或模板无法加载，请重新选择后继续。",
+      title: "实时编码预览",
+      description: "编辑表单时，当前样本的编码值会在这里同步更新。"
+    },
+    exportPanel: {
+      emptyTitle: "导出功能将在这里显示",
+      emptyDescription: "载入样本并产生编码结果后，就可以在不改变整体架构的情况下导出 CSV、JSON 和 Markdown。",
+      title: "导出工作区分析结果",
+      description: "v0.1 的导出完全在浏览器中完成。CSV 用于平铺编码数据，JSON 保留工作区结构，Markdown 生成便于课堂展示的分析摘要。",
+      exportCsv: "导出 CSV",
+      exportJson: "导出 JSON",
+      exportMarkdown: "导出 Markdown",
+      csvDescription: "按样本、模板和字段值平铺编码结果。",
+      jsonDescription: "保留样本、当前模板、编码结果和导出元数据。",
+      markdownDescription: "生成包含方法说明、AI 声明和逐样本摘要的可读报告。",
+      downloaded: "已下载 {filename}。"
+    },
+    exportReport: {
+      projectTitle: "FrameLab 分析项目",
+      generatedDate: "生成时间",
+      selectedTemplate: "当前模板",
+      numberOfSamples: "样本数量",
+      methodologyNote: "方法说明",
+      methodologyBody: "本报告由本地 FrameLab 工作区生成。编码结果可能同时包含用户手动输入的判断和模拟 AI 辅助建议，但在研究流程中始终保持可编辑。",
+      aiDisclaimer: "AI 建议仅是可编辑的辅助工具，不应被视为最终的学术判断。",
+      sampleCodingSummary: "样本编码摘要",
+      noSamples: "导出时没有可用样本。",
+      source: "来源",
+      textExcerpt: "文本摘录",
+      codingSummary: "编码摘要",
+      noTemplate: "生成报告时未选择模板。"
+    }
+  }
+} as const;
