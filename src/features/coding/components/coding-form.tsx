@@ -145,6 +145,7 @@ export function CodingForm() {
   const [suggestionMessage, setSuggestionMessage] = useState<string | null>(null);
   const [suggestionStatus, setSuggestionStatus] = useState<SuggestionStatus>({
     mode: "mock",
+    provider: "mock",
     fallbackUsed: false,
     message: messages.codingForm.mockModeMessage
   });
@@ -163,6 +164,7 @@ export function CodingForm() {
         if (isActive) {
           setSuggestionStatus({
             mode: "mock",
+            provider: "mock",
             fallbackUsed: true,
             message: messages.codingForm.localFallbackMessage
           });
@@ -234,6 +236,7 @@ export function CodingForm() {
 
       setSuggestionStatus({
         mode: result.mode,
+        provider: result.provider,
         fallbackUsed: result.fallbackUsed,
         message: result.message
       });
@@ -283,18 +286,20 @@ export function CodingForm() {
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">{messages.codingForm.aiEyebrow}</p>
             <p className="text-sm font-medium leading-7 text-ink">
               {messages.codingForm.modeLabel}:{" "}
-              {suggestionStatus.mode === "real"
-                ? messages.codingForm.realModeTitle
-                : messages.codingForm.mockModeTitle}
+              {suggestionStatus.provider === "openai"
+                ? messages.codingForm.openAiModeTitle
+                : suggestionStatus.provider === "gemini"
+                  ? messages.codingForm.geminiModeTitle
+                  : messages.codingForm.mockModeTitle}
             </p>
             <p className="text-sm leading-7 text-ink">{messages.codingForm.aiDisclaimer}</p>
             <p className="text-sm leading-7 text-muted">{messages.codingForm.aiHowItWorks}</p>
             <p className="text-sm leading-7 text-muted">{messages.codingForm.aiEditableNote}</p>
             <p className="text-sm leading-7 text-muted">{messages.codingForm.aiOnlyEmptyFields}</p>
             <p className="text-sm leading-7 text-muted">
-              {suggestionStatus.mode === "real"
-                ? messages.codingForm.realPrivacyNote
-                : messages.codingForm.mockPrivacyNote}
+              {suggestionStatus.provider === "mock"
+                ? messages.codingForm.mockPrivacyNote
+                : messages.codingForm.realPrivacyNote}
             </p>
             <p className="text-sm leading-7 text-muted">{suggestionStatus.message}</p>
           </div>

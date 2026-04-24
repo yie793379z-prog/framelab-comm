@@ -5,6 +5,7 @@ import { getMessages } from "@/i18n/utils";
 import type {
   GenerateSuggestionsInput,
   SuggestionRequestPayload,
+  SuggestionProvider,
   SuggestionResponse,
   SuggestionStatus
 } from "@/features/ai/types";
@@ -18,6 +19,7 @@ function isSuggestionStatus(value: unknown): value is SuggestionStatus {
 
   return (
     (candidate.mode === "mock" || candidate.mode === "real") &&
+    (candidate.provider === "mock" || candidate.provider === "openai" || candidate.provider === "gemini") &&
     typeof candidate.fallbackUsed === "boolean" &&
     typeof candidate.message === "string"
   );
@@ -29,7 +31,18 @@ function isSuggestionResponse(value: unknown): value is SuggestionResponse {
   }
 
   const candidate = value as unknown as Record<string, unknown>;
-  return Boolean(candidate.suggestions) && typeof candidate.suggestions === "object" && !Array.isArray(candidate.suggestions);
+  return (
+    Boolean(candidate.suggestions) &&
+    typeof candidate.suggestions === "object" &&
+    !Array.isArray(candidate.suggestions) &&
+    (candidate.requestedProvider === "mock" ||
+      candidate.requestedProvider === "openai" ||
+      candidate.requestedProvider === "gemini") &&
+    typeof candidate.model === "string" &&
+    Array.isArray(candidate.validationDroppedKeys) &&
+    Array.isArray(candidate.acceptedKeys) &&
+    typeof candidate.rawProviderReturnedJson === "boolean"
+  );
 }
 
 export async function fetchSuggestionStatus(locale: GenerateSuggestionsInput["locale"]) {
@@ -57,6 +70,7 @@ export async function requestSuggestions(input: GenerateSuggestionsInput): Promi
     currentValues: input.currentValues,
     locale: input.locale
   };
+  const fallbackRequestedProvider = "mock" as SuggestionProvider;
 
   try {
     const response = await fetch("/api/suggest-codes", {
@@ -85,8 +99,15 @@ export async function requestSuggestions(input: GenerateSuggestionsInput): Promi
     return {
       suggestions,
       mode: "mock",
+      provider: "mock",
+      requestedProvider: fallbackRequestedProvider,
+      model: "mock-local",
       fallbackUsed: true,
-      message: messages.codingForm.localFallbackMessage
+      message: messages.codingForm.localFallbackMessage,
+      errorCode: "provider_request_failed",
+      validationDroppedKeys: [],
+      acceptedKeys: Object.keys(suggestions),
+      rawProviderReturnedJson: false
     };
   }
 }

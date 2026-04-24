@@ -1,56 +1,120 @@
-import OpenAI from "openai";
 import { NextResponse } from "next/server";
-import { generateSuggestions } from "@/features/ai/generate-suggestions";
-import { buildSuggestionJsonSchema, sanitizeSuggestedValues } from "@/features/ai/validate-suggestions";
+import { getGeminiSuggestions } from "@/features/ai/providers/gemini-provider";
+import { getMockSuggestions } from "@/features/ai/providers/mock-provider";
+import { getOpenAiSuggestions } from "@/features/ai/providers/openai-provider";
 import { analysisTemplates } from "@/features/templates/data/templates";
-import { getMessages, getLocalizedText } from "@/i18n/utils";
+import { getMessages } from "@/i18n/utils";
 import type { Locale } from "@/i18n/types";
+import type {
+  SuggestionErrorCode,
+  SuggestionProvider,
+  SuggestionRequestPayload,
+  SuggestionResponse,
+  SuggestionStatus
+} from "@/features/ai/types";
 import type { CodingFieldValue } from "@/types/coding";
 import type { SampleRecord } from "@/types/sample";
-import type { AnalysisTemplate } from "@/types/template";
-import type { SuggestionRequestPayload, SuggestionResponse, SuggestionStatus } from "@/features/ai/types";
+import type { ProviderSuggestionResult } from "@/features/ai/providers/types";
 
 function parseLocale(value: unknown): Locale {
   return value === "zh-CN" ? "zh-CN" : "en";
 }
 
-function parseSuggestionMode() {
-  return process.env.AI_SUGGESTION_MODE === "real" ? "real" : "mock";
+function getConfiguredProvider(): SuggestionProvider {
+  const explicitProvider = process.env.AI_PROVIDER?.trim();
+
+  if (explicitProvider === "mock" || explicitProvider === "openai" || explicitProvider === "gemini") {
+    return explicitProvider;
+  }
+
+  if (process.env.AI_SUGGESTION_MODE === "real") {
+    return "openai";
+  }
+
+  return "mock";
 }
 
-function hasOpenAiKey() {
-  return Boolean(process.env.OPENAI_API_KEY?.trim());
+function getProviderModel(provider: SuggestionProvider) {
+  if (provider === "openai") {
+    return process.env.OPENAI_MODEL?.trim() || "gpt-4.1-mini";
+  }
+
+  if (provider === "gemini") {
+    return process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash";
+  }
+
+  return "mock-local";
+}
+
+function hasProviderKey(provider: SuggestionProvider) {
+  if (provider === "openai") {
+    return Boolean(process.env.OPENAI_API_KEY?.trim());
+  }
+
+  if (provider === "gemini") {
+    return Boolean(process.env.GEMINI_API_KEY?.trim());
+  }
+
+  return true;
 }
 
 function isEmptyCodingValue(value: CodingFieldValue | undefined) {
   return value === null || value === undefined || value === "" || (Array.isArray(value) && value.length === 0);
 }
 
-function getModeStatus(locale: Locale): SuggestionStatus {
+function getProviderStatus(locale: Locale): SuggestionStatus {
   const messages = getMessages(locale);
-  const configuredMode = parseSuggestionMode();
+  const configuredProvider = getConfiguredProvider();
 
-  if (configuredMode === "mock") {
+  if (configuredProvider === "mock") {
     return {
       mode: "mock",
+      provider: "mock",
       fallbackUsed: false,
       message: messages.codingForm.mockModeMessage
     };
   }
 
-  if (hasOpenAiKey()) {
+  if (hasProviderKey(configuredProvider)) {
     return {
       mode: "real",
+      provider: configuredProvider,
       fallbackUsed: false,
-      message: messages.codingForm.realModeMessage
+      message:
+        configuredProvider === "gemini"
+          ? messages.codingForm.geminiModeMessage
+          : messages.codingForm.openAiModeMessage
     };
   }
 
   return {
     mode: "mock",
+    provider: "mock",
     fallbackUsed: true,
-    message: messages.codingForm.realModeMissingKeyMessage
+    message:
+      configuredProvider === "gemini"
+        ? messages.codingForm.geminiMissingKeyMessage
+        : messages.codingForm.openAiMissingKeyMessage
   };
+}
+
+function logSuggestionDebug(metadata: {
+  requestedProvider: SuggestionProvider;
+  provider: SuggestionProvider;
+  model: string;
+  keyExists: boolean;
+  templateId: string;
+  requestedFieldKeys: string[];
+  acceptedKeys: string[];
+  validationDroppedKeys: string[];
+  fallbackReason: SuggestionErrorCode | "mock_mode" | null;
+  rawProviderReturnedJson: boolean;
+}) {
+  if (process.env.NODE_ENV === "production") {
+    return;
+  }
+
+  console.info("[FrameLab AI Debug]", metadata);
 }
 
 function isSampleRecord(value: unknown): value is SampleRecord {
@@ -93,126 +157,59 @@ function parseRequestBody(body: unknown) {
   };
 }
 
-function getEmptyFieldIds(template: AnalysisTemplate, currentValues: Record<string, CodingFieldValue>) {
+function getEmptyFieldIds(templateId: string, currentValues: Record<string, CodingFieldValue>) {
+  const template = analysisTemplates.find((item) => item.id === templateId);
+
+  if (!template) {
+    return [];
+  }
+
   return template.fields.filter((field) => isEmptyCodingValue(currentValues[field.id])).map((field) => field.id);
 }
 
-function buildRealSuggestionPrompt(
-  sample: SampleRecord,
-  template: AnalysisTemplate,
-  currentValues: Record<string, CodingFieldValue>,
-  locale: Locale
-) {
-  const localizedTemplate = {
-    id: template.id,
-    name: getLocalizedText(template.name, locale),
-    shortDescription: getLocalizedText(template.shortDescription, locale),
-    researchUseCase: getLocalizedText(template.researchUseCase, locale),
-    fields: template.fields.map((field) => ({
-      id: field.id,
-      label: getLocalizedText(field.label, locale),
-      description: getLocalizedText(field.description, locale),
-      type: field.type,
-      options: field.options?.map((option) => ({
-        value: option.value,
-        label: getLocalizedText(option.label, locale)
-      }))
-    }))
-  };
-
-  return [
-    locale === "zh-CN"
-      ? "请根据下面的文本和编码模板，给出谨慎、可编辑的初步编码建议。"
-      : "Based on the sample and coding template below, provide cautious, editable first-pass coding suggestions.",
-    locale === "zh-CN"
-      ? "只为当前为空的字段提供建议；已填写字段只作为上下文参考。"
-      : "Only suggest values for fields that are currently empty; treat existing values as context only.",
-    locale === "zh-CN"
-      ? "如果文本不足以支持明确判断，请保持建议简短、保守，不要声称学术确定性。"
-      : "If the text does not support a strong judgment, keep suggestions brief and conservative and do not claim academic certainty.",
-    "",
-    `Locale: ${locale}`,
-    "",
-    "Template:",
-    JSON.stringify(localizedTemplate, null, 2),
-    "",
-    "Current values:",
-    JSON.stringify(currentValues, null, 2),
-    "",
-    "Sample:",
-    JSON.stringify(
-      {
-        title: sample.title,
-        source: sample.source ?? null,
-        text: sample.text
-      },
-      null,
-      2
-    )
-  ].join("\n");
-}
-
 async function buildMockResponse(
-  sample: SampleRecord,
-  template: AnalysisTemplate,
-  currentValues: Record<string, CodingFieldValue>,
-  locale: Locale,
-  statusOverride?: SuggestionStatus
+  payload: Extract<ReturnType<typeof parseRequestBody>, { success: true }>,
+  statusOverride?: SuggestionStatus,
+  debugOverride?: Partial<SuggestionResponse>
 ) {
-  const suggestions = sanitizeSuggestedValues(
-    template,
-    await generateSuggestions({
-      sample,
-      template,
-      currentValues,
-      locale
-    })
-  );
-
-  const status = statusOverride ?? getModeStatus(locale);
-
-  return NextResponse.json({
-    suggestions,
-    ...status
-  } satisfies SuggestionResponse);
-}
-
-async function generateRealSuggestions(
-  sample: SampleRecord,
-  template: AnalysisTemplate,
-  currentValues: Record<string, CodingFieldValue>,
-  locale: Locale
-) {
-  const client = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY
+  const mockResult = await getMockSuggestions({
+    sample: payload.sample,
+    template: payload.template,
+    currentValues: payload.currentValues,
+    locale: payload.locale
   });
 
-  const response = await client.responses.create({
-    model: process.env.OPENAI_MODEL?.trim() || "gpt-4.1-mini",
-    instructions:
-      "You are assisting with communication/media studies coding. Provide tentative, editable coding suggestions. Do not claim academic certainty.",
-    input: buildRealSuggestionPrompt(sample, template, currentValues, locale),
-    temperature: 0.2,
-    max_output_tokens: 700,
-    text: {
-      verbosity: "low",
-      format: {
-        type: "json_schema",
-        name: "coding_suggestions",
-        strict: true,
-        description: "Tentative coding suggestions for empty template fields only.",
-        schema: buildSuggestionJsonSchema(template)
-      }
-    }
+  const status = statusOverride ?? getProviderStatus(payload.locale);
+  const response = {
+    ...status,
+    suggestions: mockResult.suggestions,
+    requestedProvider: debugOverride?.requestedProvider ?? "mock",
+    model: debugOverride?.model ?? "mock-local",
+    errorCode: debugOverride?.errorCode ?? null,
+    validationDroppedKeys: debugOverride?.validationDroppedKeys ?? [],
+    acceptedKeys: debugOverride?.acceptedKeys ?? Object.keys(mockResult.suggestions),
+    rawProviderReturnedJson: debugOverride?.rawProviderReturnedJson ?? false
+  } satisfies SuggestionResponse;
+
+  logSuggestionDebug({
+    requestedProvider: response.requestedProvider,
+    provider: response.provider,
+    model: response.model,
+    keyExists: hasProviderKey(response.requestedProvider),
+    templateId: payload.template.id,
+    requestedFieldKeys: payload.template.fields.map((field) => field.id),
+    acceptedKeys: response.acceptedKeys,
+    validationDroppedKeys: response.validationDroppedKeys,
+    fallbackReason: response.errorCode,
+    rawProviderReturnedJson: response.rawProviderReturnedJson
   });
 
-  const parsed = JSON.parse(response.output_text || "{}") as unknown;
-  return sanitizeSuggestedValues(template, parsed);
+  return NextResponse.json(response);
 }
 
 export async function GET(request: Request) {
   const locale = parseLocale(new URL(request.url).searchParams.get("locale"));
-  return NextResponse.json(getModeStatus(locale));
+  return NextResponse.json(getProviderStatus(locale));
 }
 
 export async function POST(request: Request) {
@@ -232,44 +229,122 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: messages.codingForm.invalidRequestMessage }, { status: 400 });
   }
 
-  const { sample, template, currentValues } = parsedRequest;
-  const emptyFieldIds = getEmptyFieldIds(template, currentValues);
+  const emptyFieldIds = getEmptyFieldIds(parsedRequest.template.id, parsedRequest.currentValues);
+  const requestedProvider = getConfiguredProvider();
+  const requestedModel = getProviderModel(requestedProvider);
 
   if (!emptyFieldIds.length) {
     return NextResponse.json({
       suggestions: {},
-      ...getModeStatus(locale)
+      requestedProvider,
+      model: requestedModel,
+      errorCode: null,
+      validationDroppedKeys: [],
+      acceptedKeys: [],
+      rawProviderReturnedJson: false,
+      ...getProviderStatus(locale)
     } satisfies SuggestionResponse);
   }
 
-  const modeStatus = getModeStatus(locale);
+  const status = getProviderStatus(locale);
 
-  if (modeStatus.mode === "mock") {
-    return buildMockResponse(sample, template, currentValues, locale, modeStatus);
+  if (status.provider === "mock") {
+    return buildMockResponse(parsedRequest, status, {
+      requestedProvider,
+      model: requestedModel,
+      errorCode: requestedProvider === "mock" ? null : "missing_key",
+      validationDroppedKeys: [],
+      acceptedKeys: [],
+      rawProviderReturnedJson: false
+    });
   }
 
   try {
-    const suggestions = await generateRealSuggestions(sample, template, currentValues, locale);
+    const providerResult =
+      status.provider === "gemini"
+        ? await getGeminiSuggestions({
+            sample: parsedRequest.sample,
+            template: parsedRequest.template,
+            currentValues: parsedRequest.currentValues,
+            locale: parsedRequest.locale
+          })
+        : await getOpenAiSuggestions({
+            sample: parsedRequest.sample,
+            template: parsedRequest.template,
+            currentValues: parsedRequest.currentValues,
+            locale: parsedRequest.locale
+          });
 
-    if (!Object.keys(suggestions).length) {
-      return buildMockResponse(sample, template, currentValues, locale, {
+    if (!providerResult.acceptedKeys.length) {
+      return buildMockResponse(parsedRequest, {
         mode: "mock",
+        provider: "mock",
         fallbackUsed: true,
-        message: messages.codingForm.realModeMalformedFallbackMessage
+        message:
+          status.provider === "gemini"
+            ? messages.codingForm.geminiNoValidFieldsFallbackMessage
+            : messages.codingForm.openAiNoValidFieldsFallbackMessage
+      }, {
+        requestedProvider,
+        model: requestedModel,
+        errorCode: providerResult.errorCode ?? "no_valid_fields",
+        validationDroppedKeys: providerResult.validationDroppedKeys,
+        acceptedKeys: providerResult.acceptedKeys,
+        rawProviderReturnedJson: providerResult.rawProviderReturnedJson
       });
     }
 
-    return NextResponse.json({
-      suggestions,
+    const response = {
+      suggestions: providerResult.suggestions,
       mode: "real",
+      provider: status.provider,
+      requestedProvider,
+      model: requestedModel,
       fallbackUsed: false,
-      message: messages.codingForm.realModeMessage
-    } satisfies SuggestionResponse);
+      message:
+        providerResult.validationDroppedKeys.length > 0
+          ? status.provider === "gemini"
+            ? messages.codingForm.geminiPartialMessage
+            : messages.codingForm.openAiPartialMessage
+          : status.provider === "gemini"
+            ? messages.codingForm.geminiAppliedMessage
+            : messages.codingForm.openAiAppliedMessage,
+      errorCode: null,
+      validationDroppedKeys: providerResult.validationDroppedKeys,
+      acceptedKeys: providerResult.acceptedKeys,
+      rawProviderReturnedJson: providerResult.rawProviderReturnedJson
+    } satisfies SuggestionResponse;
+
+    logSuggestionDebug({
+      requestedProvider,
+      provider: response.provider,
+      model: requestedModel,
+      keyExists: hasProviderKey(requestedProvider),
+      templateId: parsedRequest.template.id,
+      requestedFieldKeys: parsedRequest.template.fields.map((field) => field.id),
+      acceptedKeys: response.acceptedKeys,
+      validationDroppedKeys: response.validationDroppedKeys,
+      fallbackReason: null,
+      rawProviderReturnedJson: response.rawProviderReturnedJson
+    });
+
+    return NextResponse.json(response);
   } catch {
-    return buildMockResponse(sample, template, currentValues, locale, {
+    return buildMockResponse(parsedRequest, {
       mode: "mock",
+      provider: "mock",
       fallbackUsed: true,
-      message: messages.codingForm.realModeErrorFallbackMessage
+      message:
+        status.provider === "gemini"
+          ? messages.codingForm.geminiErrorFallbackMessage
+          : messages.codingForm.openAiErrorFallbackMessage
+    }, {
+      requestedProvider,
+      model: requestedModel,
+      errorCode: "provider_request_failed",
+      validationDroppedKeys: [],
+      acceptedKeys: [],
+      rawProviderReturnedJson: false
     });
   }
 }

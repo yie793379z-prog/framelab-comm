@@ -33,7 +33,7 @@ FrameLab is positioned in the middle. It is not a replacement for careful method
 - Switch between four communication-oriented templates
 - Edit coding fields sample by sample
 - Generate mock AI-assisted suggestions by default
-- Optionally enable real OpenAI-backed suggestions with your own API key
+- Optionally enable real OpenAI- or Gemini-backed suggestions with your own API key
 - Export coded data as CSV, JSON, and Markdown
 - Reload previously exported project JSON to continue editing
 - Use the interface in English or Simplified Chinese
@@ -115,22 +115,48 @@ Open [http://localhost:3000](http://localhost:3000).
 
 FrameLab defaults to local mock suggestions. Real AI is optional.
 
-To enable real OpenAI-backed suggestions, create a local `.env.local` file and set:
+To enable provider-based real AI suggestions, create a local `.env.local` file and set:
 
 ```bash
-OPENAI_API_KEY=your_key_here
-AI_SUGGESTION_MODE=real
+AI_PROVIDER=mock
+OPENAI_API_KEY=
 OPENAI_MODEL=gpt-4.1-mini
+GEMINI_API_KEY=
+GEMINI_MODEL=gemini-2.5-flash
 ```
 
 Notes:
 
-- if `AI_SUGGESTION_MODE` is missing or set to `mock`, FrameLab uses local mock suggestions
-- if `AI_SUGGESTION_MODE=real` but `OPENAI_API_KEY` is missing, FrameLab falls back to mock suggestions
-- if the real AI request fails, FrameLab falls back to mock suggestions
+- `AI_PROVIDER=mock` keeps suggestions local
+- `AI_PROVIDER=openai` uses the configured OpenAI API key and model
+- `AI_PROVIDER=gemini` uses the configured Gemini API key and model
+- if the chosen provider is missing a key or the real AI request fails, FrameLab falls back to mock suggestions
+- for backward compatibility, `AI_SUGGESTION_MODE=real` still maps to OpenAI when `AI_PROVIDER` is unset
 - API keys must stay server-side and must not be committed to the repository
 - real AI mode sends the selected sample text to the configured AI provider
-- real AI mode may incur API costs on the user’s own OpenAI account
+- real AI mode may incur API costs on the user’s own account
+- free tiers, quotas, and pricing for OpenAI and Gemini may change over time
+
+Examples:
+
+```bash
+# Mock mode
+AI_PROVIDER=mock
+```
+
+```bash
+# OpenAI
+AI_PROVIDER=openai
+OPENAI_API_KEY=your_key_here
+OPENAI_MODEL=gpt-4.1-mini
+```
+
+```bash
+# Gemini
+AI_PROVIDER=gemini
+GEMINI_API_KEY=your_key_here
+GEMINI_MODEL=gemini-2.5-flash
+```
 
 ## Project Structure
 
