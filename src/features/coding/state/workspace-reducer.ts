@@ -17,7 +17,25 @@ type WorkspaceAction =
         value: CodingFieldValue;
       };
     }
+  | {
+      type: "APPLY_SUGGESTIONS";
+      payload: {
+        sampleId: string;
+        templateId: string;
+        values: Record<string, CodingFieldValue>;
+      };
+    }
   | { type: "RESET_WORKSPACE" };
+
+function isEmptyCodingValue(value: CodingFieldValue | undefined) {
+  return value === null || value === undefined || value === "" || (Array.isArray(value) && value.length === 0);
+}
+
+function filterNonEmptyValues(values: Record<string, CodingFieldValue>) {
+  return Object.fromEntries(
+    Object.entries(values).filter(([, value]) => !isEmptyCodingValue(value))
+  ) as Record<string, CodingFieldValue>;
+}
 
 function upsertCodingRow(
   codingRows: WorkspaceState["codingRows"],
@@ -54,6 +72,53 @@ function upsertCodingRow(
         ...row.values,
         [fieldId]: value
       }
+    };
+  });
+}
+
+function applySuggestionsToCodingRows(
+  codingRows: WorkspaceState["codingRows"],
+  sampleId: string,
+  templateId: string,
+  suggestedValues: Record<string, CodingFieldValue>
+) {
+  const existingRowIndex = codingRows.findIndex(
+    (row) => row.sampleId === sampleId && row.templateId === templateId
+  );
+
+  if (existingRowIndex === -1) {
+    const nonEmptyValues = filterNonEmptyValues(suggestedValues);
+
+    if (!Object.keys(nonEmptyValues).length) {
+      return codingRows;
+    }
+
+    return [
+      ...codingRows,
+      {
+        sampleId,
+        templateId,
+        values: nonEmptyValues
+      }
+    ];
+  }
+
+  return codingRows.map((row, index) => {
+    if (index !== existingRowIndex) {
+      return row;
+    }
+
+    const nextValues = { ...row.values };
+
+    for (const [fieldId, suggestedValue] of Object.entries(suggestedValues)) {
+      if (isEmptyCodingValue(nextValues[fieldId]) && !isEmptyCodingValue(suggestedValue)) {
+        nextValues[fieldId] = suggestedValue;
+      }
+    }
+
+    return {
+      ...row,
+      values: nextValues
     };
   });
 }
@@ -114,6 +179,17 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
           action.payload.templateId,
           action.payload.fieldId,
           action.payload.value
+        )
+      };
+
+    case "APPLY_SUGGESTIONS":
+      return {
+        ...state,
+        codingRows: applySuggestionsToCodingRows(
+          state.codingRows,
+          action.payload.sampleId,
+          action.payload.templateId,
+          action.payload.values
         )
       };
 

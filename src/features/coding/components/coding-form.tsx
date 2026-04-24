@@ -1,6 +1,8 @@
 "use client";
 
+import { useState } from "react";
 import { EmptyState } from "@/components/shared/empty-state";
+import { generateSuggestions } from "@/features/ai/generate-suggestions";
 import { useWorkspace } from "@/features/coding/state/workspace-context";
 import { analysisTemplates } from "@/features/templates/data/templates";
 import type { CodingFieldValue } from "@/types/coding";
@@ -11,6 +13,10 @@ type FieldInputProps = {
   value: CodingFieldValue;
   onChange: (value: CodingFieldValue) => void;
 };
+
+function isEmptyCodingValue(value: CodingFieldValue | undefined) {
+  return value === null || value === undefined || value === "" || (Array.isArray(value) && value.length === 0);
+}
 
 function FieldInput({ field, value, onChange }: FieldInputProps) {
   if (field.type === "text") {
@@ -124,6 +130,8 @@ function FieldInput({ field, value, onChange }: FieldInputProps) {
 
 export function CodingForm() {
   const { state, dispatch } = useWorkspace();
+  const [isGeneratingSuggestions, setIsGeneratingSuggestions] = useState(false);
+  const [suggestionMessage, setSuggestionMessage] = useState<string | null>(null);
 
   if (!state.selectedTemplateId) {
     return (
@@ -158,6 +166,44 @@ export function CodingForm() {
   const codingRow = state.codingRows.find(
     (row) => row.sampleId === sample.id && row.templateId === template.id
   );
+  const currentValues = codingRow?.values ?? {};
+
+  async function handleGenerateSuggestions() {
+    setIsGeneratingSuggestions(true);
+    setSuggestionMessage(null);
+
+    try {
+      const suggestions = await generateSuggestions({
+        sample,
+        template,
+        currentValues
+      });
+
+      const fillableFieldCount = Object.entries(suggestions).filter(
+        ([fieldId, value]) => isEmptyCodingValue(currentValues[fieldId]) && !isEmptyCodingValue(value)
+      ).length;
+
+      dispatch({
+        type: "APPLY_SUGGESTIONS",
+        payload: {
+          sampleId: sample.id,
+          templateId: template.id,
+          values: suggestions
+        }
+      });
+
+      if (!fillableFieldCount) {
+        setSuggestionMessage("No empty fields were updated. Existing edits were left unchanged.");
+        return;
+      }
+
+      setSuggestionMessage(
+        `Filled ${fillableFieldCount} empty field${fillableFieldCount === 1 ? "" : "s"}. Existing edits were left unchanged.`
+      );
+    } finally {
+      setIsGeneratingSuggestions(false);
+    }
+  }
 
   return (
     <section className="space-y-5 rounded-[1.5rem] border border-line bg-white p-6 shadow-soft">
@@ -172,6 +218,28 @@ export function CodingForm() {
         <p className="mt-2 whitespace-pre-wrap text-sm leading-7 text-ink">{sample.text}</p>
       </div>
 
+      <div className="rounded-[1.25rem] border border-accent/30 bg-accent/10 p-5">
+        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+          <div className="space-y-2">
+            <p className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">Mock AI suggestions</p>
+            <p className="text-sm leading-7 text-ink">
+              Suggestions are editable starting points, not final research judgments.
+            </p>
+            <p className="text-sm leading-7 text-muted">Only empty fields are filled. Existing edits stay unchanged.</p>
+          </div>
+          <button
+            type="button"
+            onClick={handleGenerateSuggestions}
+            disabled={isGeneratingSuggestions}
+            className="rounded-full bg-ink px-5 py-3 text-sm font-medium text-white hover:bg-ink/90 disabled:cursor-not-allowed disabled:bg-ink/40"
+          >
+            {isGeneratingSuggestions ? "Generating suggestions..." : "Generate Suggestions"}
+          </button>
+        </div>
+
+        {suggestionMessage && <p className="mt-4 text-sm text-muted">{suggestionMessage}</p>}
+      </div>
+
       <div className="space-y-4">
         {template.fields.map((field) => (
           <div key={field.id} className="rounded-[1.25rem] border border-line bg-white p-5">
@@ -182,7 +250,7 @@ export function CodingForm() {
             <div className="mt-4">
               <FieldInput
                 field={field}
-                value={codingRow?.values[field.id] ?? null}
+                value={currentValues[field.id] ?? null}
                 onChange={(value) =>
                   dispatch({
                     type: "UPDATE_CODING_VALUE",
