@@ -4,7 +4,7 @@ This folder contains fictional example materials for trying FrameLab quickly. Th
 
 ## Files
 
-### [news_sample.csv](/Users/zhangchengjia/Desktop/Codex/framelab-comm/examples/news_sample.csv)
+### [news_sample.csv](./news_sample.csv)
 
 Best template:
 
@@ -27,7 +27,7 @@ How to import right now:
 - copy one or more `text` cells
 - paste them into FrameLab separated by blank lines
 
-### [social_posts.csv](/Users/zhangchengjia/Desktop/Codex/framelab-comm/examples/social_posts.csv)
+### [social_posts.csv](./social_posts.csv)
 
 Best template:
 
@@ -50,7 +50,7 @@ How to import right now:
 - copy the `text` column values you want to test
 - paste them into FrameLab with blank lines between posts
 
-### [interview_sample.txt](/Users/zhangchengjia/Desktop/Codex/framelab-comm/examples/interview_sample.txt)
+### [interview_sample.txt](./interview_sample.txt)
 
 Best template:
 
@@ -74,7 +74,7 @@ How to import right now:
 - paste directly into FrameLab
 - each paragraph block is already separated for multi-sample import
 
-### [crisis_comm_sample.txt](/Users/zhangchengjia/Desktop/Codex/framelab-comm/examples/crisis_comm_sample.txt)
+### [crisis_comm_sample.txt](./crisis_comm_sample.txt)
 
 Best template:
 

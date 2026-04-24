@@ -1,6 +1,6 @@
 # FrameLab
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](/Users/zhangchengjia/Desktop/Codex/framelab-comm/LICENSE)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 CI badge placeholder:
 
@@ -32,6 +32,7 @@ FrameLab is positioned in the middle. It is not a replacement for careful method
 - Edit coding fields sample by sample
 - Generate mock AI-assisted suggestions that only fill empty fields
 - Export coded data as CSV, JSON, and Markdown
+- Reload previously exported project JSON to continue editing
 - Use the interface in English or Simplified Chinese
 - Keep everything local in the current MVP
 
@@ -54,7 +55,7 @@ Place release screenshots here:
 - `public/screenshots/workspace-zh.png`
 - `public/screenshots/export-panel.png`
 
-Use [docs/demo-script.md](/Users/zhangchengjia/Desktop/Codex/framelab-comm/docs/demo-script.md) as the capture checklist.
+Use [docs/demo-script.md](./docs/demo-script.md) as the capture checklist.
 
 Suggested future README image blocks:
 
@@ -67,19 +68,19 @@ Suggested future README image blocks:
 
 ## Example Datasets
 
-The repository includes fictional example materials under [`examples/`](/Users/zhangchengjia/Desktop/Codex/framelab-comm/examples/):
+The repository includes fictional example materials under [`examples/`](./examples/):
 
-- [news_sample.csv](/Users/zhangchengjia/Desktop/Codex/framelab-comm/examples/news_sample.csv)
-- [social_posts.csv](/Users/zhangchengjia/Desktop/Codex/framelab-comm/examples/social_posts.csv)
-- [interview_sample.txt](/Users/zhangchengjia/Desktop/Codex/framelab-comm/examples/interview_sample.txt)
-- [crisis_comm_sample.txt](/Users/zhangchengjia/Desktop/Codex/framelab-comm/examples/crisis_comm_sample.txt)
+- [news_sample.csv](./examples/news_sample.csv)
+- [social_posts.csv](./examples/social_posts.csv)
+- [interview_sample.txt](./examples/interview_sample.txt)
+- [crisis_comm_sample.txt](./examples/crisis_comm_sample.txt)
 
-See [examples/README.md](/Users/zhangchengjia/Desktop/Codex/framelab-comm/examples/README.md) for suggested templates and quick import guidance.
+See [examples/README.md](./examples/README.md) for suggested templates and quick import guidance.
 
 ## Export Formats
 
 - `CSV`: flattened coded data by sample, template, and field values
-- `JSON`: workspace-style project export with samples, selected template, coding results, and export metadata
+- `JSON`: workspace-style project export with samples, selected template, coding results, and export metadata that can be loaded back into FrameLab
 - `Markdown`: a readable analysis report with methodology note, per-sample coding summary, and AI disclaimer
 
 ## Bilingual Interface
@@ -126,12 +127,12 @@ examples/                # Fictional datasets for quick demos
 
 FrameLab is designed to support introductory communication research workflows, not to replace research judgment.
 
-- Read [docs/methodology.md](/Users/zhangchengjia/Desktop/Codex/framelab-comm/docs/methodology.md) for a short explanation of content analysis, framing analysis, and human-in-the-loop coding.
-- Read [docs/research-disclaimer.md](/Users/zhangchengjia/Desktop/Codex/framelab-comm/docs/research-disclaimer.md) before treating AI-assisted outputs as analytical conclusions.
+- Read [docs/methodology.md](./docs/methodology.md) for a short explanation of content analysis, framing analysis, and human-in-the-loop coding.
+- Read [docs/research-disclaimer.md](./docs/research-disclaimer.md) before treating AI-assisted outputs as analytical conclusions.
 
 ## Roadmap
 
-See [docs/roadmap.md](/Users/zhangchengjia/Desktop/Codex/framelab-comm/docs/roadmap.md).
+See [docs/roadmap.md](./docs/roadmap.md).
 
 Current direction:
 
@@ -157,7 +158,7 @@ Good starting points:
 - improve bilingual copy quality
 - add student-friendly onboarding polish
 
-See [CONTRIBUTING.md](/Users/zhangchengjia/Desktop/Codex/framelab-comm/CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](/Users/zhangchengjia/Desktop/Codex/framelab-comm/CODE_OF_CONDUCT.md).
+See [CONTRIBUTING.md](./CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](./CODE_OF_CONDUCT.md).
 
 ## Research Use Disclaimer
 
@@ -169,4 +170,4 @@ FrameLab is a learning and research-assistance tool.
 
 ## License
 
-This repository is licensed under the MIT License. See [LICENSE](/Users/zhangchengjia/Desktop/Codex/framelab-comm/LICENSE).
+This repository is licensed under the MIT License. See [LICENSE](./LICENSE).

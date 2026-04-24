@@ -26,10 +26,10 @@ Usability and documentation:
 
 ## v0.3
 
-Project save/load and custom codebooks:
+Richer project persistence and custom codebooks:
 
-- save workspace state locally
-- reload prior projects
+- improve project save/load flow beyond the current JSON export/import
+- add clearer named-project workflow and project metadata
 - create and edit custom codebooks
 - duplicate and modify built-in templates
 - improve dataset import for CSV and structured text

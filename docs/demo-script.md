@@ -5,7 +5,7 @@ Use this short capture flow when preparing FrameLab screenshots for a public rel
 ## Before You Capture
 
 - Run the app locally with `npm run dev`.
-- Use the example datasets in [examples/README.md](/Users/zhangchengjia/Desktop/Codex/framelab-comm/examples/README.md) or a short fictional dataset of your own.
+- Use the example datasets in [examples/README.md](../examples/README.md) or a short fictional dataset of your own.
 - Keep the browser zoom at `100%`.
 - Use a clean browser window with minimal extensions or bookmarks visible.
 - Aim for a window size that shows the main content without excessive empty space.
