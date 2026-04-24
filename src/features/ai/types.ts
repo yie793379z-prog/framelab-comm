@@ -7,9 +7,14 @@ export type SuggestionMode = "mock" | "real";
 export type SuggestionProvider = "mock" | "openai" | "gemini";
 export type SuggestionErrorCode =
   | "missing_key"
+  | "invalid_api_key"
+  | "rate_limited"
+  | "model_not_found"
+  | "provider_config_error"
   | "provider_request_failed"
   | "parse_failed"
   | "no_valid_fields"
+  | "unknown_error"
   | "invalid_request";
 
 export interface GenerateSuggestionsInput {

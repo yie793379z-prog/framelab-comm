@@ -14,7 +14,7 @@ import type {
 } from "@/features/ai/types";
 import type { CodingFieldValue } from "@/types/coding";
 import type { SampleRecord } from "@/types/sample";
-import type { ProviderSuggestionResult } from "@/features/ai/providers/types";
+import { isSuggestionProviderError } from "@/features/ai/providers/types";
 
 function parseLocale(value: unknown): Locale {
   return value === "zh-CN" ? "zh-CN" : "en";
@@ -329,7 +329,10 @@ export async function POST(request: Request) {
     });
 
     return NextResponse.json(response);
-  } catch {
+  } catch (error) {
+    const errorCode: SuggestionErrorCode =
+      isSuggestionProviderError(error) ? error.errorCode : "provider_request_failed";
+
     return buildMockResponse(parsedRequest, {
       mode: "mock",
       provider: "mock",
@@ -341,7 +344,7 @@ export async function POST(request: Request) {
     }, {
       requestedProvider,
       model: requestedModel,
-      errorCode: "provider_request_failed",
+      errorCode,
       validationDroppedKeys: [],
       acceptedKeys: [],
       rawProviderReturnedJson: false
