@@ -1,5 +1,13 @@
 # FrameLab
 
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](/Users/zhangchengjia/Desktop/Codex/framelab-comm/LICENSE)
+
+CI badge placeholder:
+
+```md
+[![CI](https://github.com/<owner>/<repo>/actions/workflows/ci.yml/badge.svg)](https://github.com/<owner>/<repo>/actions/workflows/ci.yml)
+```
+
 Lightweight coding workspace for communication and media studies students.
 
 **English**
@@ -39,12 +47,21 @@ FrameLab is positioned in the middle. It is not a replacement for careful method
 
 ## Screenshots
 
-Screenshot placeholders:
+When screenshots are available, place them here:
 
-- Landing page
-- Workspace with imported samples
-- Coding form with template fields
-- Export panel and generated outputs
+- `public/screenshots/landing.png`
+- `public/screenshots/workspace-en.png`
+- `public/screenshots/workspace-zh.png`
+- `public/screenshots/export-panel.png`
+
+Suggested future README image blocks:
+
+```md
+![Landing](public/screenshots/landing.png)
+![Workspace English](public/screenshots/workspace-en.png)
+![Workspace Chinese](public/screenshots/workspace-zh.png)
+![Export Panel](public/screenshots/export-panel.png)
+```
 
 ## Example Datasets
 
@@ -137,6 +154,8 @@ Good starting points:
 - tighten export formatting
 - improve bilingual copy quality
 - add student-friendly onboarding polish
+
+See [CONTRIBUTING.md](/Users/zhangchengjia/Desktop/Codex/framelab-comm/CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](/Users/zhangchengjia/Desktop/Codex/framelab-comm/CODE_OF_CONDUCT.md).
 
 ## Research Use Disclaimer
 
