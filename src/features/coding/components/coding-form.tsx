@@ -1,12 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { EmptyState } from "@/components/shared/empty-state";
-import { generateSuggestions } from "@/features/ai/generate-suggestions";
+import { fetchSuggestionStatus, requestSuggestions } from "@/features/ai/request-suggestions";
 import { useWorkspace } from "@/features/coding/state/workspace-context";
 import { analysisTemplates } from "@/features/templates/data/templates";
 import { useLanguage } from "@/i18n/context";
 import { formatMessage, getCountWord, getLocalizedText } from "@/i18n/utils";
+import type { SuggestionStatus } from "@/features/ai/types";
 import type { CodingFieldValue } from "@/types/coding";
 import type { TemplateField } from "@/types/template";
 
@@ -142,6 +143,39 @@ export function CodingForm() {
   const { locale, messages } = useLanguage();
   const [isGeneratingSuggestions, setIsGeneratingSuggestions] = useState(false);
   const [suggestionMessage, setSuggestionMessage] = useState<string | null>(null);
+  const [suggestionStatus, setSuggestionStatus] = useState<SuggestionStatus>({
+    mode: "mock",
+    fallbackUsed: false,
+    message: messages.codingForm.mockModeMessage
+  });
+
+  useEffect(() => {
+    let isActive = true;
+
+    async function loadSuggestionStatus() {
+      try {
+        const status = await fetchSuggestionStatus(locale);
+
+        if (isActive) {
+          setSuggestionStatus(status);
+        }
+      } catch {
+        if (isActive) {
+          setSuggestionStatus({
+            mode: "mock",
+            fallbackUsed: true,
+            message: messages.codingForm.localFallbackMessage
+          });
+        }
+      }
+    }
+
+    void loadSuggestionStatus();
+
+    return () => {
+      isActive = false;
+    };
+  }, [locale, messages.codingForm.localFallbackMessage, messages.codingForm.mockModeMessage]);
 
   if (!state.selectedTemplateId) {
     return (
@@ -186,16 +220,23 @@ export function CodingForm() {
     setSuggestionMessage(null);
 
     try {
-      const suggestions = await generateSuggestions({
+      const result = await requestSuggestions({
         sample: activeSample,
         template: activeTemplate,
         currentValues,
         locale
       });
+      const suggestions = result.suggestions;
 
       const fillableFieldCount = Object.entries(suggestions).filter(
         ([fieldId, value]) => isEmptyCodingValue(currentValues[fieldId]) && !isEmptyCodingValue(value)
       ).length;
+
+      setSuggestionStatus({
+        mode: result.mode,
+        fallbackUsed: result.fallbackUsed,
+        message: result.message
+      });
 
       dispatch({
         type: "APPLY_SUGGESTIONS",
@@ -240,10 +281,22 @@ export function CodingForm() {
         <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
           <div className="space-y-2">
             <p className="text-sm font-semibold uppercase tracking-[0.18em] text-accent">{messages.codingForm.aiEyebrow}</p>
+            <p className="text-sm font-medium leading-7 text-ink">
+              {messages.codingForm.modeLabel}:{" "}
+              {suggestionStatus.mode === "real"
+                ? messages.codingForm.realModeTitle
+                : messages.codingForm.mockModeTitle}
+            </p>
             <p className="text-sm leading-7 text-ink">{messages.codingForm.aiDisclaimer}</p>
             <p className="text-sm leading-7 text-muted">{messages.codingForm.aiHowItWorks}</p>
             <p className="text-sm leading-7 text-muted">{messages.codingForm.aiEditableNote}</p>
             <p className="text-sm leading-7 text-muted">{messages.codingForm.aiOnlyEmptyFields}</p>
+            <p className="text-sm leading-7 text-muted">
+              {suggestionStatus.mode === "real"
+                ? messages.codingForm.realPrivacyNote
+                : messages.codingForm.mockPrivacyNote}
+            </p>
+            <p className="text-sm leading-7 text-muted">{suggestionStatus.message}</p>
           </div>
           <button
             type="button"

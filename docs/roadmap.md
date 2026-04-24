@@ -10,7 +10,7 @@ Current MVP:
 - multi-sample workspace
 - four built-in communication studies templates
 - manual coding form
-- mock AI-assisted suggestions that only fill empty fields
+- mock suggestions by default, with optional real AI mode
 - CSV, JSON, and Markdown export
 - English and Simplified Chinese interface
 
@@ -36,12 +36,13 @@ Richer project persistence and custom codebooks:
 
 ## v0.4
 
-Optional real AI integration:
+Expanded AI configuration and provider options:
 
-- connect a real model provider behind an explicit configuration step
-- allow optional suggestion generation beyond the current mock engine
+- refine the current optional real AI workflow
+- support more configurable provider and model options
+- improve privacy and cost messaging in AI-enabled setups
 - keep strong human-in-the-loop controls
-- add privacy guidance before any external API use
+- add stronger validation and explainability around AI suggestions
 
 ## Good First Issue Ideas
 

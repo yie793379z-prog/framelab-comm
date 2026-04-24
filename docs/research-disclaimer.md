@@ -24,6 +24,14 @@ Users remain responsible for:
 - correcting weak or misleading suggestions
 - explaining final coding choices in assignments, memos, or theses
 
+By default, FrameLab uses local mock suggestions for this feature.
+
+If a user enables optional real AI mode with their own API key:
+
+- selected sample text is sent to the configured AI provider
+- API usage may incur costs on the user's own account
+- the output should still be treated as tentative and editable
+
 ## Responsibility for Research Quality
 
 FrameLab can help structure work, but research quality still depends on the user.
@@ -37,6 +45,6 @@ That includes:
 
 ## Data Caution
 
-The current MVP is local-first, but future AI integrations may involve external services.
+The current MVP is local-first, but optional real AI mode uses an external API provider.
 
-Users should avoid uploading sensitive, private, or identifiable data into future AI-enabled workflows unless they fully understand the privacy, ethics, and institutional requirements involved.
+Users should avoid uploading sensitive, private, or identifiable data into AI-enabled workflows unless they fully understand the privacy, ethics, institutional, and cost implications involved.

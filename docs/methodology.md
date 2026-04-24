@@ -35,7 +35,7 @@ Human-in-the-loop coding means the tool assists the researcher, but the research
 In FrameLab, that means:
 
 - templates provide structured starting points
-- mock AI suggestions provide editable draft values
+- local mock suggestions or optional real AI suggestions provide editable draft values
 - users can and should revise every field
 - exported outputs are records of a coding workflow, not automatic conclusions
 

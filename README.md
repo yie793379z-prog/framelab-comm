@@ -1,5 +1,7 @@
 # FrameLab
 
+English | [简体中文](./README.zh-CN.md)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 CI badge placeholder:
@@ -30,11 +32,12 @@ FrameLab is positioned in the middle. It is not a replacement for careful method
 - Import multiple text samples into a local workspace
 - Switch between four communication-oriented templates
 - Edit coding fields sample by sample
-- Generate mock AI-assisted suggestions that only fill empty fields
+- Generate mock AI-assisted suggestions by default
+- Optionally enable real OpenAI-backed suggestions with your own API key
 - Export coded data as CSV, JSON, and Markdown
 - Reload previously exported project JSON to continue editing
 - Use the interface in English or Simplified Chinese
-- Keep everything local in the current MVP
+- Keep mock mode local-first, with real AI available only as an optional server-side integration
 
 ## Demo Workflow
 
@@ -43,7 +46,7 @@ FrameLab is positioned in the middle. It is not a replacement for careful method
 3. Choose a template such as `News Framing Analysis` or `Crisis Communication Scan`.
 4. Select a sample from the sample list.
 5. Edit coding fields manually.
-6. Optionally generate mock AI suggestions as editable starting points.
+6. Optionally generate AI suggestions as editable starting points.
 7. Export your workspace as CSV, JSON, or Markdown.
 
 ## Screenshots
@@ -108,6 +111,27 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
+### Optional Real AI Mode
+
+FrameLab defaults to local mock suggestions. Real AI is optional.
+
+To enable real OpenAI-backed suggestions, create a local `.env.local` file and set:
+
+```bash
+OPENAI_API_KEY=your_key_here
+AI_SUGGESTION_MODE=real
+OPENAI_MODEL=gpt-4.1-mini
+```
+
+Notes:
+
+- if `AI_SUGGESTION_MODE` is missing or set to `mock`, FrameLab uses local mock suggestions
+- if `AI_SUGGESTION_MODE=real` but `OPENAI_API_KEY` is missing, FrameLab falls back to mock suggestions
+- if the real AI request fails, FrameLab falls back to mock suggestions
+- API keys must stay server-side and must not be committed to the repository
+- real AI mode sends the selected sample text to the configured AI provider
+- real AI mode may incur API costs on the user’s own OpenAI account
+
 ## Project Structure
 
 ```text
@@ -138,8 +162,8 @@ Current direction:
 
 - `v0.1`: local MVP workflow
 - `v0.2`: usability and documentation polish
-- `v0.3`: project save/load and custom codebooks
-- `v0.4`: optional real AI integration
+- `v0.3`: richer project persistence and custom codebooks
+- `v0.4`: expanded AI configuration and provider options
 
 ## Contributing
 
@@ -165,6 +189,9 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) and [CODE_OF_CONDUCT.md](./CODE_OF_COND
 FrameLab is a learning and research-assistance tool.
 
 - AI suggestions are editable aids, not final academic judgments.
+- Mock mode keeps suggestion generation local.
+- Optional real AI mode sends selected sample text to the configured AI provider.
+- Users are responsible for their own API usage costs if they enable real AI mode.
 - Users remain responsible for reviewing and revising all codes.
 - Future AI integrations should not be used with sensitive or private data without proper safeguards.
 
