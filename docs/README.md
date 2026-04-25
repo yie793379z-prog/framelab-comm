@@ -1,9 +1,15 @@
 # Docs
 
-Core project documentation:
+English-first index:
 
+- [getting-started.md](./getting-started.md)
+- [getting-started.zh-CN.md](./getting-started.zh-CN.md)
 - [methodology.md](./methodology.md)
+- [social-media-datasets.md](./social-media-datasets.md)
+- [social-media-datasets.zh-CN.md](./social-media-datasets.zh-CN.md)
+- [inspirations.md](./inspirations.md)
+- [inspirations.zh-CN.md](./inspirations.zh-CN.md)
 - [roadmap.md](./roadmap.md)
 - [research-disclaimer.md](./research-disclaimer.md)
 
-These files are intentionally short and aimed at students, contributors, and early adopters who want to understand the project quickly.
+These files are intentionally short and aimed at students, contributors, and early adopters who want to understand the project quickly, even if they do not have a technical background.

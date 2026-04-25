@@ -19,7 +19,7 @@ type LanguageProviderProps = {
 };
 
 export function LanguageProvider({ children }: LanguageProviderProps) {
-  const [locale, setLocale] = useState<Locale>("en");
+  const [locale, setLocale] = useState<Locale>("zh-CN");
 
   useEffect(() => {
     const storedLocale = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);

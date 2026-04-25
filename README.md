@@ -31,7 +31,7 @@ FrameLab is positioned in the middle. It is not a replacement for careful method
 
 Direct LLM chat is useful for one-off analysis, brainstorming, or getting a quick first reading of a text. FrameLab is meant for a different job: structured, repeatable communication research workflows.
 
-FrameLab does not claim to be smarter than ChatGPT or Gemini. Its value is in giving students a clearer workflow: built-in templates, consistent fields, editable coding forms, CSV/JSON/Markdown export, project reload, bilingual UI, and human-in-the-loop review. AI suggestions are optional and always editable. The main benefit is structure, reproducibility, and better usability for coursework and small research projects.
+FrameLab does not claim to be smarter than ChatGPT or Gemini. Its value is in the workflow around the model: built-in templates, project codebooks, editable coding forms, batch suggestions, coding summaries, exports, autosave, and project reload. AI suggestions are optional and always editable. The main benefit is structure, reproducibility, and classroom or small-project usability.
 
 ## Custom Project Codebooks
 
@@ -53,27 +53,48 @@ To keep coding data stable, FrameLab does not yet allow changes to field keys, f
 
 - Import multiple text samples into a local workspace
 - Import from pasted text or local `.txt`, `.md`, and `.csv` files
+- Clean pasted text conservatively before coding
+- Search, filter, and sort samples in larger workspaces
 - Switch between four communication-oriented templates
 - Copy a built-in template into a project-level custom codebook
 - Edit template names, descriptions, field labels, help text, placeholders, and option labels
 - Edit coding fields sample by sample
 - Generate mock AI-assisted suggestions by default
 - Optionally enable real OpenAI- or Gemini-backed suggestions with your own API key
-- Export coded data as CSV, JSON, and Markdown
+- Generate batch suggestions for uncoded samples
+- Review a coding summary dashboard for the active template
+- Export coded data as CSV, JSON, Markdown report, and Markdown codebook
 - Reload previously exported project JSON to continue editing
-- Use the interface in English or Simplified Chinese
-- Keep mock mode local-first, with real AI available only as an optional server-side integration
+- Use local autosave and restore
+- Use the interface in Simplified Chinese by default, with English still available
+
+## Beginner Guides
+
+- [Beginner guide (English)](./docs/getting-started.md)
+- [零基础使用指南（简体中文）](./docs/getting-started.zh-CN.md)
+- [Social media dataset guide](./docs/social-media-datasets.md)
+- [社交媒体数据导入指南](./docs/social-media-datasets.zh-CN.md)
+- [Project inspirations](./docs/inspirations.md)
+- [产品灵感与定位](./docs/inspirations.zh-CN.md)
+
+## Real Workflow Examples
+
+- [examples/README.md](./examples/README.md)
+- [examples/README.zh-CN.md](./examples/README.zh-CN.md)
+- [WeChat news cleaning demo](./examples/projects/wechat-news-cleaning-demo.md)
+- [Weibo topic analysis demo](./examples/projects/weibo-topic-analysis-demo.md)
+- [Interview coding demo](./examples/projects/interview-coding-demo.md)
 
 ## Demo Workflow
 
 1. Paste one or more text samples into the workspace, or choose a local TXT, Markdown, or CSV file.
-2. Separate samples with blank lines.
+2. Separate samples with blank lines, or use the import panel to clean obvious pasted-text noise first.
 3. Choose a template such as `News Framing Analysis` or `Crisis Communication Scan`.
 4. Optionally customize the active codebook text for your project.
 5. Select a sample from the sample list.
 6. Edit coding fields manually.
 7. Optionally generate AI suggestions as editable starting points.
-8. Export your workspace as CSV, JSON, or Markdown.
+8. Export your workspace as CSV, JSON, Markdown, or Codebook Markdown.
 
 ## Screenshots
 
@@ -104,7 +125,7 @@ The repository includes fictional example materials under [`examples/`](./exampl
 - [interview_sample.txt](./examples/interview_sample.txt)
 - [crisis_comm_sample.txt](./examples/crisis_comm_sample.txt)
 
-See [examples/README.md](./examples/README.md) for suggested templates and quick import guidance.
+See [examples/README.md](./examples/README.md) for quick English guidance and [examples/README.zh-CN.md](./examples/README.zh-CN.md) for a Chinese step-by-step walkthrough.
 
 ## Import Formats
 
@@ -127,20 +148,23 @@ For CSV import, FrameLab looks for a text column with one of these names:
 
 If multiple matching columns exist, FrameLab uses the first one. CSV parsing happens locally in the browser, and paste import still works as before.
 
+FrameLab also includes a conservative `Clean pasted text` helper for messy copied material such as public account articles. It only removes obvious standalone noise such as repeated blank lines, image placeholders, and ad or disclaimer markers. The cleaned result should still be reviewed manually before coding.
+
 ## Export Formats
 
 - `CSV`: flattened coded data by sample, template, and field values
 - `JSON`: workspace-style project export with samples, selected template, project metadata, custom project codebooks, coding results, and export metadata that can be loaded back into FrameLab
 - `Markdown`: a readable analysis report with project metadata, coding summary, codebook section, per-sample coding summary, and AI disclaimer
+- `Codebook Markdown`: a template/codebook export for coursework methods notes and research documentation
 
 ## Bilingual Interface
 
 FrameLab currently supports:
 
+- Simplified Chinese (`zh-CN`) by default
 - English
-- Simplified Chinese (`zh-CN`)
 
-The active interface language also affects exported reports and localized template labels.
+The interface opens in Simplified Chinese for the current student audience, but users can switch to English at any time from the header. The active interface language also affects exported reports and localized template labels.
 
 ## Getting Started
 
@@ -157,6 +181,11 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000).
+
+If you are not comfortable with developer terminology, use the beginner guide instead:
+
+- [docs/getting-started.md](./docs/getting-started.md)
+- [docs/getting-started.zh-CN.md](./docs/getting-started.zh-CN.md)
 
 ### Optional Real AI Mode
 
@@ -190,27 +219,6 @@ Notes:
 - real AI mode may incur API costs on the user’s own account
 - free tiers, quotas, and pricing for OpenAI and Gemini may change over time
 
-Examples:
-
-```bash
-# Mock mode
-AI_PROVIDER=mock
-```
-
-```bash
-# OpenAI
-AI_PROVIDER=openai
-OPENAI_API_KEY=your_key_here
-OPENAI_MODEL=gpt-4.1-mini
-```
-
-```bash
-# Gemini
-AI_PROVIDER=gemini
-GEMINI_API_KEY=your_key_here
-GEMINI_MODEL=gemini-2.5-flash-lite
-```
-
 ## Project Structure
 
 ```text
@@ -222,8 +230,8 @@ src/
 ├─ lib/                  # Shared helpers and constants
 └─ types/                # Shared TypeScript domain types
 
-docs/                    # Methodology, roadmap, and research disclaimers
-examples/                # Fictional datasets for quick demos
+docs/                    # Beginner guides, methodology, roadmap, and research notes
+examples/                # Fictional datasets and end-to-end walkthrough projects
 ```
 
 ## Methodology and Research Use
@@ -232,6 +240,7 @@ FrameLab is designed to support introductory communication research workflows, n
 
 - Read [docs/methodology.md](./docs/methodology.md) for a short explanation of content analysis, framing analysis, and human-in-the-loop coding.
 - Read [docs/research-disclaimer.md](./docs/research-disclaimer.md) before treating AI-assisted outputs as analytical conclusions.
+- Read [docs/social-media-datasets.md](./docs/social-media-datasets.md) if you plan to work with larger post collections.
 
 ## Roadmap
 

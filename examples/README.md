@@ -1,6 +1,16 @@
+[简体中文](./README.zh-CN.md) | English
+
 # Examples
 
 This folder contains fictional example materials for trying FrameLab quickly. The files are short on purpose, but varied enough for classroom demos, onboarding, and small communication analysis exercises.
+
+If you want a Chinese step-by-step walkthrough, use [README.zh-CN.md](./README.zh-CN.md).
+
+If you want fuller project-style walkthroughs, start with:
+
+- [projects/wechat-news-cleaning-demo.md](./projects/wechat-news-cleaning-demo.md)
+- [projects/weibo-topic-analysis-demo.md](./projects/weibo-topic-analysis-demo.md)
+- [projects/interview-coding-demo.md](./projects/interview-coding-demo.md)
 
 ## Files
 
@@ -71,7 +81,8 @@ What to try:
 How to import right now:
 
 - copy the full file contents
-- paste directly into FrameLab
+- or import the TXT file directly into FrameLab
+- or paste directly into FrameLab
 - each paragraph block is already separated for multi-sample import
 
 ### [crisis_comm_sample.txt](./crisis_comm_sample.txt)
@@ -94,7 +105,8 @@ What to try:
 How to import right now:
 
 - copy the full file contents
-- paste directly into FrameLab
+- or import the TXT file directly into FrameLab
+- or paste directly into FrameLab
 - the statements are already separated by blank lines
 
 ## Quick Demo Path
@@ -105,6 +117,8 @@ How to import right now:
 4. Code one sample manually first.
 5. Use `Generate Suggestions` on the next sample.
 6. Export the result as Markdown for class discussion or lab notes.
+7. Export Codebook if you want a method note about the active template.
+8. Export JSON if you want to reopen the same project later.
 
 ## Note on Import Format
 

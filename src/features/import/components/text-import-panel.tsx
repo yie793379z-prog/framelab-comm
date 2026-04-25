@@ -2,6 +2,7 @@
 
 import { useRef, useState, type ChangeEvent } from "react";
 import { useWorkspace } from "@/features/coding/state/workspace-context";
+import { cleanPastedText } from "@/features/import/utils/clean-pasted-text";
 import { parseImportFile, type FileImportErrorKey } from "@/features/import/utils/parse-import-file";
 import { splitTextIntoBlocks } from "@/features/import/utils/parse-text-input";
 import { useLanguage } from "@/i18n/context";
@@ -19,6 +20,7 @@ export function TextImportPanel() {
   const [detectedTextColumn, setDetectedTextColumn] = useState<string | null>(null);
   const [skippedRowCount, setSkippedRowCount] = useState(0);
   const [fileError, setFileError] = useState<string | null>(null);
+  const [cleaningStatus, setCleaningStatus] = useState<string | null>(null);
 
   const previewCount =
     selectedFileKind === "csv" ? parsedFileSamples.length : splitTextIntoBlocks(state.importText).length;
@@ -33,6 +35,7 @@ export function TextImportPanel() {
     setDetectedTextColumn(null);
     setSkippedRowCount(0);
     setFileError(null);
+    setCleaningStatus(null);
 
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
@@ -79,6 +82,7 @@ export function TextImportPanel() {
       setParsedFileSamples([]);
       setDetectedTextColumn(null);
       setSkippedRowCount(0);
+      setCleaningStatus(null);
       dispatch({ type: "SET_IMPORT_TEXT", payload: result.rawText });
       return;
     }
@@ -87,6 +91,7 @@ export function TextImportPanel() {
     setParsedFileSamples(result.samples);
     setDetectedTextColumn(result.detectedTextColumn ?? null);
     setSkippedRowCount(result.skippedRowCount ?? 0);
+    setCleaningStatus(null);
   }
 
   function handleLoadSamples() {
@@ -106,6 +111,21 @@ export function TextImportPanel() {
     clearFileSelection();
   }
 
+  function handleCleanPastedText() {
+    const result = cleanPastedText(state.importText);
+
+    dispatch({
+      type: "SET_IMPORT_TEXT",
+      payload: result.cleanedText
+    });
+
+    setCleaningStatus(
+      result.changed
+        ? formatMessage(messages.importPanel.cleaningApplied, { count: result.removedLineCount })
+        : messages.importPanel.noCleaningChanges
+    );
+  }
+
   return (
     <section className="surface-card p-6 md:p-7">
       <div className="space-y-2">
@@ -121,7 +141,10 @@ export function TextImportPanel() {
           <textarea
             id={textareaId}
             value={state.importText}
-            onChange={(event) => dispatch({ type: "SET_IMPORT_TEXT", payload: event.target.value })}
+            onChange={(event) => {
+              setCleaningStatus(null);
+              dispatch({ type: "SET_IMPORT_TEXT", payload: event.target.value });
+            }}
             placeholder={messages.importPanel.placeholder}
             className="field-textarea min-h-56"
           />
@@ -156,6 +179,19 @@ export function TextImportPanel() {
           <div className="surface-panel p-4">
             <p className="text-sm leading-7 text-muted">{messages.importPanel.helperFormats}</p>
           </div>
+          <div className="surface-panel p-4">
+            <p className="text-sm font-semibold text-ink">{messages.importPanel.cleaningTitle}</p>
+            <p className="mt-2 text-sm leading-7 text-muted">{messages.importPanel.cleaningDescription}</p>
+            <p className="mt-2 text-sm leading-7 text-muted">{messages.importPanel.cleaningNote}</p>
+            <button
+              type="button"
+              onClick={handleCleanPastedText}
+              disabled={selectedFileKind === "csv" || !state.importText.trim()}
+              className="button-secondary mt-3 px-4 py-2.5"
+            >
+              {messages.importPanel.cleanTextAction}
+            </button>
+          </div>
         </div>
       </div>
 
@@ -181,6 +217,12 @@ export function TextImportPanel() {
         {fileError && (
           <div className="rounded-[1.25rem] border border-[#d7a18d] bg-[#fff6f1] px-4 py-3">
             <p className="text-sm leading-7 text-ink">{fileError}</p>
+          </div>
+        )}
+
+        {cleaningStatus && (
+          <div className="surface-panel px-4 py-3">
+            <p className="text-sm leading-7 text-muted">{cleaningStatus}</p>
           </div>
         )}
 

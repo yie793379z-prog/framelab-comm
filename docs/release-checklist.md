@@ -29,7 +29,7 @@ Use this checklist before a public GitHub release or version tag.
 - all example datasets are fictional
 - no private or identifiable real-world data is included
 - example files still fit the built-in templates
-- example instructions match the current paste-based import flow
+- example instructions match the current paste, TXT, Markdown, and CSV import flow
 
 ## Bilingual UI Checks
 
