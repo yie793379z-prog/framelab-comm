@@ -7,6 +7,7 @@ import { TemplatePicker } from "@/features/templates/components/template-picker"
 import { CodingForm } from "@/features/coding/components/coding-form";
 import { CodingPreview } from "@/features/coding/components/coding-preview";
 import { ExportPanel } from "@/features/export/components/export-panel";
+import { BatchSuggestionsPanel } from "@/features/ai/components/batch-suggestions-panel";
 import { useWorkspace } from "@/features/coding/state/workspace-context";
 import { LocalAutosaveBanner } from "@/features/project/components/local-autosave-banner";
 import { ProjectMetadataPanel } from "@/features/project/components/project-metadata-panel";
@@ -101,6 +102,7 @@ export function WorkspaceFlow() {
           />
           <CodingPreview />
           <CodingSummaryPanel />
+          <BatchSuggestionsPanel />
         </div>
       </div>
 

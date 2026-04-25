@@ -200,6 +200,31 @@ export const appDictionary = {
       max: "Max",
       average: "Average"
     },
+    batchSuggestions: {
+      title: "Batch suggestions",
+      description:
+        "Generate first-pass suggestions for uncoded samples under the active template. FrameLab processes them one by one and preserves existing edits.",
+      generateForUncoded: "Generate for uncoded samples",
+      eligibleSamples: "Eligible samples",
+      maxPerBatch: "Max per batch",
+      processing: "Processing",
+      currentSample: "Current sample",
+      stopAfterCurrentSample: "Stop after current sample",
+      stopRequestedMessage: "FrameLab will stop after the current sample finishes.",
+      batchComplete: "Batch complete.",
+      batchStopped: "Batch stopped after the current sample finished.",
+      noTemplateMessage: "Choose an active template before running batch suggestions.",
+      noSamplesMessage: "Load samples before running batch suggestions.",
+      noEligibleSamplesMessage: "No uncoded samples are currently eligible under the active template.",
+      processed: "Processed",
+      updated: "Updated",
+      skipped: "Skipped",
+      failed: "Failed",
+      fallbackCount: "Mock fallback used",
+      mockPrivacyNote: "In mock mode, sample texts stay local in the browser during batch suggestions.",
+      realPrivacyCostNote:
+        "In real AI mode, sample texts are sent one by one to the configured provider, and provider usage may incur cost."
+    },
     projectMetadata: {
       title: "Project information",
       description: "Add optional context for your coursework, memo, or early thesis draft.",
@@ -485,6 +510,29 @@ export const appDictionary = {
       min: "最小值",
       max: "最大值",
       average: "平均值"
+    },
+    batchSuggestions: {
+      title: "批量建议",
+      description: "为当前模板下尚未编码的样本批量生成初步建议。FrameLab 会逐条处理，并保留已有编辑内容。",
+      generateForUncoded: "为未编码样本生成建议",
+      eligibleSamples: "符合条件的样本",
+      maxPerBatch: "每批最大数量",
+      processing: "处理中",
+      currentSample: "当前样本",
+      stopAfterCurrentSample: "当前样本完成后停止",
+      stopRequestedMessage: "FrameLab 会在当前样本处理完成后停止。",
+      batchComplete: "批量处理完成。",
+      batchStopped: "当前样本处理完成后，批量流程已停止。",
+      noTemplateMessage: "请先选择当前模板，再运行批量建议。",
+      noSamplesMessage: "请先载入样本，再运行批量建议。",
+      noEligibleSamplesMessage: "当前模板下没有符合条件的未编码样本。",
+      processed: "已处理",
+      updated: "已更新",
+      skipped: "已跳过",
+      failed: "失败",
+      fallbackCount: "已使用模拟回退",
+      mockPrivacyNote: "在模拟模式下，批量建议处理期间样本文本会保留在本地浏览器中。",
+      realPrivacyCostNote: "在真实 AI 模式下，样本文本会逐条发送到已配置的提供方，且提供方调用可能产生费用。"
     },
     projectMetadata: {
       title: "项目信息",
