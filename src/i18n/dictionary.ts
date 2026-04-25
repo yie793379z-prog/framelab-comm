@@ -78,16 +78,31 @@ export const appDictionary = {
     },
     importPanel: {
       title: "Import text samples",
-      description: "Paste one or more text samples into the workspace. Use one blank line between items to split them into separate samples.",
+      description:
+        "Paste one or more text samples into the workspace, or choose a local TXT, Markdown, or CSV file. Use one blank line between items to split them into separate samples.",
       textareaLabel: "Text samples",
       placeholder: "Paste article excerpts, posts, or interview passages here...",
+      fileTypesTitle: "Import from file",
+      fileTypesDescription: "Supported file types: .txt, .md, and .csv. CSV files are parsed locally in the browser.",
+      localFileNote: "Files stay local in your browser and are not uploaded anywhere during import.",
+      chooseFile: "Choose file",
+      fileSelected: "Selected file: {filename}",
+      csvColumnDetected: "Using CSV text column: {column}",
+      skippedEmptyRows: "Skipped {count} empty CSV rows.",
       helperBlankLines: "Tip: one blank line creates a new sample card after import.",
-      helperLoad: "Use “Load into workspace” when the sample count looks right. You can revise the pasted text before loading.",
-      helperFormats: "Short news excerpts, social posts, interview passages, and short statements all work well here.",
+      helperLoad: "Use “Load into workspace” when the sample count looks right. You can revise pasted text before loading, or switch to a different file.",
+      helperFormats:
+        "Short news excerpts, social posts, interview passages, short statements, and CSV text columns all work well here.",
       samplesDetected: "{count} {sampleWord} detected",
       samplesLoaded: "{count} {sampleWord} currently loaded into the workspace.",
       load: "Load into workspace",
-      clear: "Clear"
+      clear: "Clear",
+      unsupportedFileTypeError: "That file type is not supported yet. Please choose a .txt, .md, or .csv file.",
+      readFileError: "FrameLab could not read that file. Please try again with another local file.",
+      noKnownTextColumnError:
+        "FrameLab could not find a recognized text column in that CSV. Try a column named text, content, body, message, or transcript.",
+      invalidCsvError: "That CSV file could not be parsed safely. Please check the format and try again.",
+      emptyFileError: "The selected file did not contain any importable text samples."
     },
     sampleList: {
       emptyTitle: "No samples loaded yet",
@@ -299,16 +314,29 @@ export const appDictionary = {
     },
     importPanel: {
       title: "导入文本样本",
-      description: "将一个或多个文本样本粘贴到工作区中。用一个空行分隔条目，即可拆分为多个样本。",
+      description:
+        "你可以把一个或多个文本样本粘贴到工作区中，也可以选择本地 TXT、Markdown 或 CSV 文件。用一个空行分隔条目，即可拆分为多个样本。",
       textareaLabel: "文本样本",
       placeholder: "在此粘贴新闻文本、帖子内容或访谈片段……",
+      fileTypesTitle: "从文件导入",
+      fileTypesDescription: "支持的文件类型：.txt、.md 和 .csv。CSV 会直接在浏览器本地解析。",
+      localFileNote: "导入时文件内容只会保留在本地浏览器中，不会上传到其他地方。",
+      chooseFile: "选择文件",
+      fileSelected: "已选择文件：{filename}",
+      csvColumnDetected: "当前使用的 CSV 文本列：{column}",
+      skippedEmptyRows: "已跳过 {count} 行空白 CSV 记录。",
       helperBlankLines: "提示：一个空行就会在导入后生成新的样本卡片。",
-      helperLoad: "当检测到的样本数符合预期时，再点击“载入工作区”。载入前仍可继续修改粘贴内容。",
-      helperFormats: "这里适合粘贴新闻摘录、社交媒体帖子、访谈片段或简短声明。",
+      helperLoad: "当检测到的样本数符合预期时，再点击“载入工作区”。载入前可以继续修改粘贴内容，也可以改选其他文件。",
+      helperFormats: "这里适合新闻摘录、社交媒体帖子、访谈片段、简短声明，以及包含文本列的 CSV。",
       samplesDetected: "检测到 {count} 条{sampleWord}",
       samplesLoaded: "当前工作区已载入 {count} 条{sampleWord}。",
       load: "载入工作区",
-      clear: "清空"
+      clear: "清空",
+      unsupportedFileTypeError: "暂不支持该文件类型，请选择 .txt、.md 或 .csv 文件。",
+      readFileError: "FrameLab 无法读取该文件，请换一个本地文件后重试。",
+      noKnownTextColumnError: "FrameLab 在该 CSV 中找不到可识别的文本列。请确认列名中包含 text、content、body、message 或 transcript。",
+      invalidCsvError: "该 CSV 文件无法被安全解析，请检查格式后重试。",
+      emptyFileError: "所选文件中没有可导入的文本样本。"
     },
     sampleList: {
       emptyTitle: "尚未载入样本",

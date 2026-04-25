@@ -1,6 +1,6 @@
 import { analysisTemplates } from "@/features/templates/data/templates";
 import type { CodingFieldValue, CodingRow } from "@/types/coding";
-import type { SampleRecord } from "@/types/sample";
+import type { SampleMetadata, SampleRecord } from "@/types/sample";
 import type { WorkspaceState } from "@/types/workspace";
 
 export type LoadProjectErrorKey =
@@ -47,6 +47,34 @@ function isValidCodingValue(value: unknown): value is CodingFieldValue {
   return false;
 }
 
+function sanitizeSampleMetadata(input: unknown): SampleMetadata | undefined | null {
+  if (input === undefined) {
+    return undefined;
+  }
+
+  if (!isRecord(input)) {
+    return null;
+  }
+
+  const metadata: SampleMetadata = {};
+
+  for (const key of ["platform", "date", "author", "url"] as const) {
+    const value = input[key];
+
+    if (value !== undefined) {
+      if (typeof value !== "string") {
+        return null;
+      }
+
+      if (value.trim()) {
+        metadata[key] = value;
+      }
+    }
+  }
+
+  return Object.keys(metadata).length ? metadata : undefined;
+}
+
 function sanitizeSamples(input: unknown): SampleRecord[] | null {
   if (!Array.isArray(input)) {
     return null;
@@ -64,6 +92,7 @@ function sanitizeSamples(input: unknown): SampleRecord[] | null {
     const title = item.title;
     const text = item.text;
     const source = item.source;
+    const metadata = sanitizeSampleMetadata(item.metadata);
 
     if (typeof id !== "string" || typeof title !== "string" || typeof text !== "string") {
       return null;
@@ -77,12 +106,17 @@ function sanitizeSamples(input: unknown): SampleRecord[] | null {
       return null;
     }
 
+    if (metadata === null) {
+      return null;
+    }
+
     seenIds.add(id);
     samples.push({
       id,
       title,
       text,
-      source
+      source,
+      metadata
     });
   }
 

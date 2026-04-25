@@ -23,9 +23,9 @@ What to try:
 
 How to import right now:
 
-- open the CSV
-- copy one or more `text` cells
-- paste them into FrameLab separated by blank lines
+- import the CSV directly into FrameLab
+- FrameLab will use the `text` column automatically
+- you can still copy individual cells and paste them with blank lines if you prefer
 
 ### [social_posts.csv](./social_posts.csv)
 
@@ -46,9 +46,9 @@ What to try:
 
 How to import right now:
 
-- open the CSV
-- copy the `text` column values you want to test
-- paste them into FrameLab with blank lines between posts
+- import the CSV directly into FrameLab
+- FrameLab will use the `text` column automatically
+- you can still paste selected post text manually if you want a smaller subset
 
 ### [interview_sample.txt](./interview_sample.txt)
 
@@ -100,7 +100,7 @@ How to import right now:
 ## Quick Demo Path
 
 1. Start with `news_sample.csv` or `interview_sample.txt`.
-2. Paste 3 to 4 items into the workspace.
+2. Import the file directly, or paste 3 to 4 items into the workspace.
 3. Select the suggested template for that file type.
 4. Code one sample manually first.
 5. Use `Generate Suggestions` on the next sample.
@@ -108,8 +108,19 @@ How to import right now:
 
 ## Note on Import Format
 
-Current MVP import is paste-based. FrameLab does not yet parse CSV files directly in the browser, so the quickest workflow is:
+FrameLab now supports local browser import for:
 
-1. open an example file
-2. copy the relevant text entries
-3. paste them into FrameLab with blank lines between items
+1. pasted text
+2. `.txt`
+3. `.md`
+4. `.csv`
+
+CSV import recognizes these text column names:
+
+- `text`
+- `content`
+- `body`
+- `message`
+- `transcript`
+
+If more than one recognized column is present, FrameLab uses the first matching column. All parsing happens locally in the browser.

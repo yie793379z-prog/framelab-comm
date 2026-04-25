@@ -1,10 +1,10 @@
-import type { SampleRecord } from "@/types/sample";
+import type { SampleMetadata, SampleRecord } from "@/types/sample";
 
-function buildSampleId(seed: number, index: number) {
+export function buildSampleId(seed: number, index: number) {
   return `sample-${seed}-${index + 1}`;
 }
 
-function buildSampleTitle(text: string, index: number) {
+export function buildSampleTitle(text: string, index: number) {
   const firstLine = text.split("\n")[0]?.trim() ?? "";
 
   if (!firstLine) {
@@ -14,17 +14,36 @@ function buildSampleTitle(text: string, index: number) {
   return firstLine.length > 72 ? `${firstLine.slice(0, 69)}...` : firstLine;
 }
 
-export function parseTextInput(input: string): SampleRecord[] {
-  const seed = Date.now();
-  const blocks = input
+export function splitTextIntoBlocks(input: string) {
+  return input
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n")
     .split(/\n\s*\n/g)
     .map((item) => item.trim())
     .filter(Boolean);
+}
+
+type ParseTextInputOptions = {
+  source?: string | ((text: string, index: number) => string | undefined);
+  metadata?: SampleMetadata | ((text: string, index: number) => SampleMetadata | undefined);
+  seed?: number;
+};
+
+export function parseTextInput(input: string, options?: ParseTextInputOptions): SampleRecord[] {
+  const seed = options?.seed ?? Date.now();
+  const blocks = splitTextIntoBlocks(input);
 
   return blocks.map((text, index) => ({
     id: buildSampleId(seed, index),
     title: buildSampleTitle(text, index),
     text,
-    source: "Manual paste"
+    source:
+      typeof options?.source === "function"
+        ? options.source(text, index)
+        : options?.source ?? "Manual paste",
+    metadata:
+      typeof options?.metadata === "function"
+        ? options.metadata(text, index)
+        : options?.metadata
   }));
 }

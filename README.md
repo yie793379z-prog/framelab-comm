@@ -36,6 +36,7 @@ FrameLab does not claim to be smarter than ChatGPT or Gemini. Its value is in gi
 ## Key Features
 
 - Import multiple text samples into a local workspace
+- Import from pasted text or local `.txt`, `.md`, and `.csv` files
 - Switch between four communication-oriented templates
 - Edit coding fields sample by sample
 - Generate mock AI-assisted suggestions by default
@@ -47,7 +48,7 @@ FrameLab does not claim to be smarter than ChatGPT or Gemini. Its value is in gi
 
 ## Demo Workflow
 
-1. Paste one or more text samples into the workspace.
+1. Paste one or more text samples into the workspace, or choose a local TXT, Markdown, or CSV file.
 2. Separate samples with blank lines.
 3. Choose a template such as `News Framing Analysis` or `Crisis Communication Scan`.
 4. Select a sample from the sample list.
@@ -85,6 +86,27 @@ The repository includes fictional example materials under [`examples/`](./exampl
 - [crisis_comm_sample.txt](./examples/crisis_comm_sample.txt)
 
 See [examples/README.md](./examples/README.md) for suggested templates and quick import guidance.
+
+## Import Formats
+
+FrameLab currently supports local browser import for:
+
+- pasted text
+- `.txt`
+- `.md`
+- `.csv`
+
+TXT and Markdown files use the same blank-line splitting logic as pasted text.
+
+For CSV import, FrameLab looks for a text column with one of these names:
+
+- `text`
+- `content`
+- `body`
+- `message`
+- `transcript`
+
+If multiple matching columns exist, FrameLab uses the first one. CSV parsing happens locally in the browser, and paste import still works as before.
 
 ## Export Formats
 

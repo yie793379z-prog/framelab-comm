@@ -1,11 +1,13 @@
 import { parseTextInput } from "@/features/import/utils/parse-text-input";
 import type { CodingFieldValue } from "@/types/coding";
+import type { SampleRecord } from "@/types/sample";
 import type { PersistedWorkspaceState, WorkspaceState } from "@/types/workspace";
 
 type WorkspaceAction =
   | { type: "SET_IMPORT_TEXT"; payload: string }
   | { type: "RESET_IMPORT_TEXT" }
   | { type: "LOAD_SAMPLES_FROM_IMPORT" }
+  | { type: "LOAD_SAMPLES"; payload: SampleRecord[] }
   | { type: "SELECT_TEMPLATE"; payload: string }
   | { type: "SELECT_SAMPLE"; payload: string }
   | {
@@ -175,6 +177,14 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
         codingRows: []
       };
     }
+
+    case "LOAD_SAMPLES":
+      return {
+        ...state,
+        samples: action.payload,
+        selectedSampleId: action.payload[0]?.id ?? null,
+        codingRows: []
+      };
 
     case "SELECT_TEMPLATE":
       return {
