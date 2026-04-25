@@ -283,9 +283,12 @@ export const appDictionary = {
       exportCsv: "Export CSV",
       exportJson: "Export JSON",
       exportMarkdown: "Export Markdown",
+      exportCodebook: "Export Codebook",
       csvDescription: "Flatten coded rows by sample, template, and field values.",
       jsonDescription: "Preserve samples, selected template, coding results, project metadata, and export metadata.",
       markdownDescription: "Build a readable report with methodology note, AI disclaimer, and per-sample summary.",
+      codebookDescription: "Export the active template schema in Markdown for methods documentation and classroom notes.",
+      noActiveTemplateSelected: "No active template selected.",
       downloaded: "Downloaded {filename}.",
       loadTitle: "Load Project JSON",
       loadDescription: "Upload or paste a previously exported FrameLab project file to continue editing locally.",
@@ -324,6 +327,7 @@ export const appDictionary = {
         "This report was generated from a local FrameLab workspace. Coding values may include user-entered judgments and AI-assisted suggestions, which remain fully editable during the research workflow.",
       codingOverview: "Coding overview",
       fieldDistributionSummary: "Field distribution summary",
+      codebook: "Codebook",
       noFieldSummary: "No field distribution summary was available.",
       count: "Count",
       trueLabel: "True",
@@ -337,6 +341,25 @@ export const appDictionary = {
       textExcerpt: "Text excerpt",
       codingSummary: "Coding summary",
       noTemplate: "No template was selected when this report was generated."
+    },
+    codebook: {
+      title: "Codebook",
+      fieldKey: "Field key",
+      fieldType: "Field type",
+      helpText: "Help text",
+      placeholder: "Placeholder",
+      options: "Options",
+      optionValue: "Option value",
+      optionLabel: "Option label",
+      recommendedUseCase: "Recommended use case",
+      note:
+        "Codebooks should be reviewed and adapted to the actual research question. AI suggestions can support coding, but they do not replace coder judgment.",
+      noActiveTemplateSelected: "No active template selected.",
+      fieldTypeSingleSelect: "Single select",
+      fieldTypeMultiSelect: "Multi-select",
+      fieldTypeText: "Text",
+      fieldTypeNumber: "Number",
+      fieldTypeBoolean: "Boolean"
     }
   },
   "zh-CN": {
@@ -606,9 +629,12 @@ export const appDictionary = {
       exportCsv: "导出 CSV",
       exportJson: "导出 JSON",
       exportMarkdown: "导出 Markdown",
+      exportCodebook: "导出编码手册",
       csvDescription: "按样本、模板和字段值平铺编码结果。",
       jsonDescription: "保留样本、当前模板、编码结果、项目信息和导出元数据。",
       markdownDescription: "生成包含方法说明、AI 声明和逐样本摘要的可读报告。",
+      codebookDescription: "把当前模板结构导出为 Markdown 编码手册，便于方法说明和课堂记录。",
+      noActiveTemplateSelected: "当前尚未选择模板。",
       downloaded: "已下载 {filename}。",
       loadTitle: "载入项目 JSON",
       loadDescription: "上传或粘贴之前导出的 FrameLab 项目文件，以便继续在本地编辑。",
@@ -645,6 +671,7 @@ export const appDictionary = {
       methodologyBody: "本报告由本地 FrameLab 工作区生成。编码结果可能同时包含用户手动输入的判断和 AI 辅助建议，但在研究流程中始终保持可编辑。",
       codingOverview: "编码概览",
       fieldDistributionSummary: "字段分布摘要",
+      codebook: "编码手册",
       noFieldSummary: "当前没有可用的字段分布摘要。",
       count: "数量",
       trueLabel: "是",
@@ -658,6 +685,24 @@ export const appDictionary = {
       textExcerpt: "文本摘录",
       codingSummary: "编码摘要",
       noTemplate: "生成报告时未选择模板。"
+    },
+    codebook: {
+      title: "编码手册",
+      fieldKey: "字段键名",
+      fieldType: "字段类型",
+      helpText: "说明文本",
+      placeholder: "占位提示",
+      options: "选项",
+      optionValue: "选项值",
+      optionLabel: "选项标签",
+      recommendedUseCase: "推荐使用场景",
+      note: "编码手册应根据具体研究问题进行审查和调整。AI 建议可以辅助编码，但不能替代编码者判断。",
+      noActiveTemplateSelected: "当前尚未选择模板。",
+      fieldTypeSingleSelect: "单选",
+      fieldTypeMultiSelect: "多选",
+      fieldTypeText: "文本",
+      fieldTypeNumber: "数值",
+      fieldTypeBoolean: "布尔值"
     }
   }
 } as const;

@@ -1,4 +1,5 @@
 import { analysisTemplates } from "@/features/templates/data/templates";
+import { buildCodebookSectionLines } from "@/features/export/utils/export-codebook";
 import { buildCodingSummary } from "@/features/summary/utils/build-coding-summary";
 import { getMessages, getLocalizedText, formatLocaleDate } from "@/i18n/utils";
 import type { Locale } from "@/i18n/types";
@@ -147,6 +148,7 @@ export function buildMarkdownExport(workspace: WorkspaceState, locale: Locale) {
     }
   }
 
+  lines.push(...buildCodebookSectionLines(selectedTemplate, locale, { includeSectionTitle: true, detailed: false }));
   lines.push(`> ${messages.exportReport.aiDisclaimer}`);
   lines.push("");
   lines.push(`> ${messages.exportReport.researchLimitationNote}`);

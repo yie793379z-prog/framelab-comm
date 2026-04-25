@@ -4,6 +4,7 @@ import { useRef, useState, type ChangeEvent } from "react";
 import { useWorkspace } from "@/features/coding/state/workspace-context";
 import { importProjectJson, type LoadProjectErrorKey } from "@/features/export/utils/import-project-json";
 import { buildCsvExport } from "@/features/export/utils/export-csv";
+import { buildCodebookExport } from "@/features/export/utils/export-codebook";
 import { buildJsonExport } from "@/features/export/utils/export-json";
 import { buildMarkdownExport } from "@/features/export/utils/export-markdown";
 import { downloadTextFile } from "@/lib/utils/download-file";
@@ -12,16 +13,20 @@ import { useLanguage } from "@/i18n/context";
 import { formatLocaleDate, formatMessage, getLocalizedText } from "@/i18n/utils";
 import type { ExportFormat } from "@/types/export";
 
-const EXPORT_FILENAMES: Record<ExportFormat, string> = {
+type DownloadableExportFormat = ExportFormat | "codebook";
+
+const EXPORT_FILENAMES: Record<DownloadableExportFormat, string> = {
   csv: "framelab-coded-data.csv",
   json: "framelab-project.json",
-  markdown: "framelab-analysis-report.md"
+  markdown: "framelab-analysis-report.md",
+  codebook: "framelab-codebook.md"
 };
 
-const EXPORT_MIME_TYPES: Record<ExportFormat, string> = {
+const EXPORT_MIME_TYPES: Record<DownloadableExportFormat, string> = {
   csv: "text/csv;charset=utf-8",
   json: "application/json;charset=utf-8",
-  markdown: "text/markdown;charset=utf-8"
+  markdown: "text/markdown;charset=utf-8",
+  codebook: "text/markdown;charset=utf-8"
 };
 
 export function ExportPanel() {
@@ -57,8 +62,8 @@ export function ExportPanel() {
     }
   }
 
-  function handleExport(format: ExportFormat) {
-    if (!hasWorkspaceData) {
+  function handleExport(format: DownloadableExportFormat) {
+    if (format !== "codebook" && !hasWorkspaceData) {
       return;
     }
 
@@ -74,6 +79,15 @@ export function ExportPanel() {
 
     if (format === "markdown") {
       content = buildMarkdownExport(state, locale);
+    }
+
+    if (format === "codebook") {
+      if (!selectedTemplate) {
+        setStatusMessage(messages.exportPanel.noActiveTemplateSelected);
+        return;
+      }
+
+      content = buildCodebookExport(selectedTemplate, state.projectMetadata, locale);
     }
 
     downloadTextFile(EXPORT_FILENAMES[format], content, EXPORT_MIME_TYPES[format]);
@@ -183,28 +197,34 @@ export function ExportPanel() {
             <h4 className="text-lg font-semibold tracking-tight text-ink">{messages.exportPanel.title}</h4>
             <p className="text-sm leading-7 text-muted">{messages.exportPanel.description}</p>
           </div>
-          <div className="mt-4 grid gap-4 md:grid-cols-3 xl:grid-cols-1">
-            {(["csv", "json", "markdown"] as ExportFormat[]).map((format) => (
+          <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-2">
+            {(["csv", "json", "markdown", "codebook"] as DownloadableExportFormat[]).map((format) => (
               <div key={format} className="surface-card p-4 shadow-none">
                 <p className="text-base font-semibold text-ink">
                   {format === "csv" && messages.exportPanel.exportCsv}
                   {format === "json" && messages.exportPanel.exportJson}
                   {format === "markdown" && messages.exportPanel.exportMarkdown}
+                  {format === "codebook" && messages.exportPanel.exportCodebook}
                 </p>
                 <p className="mt-2 text-sm leading-7 text-muted">
                   {format === "csv" && messages.exportPanel.csvDescription}
                   {format === "json" && messages.exportPanel.jsonDescription}
                   {format === "markdown" && messages.exportPanel.markdownDescription}
+                  {format === "codebook" &&
+                    (selectedTemplate
+                      ? messages.exportPanel.codebookDescription
+                      : messages.exportPanel.noActiveTemplateSelected)}
                 </p>
                 <button
                   type="button"
                   onClick={() => handleExport(format)}
-                  disabled={!hasWorkspaceData}
+                  disabled={format === "codebook" ? !selectedTemplate : !hasWorkspaceData}
                   className="button-primary mt-4 w-full px-4 py-2.5"
                 >
                   {format === "csv" && messages.exportPanel.exportCsv}
                   {format === "json" && messages.exportPanel.exportJson}
                   {format === "markdown" && messages.exportPanel.exportMarkdown}
+                  {format === "codebook" && messages.exportPanel.exportCodebook}
                 </button>
               </div>
             ))}
