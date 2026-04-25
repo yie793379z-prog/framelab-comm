@@ -1,4 +1,4 @@
-import { analysisTemplates } from "@/features/templates/data/templates";
+import { getProjectTemplateById, getProjectTemplates } from "@/features/templates/utils/project-codebooks";
 import { getLocalizedText } from "@/i18n/utils";
 import type { Locale } from "@/i18n/types";
 import type { CodingFieldValue, CodingRow } from "@/types/coding";
@@ -24,13 +24,14 @@ function stringifyCodingValue(value: CodingFieldValue) {
   return String(value);
 }
 
-function buildFieldColumns(locale: Locale) {
+function buildFieldColumns(workspace: WorkspaceState, locale: Locale) {
+  const projectTemplates = getProjectTemplates(workspace.customProjectCodebooks);
   const fieldIds = Array.from(
-    new Set(analysisTemplates.flatMap((template) => template.fields.map((field) => field.id)))
+    new Set(projectTemplates.flatMap((template) => template.fields.map((field) => field.id)))
   );
 
   return fieldIds.map((fieldId) => {
-    const field = analysisTemplates.flatMap((template) => template.fields).find((item) => item.id === fieldId);
+    const field = projectTemplates.flatMap((template) => template.fields).find((item) => item.id === fieldId);
 
     return {
       id: fieldId,
@@ -46,7 +47,7 @@ function buildCsvRow(
   locale: Locale
 ) {
   const sample = workspace.samples.find((item) => item.id === row.sampleId);
-  const template = analysisTemplates.find((item) => item.id === row.templateId);
+  const template = getProjectTemplateById(row.templateId, workspace.customProjectCodebooks);
 
   const values = [
     row.sampleId,
@@ -63,7 +64,7 @@ function buildCsvRow(
 }
 
 export function buildCsvExport(workspace: WorkspaceState, locale: Locale) {
-  const fieldColumns = buildFieldColumns(locale);
+  const fieldColumns = buildFieldColumns(workspace, locale);
   const headers = [
     locale === "zh-CN" ? "样本ID" : "sampleId",
     locale === "zh-CN" ? "样本标题" : "sampleTitle",

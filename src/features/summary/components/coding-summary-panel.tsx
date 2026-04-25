@@ -3,7 +3,7 @@
 import { EmptyState } from "@/components/shared/empty-state";
 import { buildCodingSummary } from "@/features/summary/utils/build-coding-summary";
 import { useWorkspace } from "@/features/coding/state/workspace-context";
-import { analysisTemplates } from "@/features/templates/data/templates";
+import { getProjectTemplateById } from "@/features/templates/utils/project-codebooks";
 import { useLanguage } from "@/i18n/context";
 import { formatMessage, getLocalizedText } from "@/i18n/utils";
 
@@ -30,7 +30,7 @@ export function CodingSummaryPanel() {
     );
   }
 
-  const template = analysisTemplates.find((item) => item.id === state.selectedTemplateId);
+  const template = getProjectTemplateById(state.selectedTemplateId, state.customProjectCodebooks);
 
   if (!template) {
     return (

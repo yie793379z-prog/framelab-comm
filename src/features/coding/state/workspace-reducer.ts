@@ -1,8 +1,14 @@
 import { parseTextInput } from "@/features/import/utils/parse-text-input";
 import { emptyProjectMetadata } from "@/features/project/utils/project-metadata";
+import {
+  createCustomProjectCodebook,
+  emptyProjectCodebooks,
+  updateLocalizedTextValue
+} from "@/features/templates/utils/project-codebooks";
 import type { CodingFieldValue } from "@/types/coding";
 import type { ProjectMetadata } from "@/types/project";
 import type { SampleRecord } from "@/types/sample";
+import type { Locale } from "@/i18n/types";
 import type { PersistedWorkspaceState, WorkspaceState } from "@/types/workspace";
 
 type WorkspaceAction =
@@ -14,6 +20,47 @@ type WorkspaceAction =
       type: "UPDATE_PROJECT_METADATA";
       payload: {
         field: keyof ProjectMetadata;
+        value: string;
+      };
+    }
+  | {
+      type: "CREATE_CUSTOM_CODEBOOK";
+      payload: {
+        templateId: string;
+      };
+    }
+  | {
+      type: "RESET_CUSTOM_CODEBOOK";
+      payload: {
+        templateId: string;
+      };
+    }
+  | {
+      type: "UPDATE_CUSTOM_CODEBOOK_TEMPLATE_TEXT";
+      payload: {
+        templateId: string;
+        locale: Locale;
+        field: "name" | "shortDescription" | "researchUseCase";
+        value: string;
+      };
+    }
+  | {
+      type: "UPDATE_CUSTOM_CODEBOOK_FIELD_TEXT";
+      payload: {
+        templateId: string;
+        fieldId: string;
+        locale: Locale;
+        field: "label" | "description" | "placeholder";
+        value: string;
+      };
+    }
+  | {
+      type: "UPDATE_CUSTOM_CODEBOOK_OPTION_LABEL";
+      payload: {
+        templateId: string;
+        fieldId: string;
+        optionValue: string;
+        locale: Locale;
         value: string;
       };
     }
@@ -44,10 +91,119 @@ type WorkspaceAction =
       type: "LOAD_PROJECT";
       payload: Pick<
         WorkspaceState,
-        "samples" | "selectedTemplateId" | "selectedSampleId" | "codingRows" | "projectMetadata"
+        | "samples"
+        | "selectedTemplateId"
+        | "selectedSampleId"
+        | "codingRows"
+        | "projectMetadata"
+        | "customProjectCodebooks"
       >;
     }
   | { type: "RESET_WORKSPACE" };
+
+function updateCustomCodebookTemplateText(
+  state: WorkspaceState,
+  payload: Extract<WorkspaceAction, { type: "UPDATE_CUSTOM_CODEBOOK_TEMPLATE_TEXT" }>["payload"]
+) {
+  const currentTemplate = state.customProjectCodebooks[payload.templateId];
+
+  if (!currentTemplate) {
+    return state;
+  }
+
+  return {
+    ...state,
+    customProjectCodebooks: {
+      ...state.customProjectCodebooks,
+      [payload.templateId]: {
+        ...currentTemplate,
+        [payload.field]: updateLocalizedTextValue(currentTemplate[payload.field], payload.locale, payload.value)
+      }
+    }
+  };
+}
+
+function updateCustomCodebookFieldText(
+  state: WorkspaceState,
+  payload: Extract<WorkspaceAction, { type: "UPDATE_CUSTOM_CODEBOOK_FIELD_TEXT" }>["payload"]
+) {
+  const currentTemplate = state.customProjectCodebooks[payload.templateId];
+
+  if (!currentTemplate) {
+    return state;
+  }
+
+  return {
+    ...state,
+    customProjectCodebooks: {
+      ...state.customProjectCodebooks,
+      [payload.templateId]: {
+        ...currentTemplate,
+        fields: currentTemplate.fields.map((field) => {
+          if (field.id !== payload.fieldId) {
+            return field;
+          }
+
+          if (payload.field === "placeholder") {
+            return {
+              ...field,
+              placeholder: updateLocalizedTextValue(
+                field.placeholder ?? { en: "", "zh-CN": "" },
+                payload.locale,
+                payload.value
+              )
+            };
+          }
+
+          return {
+            ...field,
+            [payload.field]: updateLocalizedTextValue(field[payload.field], payload.locale, payload.value)
+          };
+        })
+      }
+    }
+  };
+}
+
+function updateCustomCodebookOptionLabel(
+  state: WorkspaceState,
+  payload: Extract<WorkspaceAction, { type: "UPDATE_CUSTOM_CODEBOOK_OPTION_LABEL" }>["payload"]
+) {
+  const currentTemplate = state.customProjectCodebooks[payload.templateId];
+
+  if (!currentTemplate) {
+    return state;
+  }
+
+  return {
+    ...state,
+    customProjectCodebooks: {
+      ...state.customProjectCodebooks,
+      [payload.templateId]: {
+        ...currentTemplate,
+        fields: currentTemplate.fields.map((field) => {
+          if (field.id !== payload.fieldId) {
+            return field;
+          }
+
+          return {
+            ...field,
+            options: field.options?.map((option) => {
+              if (option.value !== payload.optionValue) {
+                return option;
+              }
+
+              return {
+                ...option,
+                label: updateLocalizedTextValue(option.label, payload.locale, payload.value)
+              };
+            })
+          };
+        })
+      }
+    }
+  };
+}
 
 function isEmptyCodingValue(value: CodingFieldValue | undefined) {
   return value === null || value === undefined || value === "" || (Array.isArray(value) && value.length === 0);
@@ -152,6 +308,7 @@ export const initialWorkspaceState: WorkspaceState = {
   selectedSampleId: null,
   codingRows: [],
   projectMetadata: emptyProjectMetadata,
+  customProjectCodebooks: emptyProjectCodebooks,
   exportFormats: ["csv", "json", "markdown"]
 };
 
@@ -163,7 +320,8 @@ function restoreWorkspaceState(payload: PersistedWorkspaceState): WorkspaceState
     selectedTemplateId: payload.selectedTemplateId,
     selectedSampleId: payload.selectedSampleId,
     codingRows: payload.codingRows,
-    projectMetadata: payload.projectMetadata
+    projectMetadata: payload.projectMetadata,
+    customProjectCodebooks: payload.customProjectCodebooks
   };
 }
 
@@ -208,6 +366,49 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
           [action.payload.field]: action.payload.value
         }
       };
+
+    case "CREATE_CUSTOM_CODEBOOK": {
+      const customCodebook = createCustomProjectCodebook(
+        action.payload.templateId,
+        state.customProjectCodebooks
+      );
+
+      if (!customCodebook) {
+        return state;
+      }
+
+      return {
+        ...state,
+        customProjectCodebooks: {
+          ...state.customProjectCodebooks,
+          [action.payload.templateId]: customCodebook
+        },
+        selectedTemplateId: action.payload.templateId
+      };
+    }
+
+    case "RESET_CUSTOM_CODEBOOK": {
+      if (!state.customProjectCodebooks[action.payload.templateId]) {
+        return state;
+      }
+
+      const nextCodebooks = { ...state.customProjectCodebooks };
+      delete nextCodebooks[action.payload.templateId];
+
+      return {
+        ...state,
+        customProjectCodebooks: nextCodebooks
+      };
+    }
+
+    case "UPDATE_CUSTOM_CODEBOOK_TEMPLATE_TEXT":
+      return updateCustomCodebookTemplateText(state, action.payload);
+
+    case "UPDATE_CUSTOM_CODEBOOK_FIELD_TEXT":
+      return updateCustomCodebookFieldText(state, action.payload);
+
+    case "UPDATE_CUSTOM_CODEBOOK_OPTION_LABEL":
+      return updateCustomCodebookOptionLabel(state, action.payload);
 
     case "SELECT_TEMPLATE":
       return {
@@ -255,7 +456,8 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
         selectedTemplateId: action.payload.selectedTemplateId,
         selectedSampleId: action.payload.selectedSampleId,
         codingRows: action.payload.codingRows,
-        projectMetadata: action.payload.projectMetadata
+        projectMetadata: action.payload.projectMetadata,
+        customProjectCodebooks: action.payload.customProjectCodebooks
       });
 
     case "RESET_WORKSPACE":

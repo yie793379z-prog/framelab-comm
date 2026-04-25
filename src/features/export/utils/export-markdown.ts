@@ -1,6 +1,6 @@
-import { analysisTemplates } from "@/features/templates/data/templates";
 import { buildCodebookSectionLines } from "@/features/export/utils/export-codebook";
 import { buildCodingSummary } from "@/features/summary/utils/build-coding-summary";
+import { getProjectTemplateById } from "@/features/templates/utils/project-codebooks";
 import { getMessages, getLocalizedText, formatLocaleDate } from "@/i18n/utils";
 import type { Locale } from "@/i18n/types";
 import type { CodingFieldValue } from "@/types/coding";
@@ -27,7 +27,8 @@ function formatFieldValue(field: TemplateField, value: CodingFieldValue, locale:
 
 export function buildMarkdownExport(workspace: WorkspaceState, locale: Locale) {
   const messages = getMessages(locale);
-  const selectedTemplate = analysisTemplates.find((template) => template.id === workspace.selectedTemplateId) ?? null;
+  const selectedTemplate =
+    getProjectTemplateById(workspace.selectedTemplateId, workspace.customProjectCodebooks) ?? null;
   const summary = selectedTemplate
     ? buildCodingSummary(workspace.samples, workspace.codingRows, selectedTemplate, workspace.selectedSampleId)
     : null;

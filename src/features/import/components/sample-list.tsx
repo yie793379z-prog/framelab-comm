@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { useWorkspace } from "@/features/coding/state/workspace-context";
 import { buildSampleListView, type SampleFilter, type SampleSort } from "@/features/import/utils/build-sample-list-view";
-import { analysisTemplates } from "@/features/templates/data/templates";
+import { getProjectTemplateById } from "@/features/templates/utils/project-codebooks";
 import { useLanguage } from "@/i18n/context";
 import { formatMessage } from "@/i18n/utils";
 
@@ -16,7 +16,7 @@ export function SampleList() {
   const [sort, setSort] = useState<SampleSort>("import-order");
 
   const activeTemplate =
-    analysisTemplates.find((template) => template.id === state.selectedTemplateId) ?? null;
+    getProjectTemplateById(state.selectedTemplateId, state.customProjectCodebooks) ?? null;
 
   useEffect(() => {
     if (!activeTemplate && (filter === "coded" || filter === "uncoded" || filter === "partial")) {

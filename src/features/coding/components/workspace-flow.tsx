@@ -4,6 +4,7 @@ import { SectionHeading } from "@/components/shared/section-heading";
 import { TextImportPanel } from "@/features/import/components/text-import-panel";
 import { SampleList } from "@/features/import/components/sample-list";
 import { TemplatePicker } from "@/features/templates/components/template-picker";
+import { CodebookEditorPanel } from "@/features/templates/components/codebook-editor-panel";
 import { CodingForm } from "@/features/coding/components/coding-form";
 import { CodingPreview } from "@/features/coding/components/coding-preview";
 import { ExportPanel } from "@/features/export/components/export-panel";
@@ -12,14 +13,14 @@ import { useWorkspace } from "@/features/coding/state/workspace-context";
 import { LocalAutosaveBanner } from "@/features/project/components/local-autosave-banner";
 import { ProjectMetadataPanel } from "@/features/project/components/project-metadata-panel";
 import { CodingSummaryPanel } from "@/features/summary/components/coding-summary-panel";
-import { analysisTemplates } from "@/features/templates/data/templates";
+import { getProjectTemplateById } from "@/features/templates/utils/project-codebooks";
 import { useLanguage } from "@/i18n/context";
 import { formatLocaleDate, formatMessage, getLocalizedText } from "@/i18n/utils";
 
 export function WorkspaceFlow() {
   const { state, autosave } = useWorkspace();
   const { locale, messages } = useLanguage();
-  const activeTemplate = analysisTemplates.find((template) => template.id === state.selectedTemplateId);
+  const activeTemplate = getProjectTemplateById(state.selectedTemplateId, state.customProjectCodebooks);
   const activeSample = state.samples.find((sample) => sample.id === state.selectedSampleId);
 
   return (
@@ -73,6 +74,7 @@ export function WorkspaceFlow() {
           description={messages.workspace.step2Description}
         />
         <TemplatePicker />
+        <CodebookEditorPanel />
       </div>
 
       <div className="space-y-5">

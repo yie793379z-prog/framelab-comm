@@ -8,7 +8,7 @@ import { buildCodebookExport } from "@/features/export/utils/export-codebook";
 import { buildJsonExport } from "@/features/export/utils/export-json";
 import { buildMarkdownExport } from "@/features/export/utils/export-markdown";
 import { downloadTextFile } from "@/lib/utils/download-file";
-import { analysisTemplates } from "@/features/templates/data/templates";
+import { getProjectTemplateById } from "@/features/templates/utils/project-codebooks";
 import { useLanguage } from "@/i18n/context";
 import { formatLocaleDate, formatMessage, getLocalizedText } from "@/i18n/utils";
 import type { ExportFormat } from "@/types/export";
@@ -36,7 +36,8 @@ export function ExportPanel() {
   const [projectJsonInput, setProjectJsonInput] = useState("");
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const pastedJsonId = "project-json-input";
-  const selectedTemplate = analysisTemplates.find((template) => template.id === state.selectedTemplateId) ?? null;
+  const selectedTemplate =
+    getProjectTemplateById(state.selectedTemplateId, state.customProjectCodebooks) ?? null;
   const hasWorkspaceData = state.samples.length > 0;
 
   function getLoadErrorMessage(errorKey: LoadProjectErrorKey) {

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { fetchSuggestionStatus, requestSuggestions } from "@/features/ai/request-suggestions";
 import { useWorkspace } from "@/features/coding/state/workspace-context";
-import { analysisTemplates } from "@/features/templates/data/templates";
+import { getProjectTemplateById } from "@/features/templates/utils/project-codebooks";
 import { useLanguage } from "@/i18n/context";
 import { getLocalizedText } from "@/i18n/utils";
 import type { SuggestionStatus } from "@/features/ai/types";
@@ -123,7 +123,8 @@ export function BatchSuggestionsPanel() {
     };
   }, [locale, messages.codingForm.localFallbackMessage, messages.codingForm.mockModeMessage]);
 
-  const activeTemplate = analysisTemplates.find((template) => template.id === state.selectedTemplateId) ?? null;
+  const activeTemplate =
+    getProjectTemplateById(state.selectedTemplateId, state.customProjectCodebooks) ?? null;
   const eligibleSamples = activeTemplate
     ? getEligibleUncodedSamples(state.samples, state.codingRows, activeTemplate)
     : [];

@@ -1,5 +1,6 @@
 import { analysisTemplates } from "@/features/templates/data/templates";
 import { emptyProjectMetadata, sanitizeProjectMetadata } from "@/features/project/utils/project-metadata";
+import { sanitizeProjectCodebooks } from "@/features/templates/utils/project-codebooks";
 import type { CodingFieldValue, CodingRow } from "@/types/coding";
 import type { SampleMetadata, SampleRecord } from "@/types/sample";
 import type { WorkspaceState } from "@/types/workspace";
@@ -19,7 +20,12 @@ type LoadProjectResult =
       success: true;
       data: Pick<
         WorkspaceState,
-        "samples" | "selectedTemplateId" | "selectedSampleId" | "codingRows" | "projectMetadata"
+        | "samples"
+        | "selectedTemplateId"
+        | "selectedSampleId"
+        | "codingRows"
+        | "projectMetadata"
+        | "customProjectCodebooks"
       >;
     }
   | {
@@ -203,6 +209,7 @@ export function importProjectJson(rawInput: string): LoadProjectResult {
 
   const codingRows = sanitizeCodingRows(parsed.codingResults);
   const projectMetadata = sanitizeProjectMetadata(parsed.projectMetadata);
+  const customProjectCodebooks = sanitizeProjectCodebooks(parsed.customProjectCodebooks);
 
   if (!codingRows) {
     return {
@@ -269,7 +276,8 @@ export function importProjectJson(rawInput: string): LoadProjectResult {
       selectedTemplateId,
       selectedSampleId: samples[0]?.id ?? null,
       codingRows,
-      projectMetadata: projectMetadata ?? emptyProjectMetadata
+      projectMetadata: projectMetadata ?? emptyProjectMetadata,
+      customProjectCodebooks
     }
   };
 }

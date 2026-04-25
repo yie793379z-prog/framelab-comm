@@ -36,6 +36,7 @@ export interface SuggestionStatus {
 export interface SuggestionRequestPayload {
   sample: SampleRecord;
   templateId: string;
+  templateSnapshot?: AnalysisTemplate;
   currentValues: Record<string, CodingFieldValue>;
   locale: Locale;
 }

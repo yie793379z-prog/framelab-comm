@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { fetchSuggestionStatus, requestSuggestions } from "@/features/ai/request-suggestions";
 import { useWorkspace } from "@/features/coding/state/workspace-context";
-import { analysisTemplates } from "@/features/templates/data/templates";
+import { getProjectTemplateById } from "@/features/templates/utils/project-codebooks";
 import { useLanguage } from "@/i18n/context";
 import { formatMessage, getCountWord, getLocalizedText } from "@/i18n/utils";
 import type { SuggestionStatus } from "@/features/ai/types";
@@ -197,7 +197,7 @@ export function CodingForm() {
     );
   }
 
-  const template = analysisTemplates.find((item) => item.id === state.selectedTemplateId);
+  const template = getProjectTemplateById(state.selectedTemplateId, state.customProjectCodebooks);
   const sample = state.samples.find((item) => item.id === state.selectedSampleId);
 
   if (!template || !sample) {

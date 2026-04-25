@@ -138,6 +138,30 @@ export const appDictionary = {
       fieldCount: "{count} fields",
       selectAction: "Use template: {title}"
     },
+    codebookEditor: {
+      title: "Codebook editor",
+      description:
+        "Copy the active built-in template into a project-level codebook and adapt its labels for your coursework or research question.",
+      noTemplateSelected: "Choose a template before customizing the project codebook.",
+      customize: "Customize this codebook",
+      usingBuiltInTemplate: "Using the built-in template",
+      usingCustomProjectCodebook: "Using custom project codebook",
+      resetToBuiltIn: "Reset to built-in template",
+      editableLabelsOnly: "Editable labels only. This v1 editor changes user-facing codebook text, not the underlying schema.",
+      keysAndValuesStable: "Editing labels does not change stored field keys or option values.",
+      templateName: "Template name",
+      templateDescription: "Template description",
+      recommendedUseCase: "Recommended use case",
+      fieldLabel: "Field label",
+      helpText: "Help text",
+      placeholder: "Placeholder",
+      optionLabel: "Option label",
+      savedLocally: "Custom codebook saved locally and included in project JSON export.",
+      resetWarning:
+        "Reset this custom project codebook back to the built-in template? Stored coding values will be kept, but your custom labels will be removed.",
+      editorSectionTitle: "Edit codebook text",
+      customBadge: "Custom"
+    },
     codingForm: {
       emptyTemplateTitle: "Choose a template first",
       emptyTemplateDescription:
@@ -492,6 +516,28 @@ export const appDictionary = {
       helper: "切换模板后，当前样本对应的编码表单和预览会同步更新。",
       fieldCount: "{count} 个字段",
       selectAction: "使用模板：{title}"
+    },
+    codebookEditor: {
+      title: "编码表编辑器",
+      description: "将当前内置模板复制为项目级编码表后，你可以按课程作业或研究问题需要修改其展示文本。",
+      noTemplateSelected: "请先选择模板，再自定义项目编码表。",
+      customize: "自定义当前编码表",
+      usingBuiltInTemplate: "当前使用内置模板",
+      usingCustomProjectCodebook: "当前使用项目自定义编码表",
+      resetToBuiltIn: "重置为内置模板",
+      editableLabelsOnly: "当前 v1 仅支持编辑展示文本，不会修改底层字段结构。",
+      keysAndValuesStable: "修改标签不会改变已存储的字段键名或选项值。",
+      templateName: "模板名称",
+      templateDescription: "模板说明",
+      recommendedUseCase: "推荐使用场景",
+      fieldLabel: "字段标签",
+      helpText: "说明文本",
+      placeholder: "占位提示",
+      optionLabel: "选项标签",
+      savedLocally: "自定义编码表会保存在本地，并包含在项目 JSON 导出中。",
+      resetWarning: "是否将当前自定义编码表重置回内置模板？已有编码值会保留，但自定义标签将被移除。",
+      editorSectionTitle: "编辑编码表文本",
+      customBadge: "自定义"
     },
     codingForm: {
       emptyTemplateTitle: "请先选择模板",

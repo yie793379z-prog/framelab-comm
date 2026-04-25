@@ -24,3 +24,7 @@ export interface AnalysisTemplate {
   researchUseCase: LocalizedText;
   fields: TemplateField[];
 }
+
+export type ProjectCodebook = AnalysisTemplate;
+
+export type ProjectCodebookMap = Record<string, ProjectCodebook>;

@@ -67,6 +67,7 @@ export async function requestSuggestions(input: GenerateSuggestionsInput): Promi
   const payload: SuggestionRequestPayload = {
     sample: input.sample,
     templateId: input.template.id,
+    templateSnapshot: input.template,
     currentValues: input.currentValues,
     locale: input.locale
   };

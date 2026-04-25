@@ -7,7 +7,14 @@ export function getLocalizedText(text: LocalizedText | undefined, locale: Locale
     return "";
   }
 
-  return text[locale];
+  const localizedValue = text[locale]?.trim();
+
+  if (localizedValue) {
+    return text[locale];
+  }
+
+  const fallbackLocale: Locale = locale === "zh-CN" ? "en" : "zh-CN";
+  return text[fallbackLocale] ?? "";
 }
 
 export function formatMessage(template: string, values: Record<string, string | number>) {

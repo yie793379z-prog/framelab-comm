@@ -1,5 +1,6 @@
 import { analysisTemplates } from "@/features/templates/data/templates";
 import { emptyProjectMetadata, hasProjectMetadataValue, sanitizeProjectMetadata } from "@/features/project/utils/project-metadata";
+import { sanitizeProjectCodebooks } from "@/features/templates/utils/project-codebooks";
 import type { CodingFieldValue, CodingRow } from "@/types/coding";
 import type { SampleMetadata, SampleRecord } from "@/types/sample";
 import type { PersistedWorkspaceState, WorkspaceState } from "@/types/workspace";
@@ -159,7 +160,13 @@ function sanitizeCodingRows(input: unknown): CodingRow[] | null {
 export function hasMeaningfulWorkspaceData(
   state: Pick<
     WorkspaceState,
-    "importText" | "samples" | "selectedTemplateId" | "selectedSampleId" | "codingRows" | "projectMetadata"
+    | "importText"
+    | "samples"
+    | "selectedTemplateId"
+    | "selectedSampleId"
+    | "codingRows"
+    | "projectMetadata"
+    | "customProjectCodebooks"
   >
 ) {
   return (
@@ -168,7 +175,8 @@ export function hasMeaningfulWorkspaceData(
     state.codingRows.length > 0 ||
     state.selectedTemplateId !== null ||
     state.selectedSampleId !== null ||
-    hasProjectMetadataValue(state.projectMetadata)
+    hasProjectMetadataValue(state.projectMetadata) ||
+    Object.keys(state.customProjectCodebooks).length > 0
   );
 }
 
@@ -182,7 +190,8 @@ export function createWorkspaceAutosaveSnapshot(state: WorkspaceState): Workspac
       selectedTemplateId: state.selectedTemplateId,
       selectedSampleId: state.selectedSampleId,
       codingRows: state.codingRows,
-      projectMetadata: state.projectMetadata
+      projectMetadata: state.projectMetadata,
+      customProjectCodebooks: state.customProjectCodebooks
     }
   };
 }
@@ -215,6 +224,7 @@ export function parseWorkspaceAutosave(rawInput: string): WorkspaceAutosaveResul
 
   const importText = typeof parsed.workspace.importText === "string" ? parsed.workspace.importText : "";
   const projectMetadata = sanitizeProjectMetadata(parsed.workspace.projectMetadata);
+  const customProjectCodebooks = sanitizeProjectCodebooks(parsed.workspace.customProjectCodebooks);
   const validTemplateIds = new Set(analysisTemplates.map((template) => template.id));
   const validSampleIds = new Set(samples.map((sample) => sample.id));
   const rawSelectedTemplateId = parsed.workspace.selectedTemplateId;
@@ -253,7 +263,8 @@ export function parseWorkspaceAutosave(rawInput: string): WorkspaceAutosaveResul
     selectedTemplateId,
     selectedSampleId,
     codingRows,
-    projectMetadata: projectMetadata ?? emptyProjectMetadata
+    projectMetadata: projectMetadata ?? emptyProjectMetadata,
+    customProjectCodebooks
   };
 
   if (!hasMeaningfulWorkspaceData(workspace)) {

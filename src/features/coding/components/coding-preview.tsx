@@ -1,8 +1,8 @@
 "use client";
 
 import { EmptyState } from "@/components/shared/empty-state";
-import { analysisTemplates } from "@/features/templates/data/templates";
 import { useWorkspace } from "@/features/coding/state/workspace-context";
+import { getProjectTemplateById } from "@/features/templates/utils/project-codebooks";
 import { useLanguage } from "@/i18n/context";
 import { getLocalizedText } from "@/i18n/utils";
 import type { CodingFieldValue } from "@/types/coding";
@@ -52,7 +52,7 @@ export function CodingPreview() {
     );
   }
 
-  const template = analysisTemplates.find((item) => item.id === state.selectedTemplateId);
+  const template = getProjectTemplateById(state.selectedTemplateId, state.customProjectCodebooks);
   const sample = state.samples.find((item) => item.id === state.selectedSampleId);
 
   if (!template || !sample) {

@@ -3,6 +3,7 @@ import { getGeminiSuggestions } from "@/features/ai/providers/gemini-provider";
 import { getMockSuggestions } from "@/features/ai/providers/mock-provider";
 import { getOpenAiSuggestions } from "@/features/ai/providers/openai-provider";
 import { analysisTemplates } from "@/features/templates/data/templates";
+import { sanitizeProjectCodebookAgainstBase } from "@/features/templates/utils/project-codebooks";
 import { getMessages } from "@/i18n/utils";
 import type { Locale } from "@/i18n/types";
 import type {
@@ -142,11 +143,14 @@ function parseRequestBody(body: unknown) {
     return { success: false as const, locale };
   }
 
-  const template = analysisTemplates.find((item) => item.id === candidate.templateId);
+  const baseTemplate = analysisTemplates.find((item) => item.id === candidate.templateId);
 
-  if (!template) {
+  if (!baseTemplate) {
     return { success: false as const, locale };
   }
+
+  const template =
+    sanitizeProjectCodebookAgainstBase(candidate.templateSnapshot, baseTemplate) ?? baseTemplate;
 
   return {
     success: true as const,
