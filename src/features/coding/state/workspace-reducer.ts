@@ -368,6 +368,10 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
       };
 
     case "CREATE_CUSTOM_CODEBOOK": {
+      if (state.customProjectCodebooks[action.payload.templateId]) {
+        return state;
+      }
+
       const customCodebook = createCustomProjectCodebook(
         action.payload.templateId,
         state.customProjectCodebooks

@@ -33,11 +33,29 @@ Direct LLM chat is useful for one-off analysis, brainstorming, or getting a quic
 
 FrameLab does not claim to be smarter than ChatGPT or Gemini. Its value is in giving students a clearer workflow: built-in templates, consistent fields, editable coding forms, CSV/JSON/Markdown export, project reload, bilingual UI, and human-in-the-loop review. AI suggestions are optional and always editable. The main benefit is structure, reproducibility, and better usability for coursework and small research projects.
 
+## Custom Project Codebooks
+
+FrameLab `v0.1` includes a lightweight project-level codebook customization flow. You can copy the active built-in template into a custom project codebook and then adapt the user-facing text for your own coursework or research question.
+
+In this version, you can edit:
+
+- template name
+- template description
+- recommended use case
+- field labels
+- field help text
+- placeholders
+- option labels
+
+To keep coding data stable, FrameLab does not yet allow changes to field keys, field types, or option values. Custom project codebooks are saved locally, included in project JSON exports, and restored from local autosave or JSON project reload.
+
 ## Key Features
 
 - Import multiple text samples into a local workspace
 - Import from pasted text or local `.txt`, `.md`, and `.csv` files
 - Switch between four communication-oriented templates
+- Copy a built-in template into a project-level custom codebook
+- Edit template names, descriptions, field labels, help text, placeholders, and option labels
 - Edit coding fields sample by sample
 - Generate mock AI-assisted suggestions by default
 - Optionally enable real OpenAI- or Gemini-backed suggestions with your own API key
@@ -51,10 +69,11 @@ FrameLab does not claim to be smarter than ChatGPT or Gemini. Its value is in gi
 1. Paste one or more text samples into the workspace, or choose a local TXT, Markdown, or CSV file.
 2. Separate samples with blank lines.
 3. Choose a template such as `News Framing Analysis` or `Crisis Communication Scan`.
-4. Select a sample from the sample list.
-5. Edit coding fields manually.
-6. Optionally generate AI suggestions as editable starting points.
-7. Export your workspace as CSV, JSON, or Markdown.
+4. Optionally customize the active codebook text for your project.
+5. Select a sample from the sample list.
+6. Edit coding fields manually.
+7. Optionally generate AI suggestions as editable starting points.
+8. Export your workspace as CSV, JSON, or Markdown.
 
 ## Screenshots
 
@@ -111,8 +130,8 @@ If multiple matching columns exist, FrameLab uses the first one. CSV parsing hap
 ## Export Formats
 
 - `CSV`: flattened coded data by sample, template, and field values
-- `JSON`: workspace-style project export with samples, selected template, coding results, and export metadata that can be loaded back into FrameLab
-- `Markdown`: a readable analysis report with methodology note, per-sample coding summary, and AI disclaimer
+- `JSON`: workspace-style project export with samples, selected template, project metadata, custom project codebooks, coding results, and export metadata that can be loaded back into FrameLab
+- `Markdown`: a readable analysis report with project metadata, coding summary, codebook section, per-sample coding summary, and AI disclaimer
 
 ## Bilingual Interface
 
@@ -222,7 +241,7 @@ Current direction:
 
 - `v0.1`: local MVP workflow
 - `v0.2`: usability and documentation polish
-- `v0.3`: richer project persistence and custom codebooks
+- `v0.3`: richer schema editing and project workflow controls
 - `v0.4`: expanded AI configuration and provider options
 
 ## Contributing

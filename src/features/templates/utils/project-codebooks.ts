@@ -194,7 +194,7 @@ export function createCustomProjectCodebook(
   templateId: string,
   customProjectCodebooks: ProjectCodebookMap
 ) {
-  const sourceTemplate = getProjectTemplateById(templateId, customProjectCodebooks);
+  const sourceTemplate = getBuiltInTemplateById(templateId);
 
   return sourceTemplate ? cloneTemplate(sourceTemplate) : null;
 }

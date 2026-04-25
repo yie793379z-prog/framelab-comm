@@ -26,12 +26,12 @@ Usability and documentation:
 
 ## v0.3
 
-Richer project persistence and custom codebooks:
+Richer schema editing and project workflow:
 
 - improve project save/load flow beyond the current JSON export/import
-- add clearer named-project workflow and project metadata
-- create and edit custom codebooks
-- duplicate and modify built-in templates
+- expand project-level codebook editing beyond display text only
+- add clearer named-project workflow and project metadata controls
+- support safer field-level schema customization without breaking saved coding rows
 - improve dataset import for CSV and structured text
 
 ## v0.4
