@@ -1,5 +1,7 @@
 import { parseTextInput } from "@/features/import/utils/parse-text-input";
+import { emptyProjectMetadata } from "@/features/project/utils/project-metadata";
 import type { CodingFieldValue } from "@/types/coding";
+import type { ProjectMetadata } from "@/types/project";
 import type { SampleRecord } from "@/types/sample";
 import type { PersistedWorkspaceState, WorkspaceState } from "@/types/workspace";
 
@@ -8,6 +10,13 @@ type WorkspaceAction =
   | { type: "RESET_IMPORT_TEXT" }
   | { type: "LOAD_SAMPLES_FROM_IMPORT" }
   | { type: "LOAD_SAMPLES"; payload: SampleRecord[] }
+  | {
+      type: "UPDATE_PROJECT_METADATA";
+      payload: {
+        field: keyof ProjectMetadata;
+        value: string;
+      };
+    }
   | { type: "SELECT_TEMPLATE"; payload: string }
   | { type: "SELECT_SAMPLE"; payload: string }
   | {
@@ -33,7 +42,10 @@ type WorkspaceAction =
     }
   | {
       type: "LOAD_PROJECT";
-      payload: Pick<WorkspaceState, "samples" | "selectedTemplateId" | "selectedSampleId" | "codingRows">;
+      payload: Pick<
+        WorkspaceState,
+        "samples" | "selectedTemplateId" | "selectedSampleId" | "codingRows" | "projectMetadata"
+      >;
     }
   | { type: "RESET_WORKSPACE" };
 
@@ -139,6 +151,7 @@ export const initialWorkspaceState: WorkspaceState = {
   selectedTemplateId: null,
   selectedSampleId: null,
   codingRows: [],
+  projectMetadata: emptyProjectMetadata,
   exportFormats: ["csv", "json", "markdown"]
 };
 
@@ -149,7 +162,8 @@ function restoreWorkspaceState(payload: PersistedWorkspaceState): WorkspaceState
     samples: payload.samples,
     selectedTemplateId: payload.selectedTemplateId,
     selectedSampleId: payload.selectedSampleId,
-    codingRows: payload.codingRows
+    codingRows: payload.codingRows,
+    projectMetadata: payload.projectMetadata
   };
 }
 
@@ -184,6 +198,15 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
         samples: action.payload,
         selectedSampleId: action.payload[0]?.id ?? null,
         codingRows: []
+      };
+
+    case "UPDATE_PROJECT_METADATA":
+      return {
+        ...state,
+        projectMetadata: {
+          ...state.projectMetadata,
+          [action.payload.field]: action.payload.value
+        }
       };
 
     case "SELECT_TEMPLATE":
@@ -231,7 +254,8 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
         samples: action.payload.samples,
         selectedTemplateId: action.payload.selectedTemplateId,
         selectedSampleId: action.payload.selectedSampleId,
-        codingRows: action.payload.codingRows
+        codingRows: action.payload.codingRows,
+        projectMetadata: action.payload.projectMetadata
       });
 
     case "RESET_WORKSPACE":

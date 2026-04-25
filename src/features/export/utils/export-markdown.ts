@@ -1,4 +1,5 @@
 import { analysisTemplates } from "@/features/templates/data/templates";
+import { buildCodingSummary } from "@/features/summary/utils/build-coding-summary";
 import { getMessages, getLocalizedText, formatLocaleDate } from "@/i18n/utils";
 import type { Locale } from "@/i18n/types";
 import type { CodingFieldValue } from "@/types/coding";
@@ -26,24 +27,132 @@ function formatFieldValue(field: TemplateField, value: CodingFieldValue, locale:
 export function buildMarkdownExport(workspace: WorkspaceState, locale: Locale) {
   const messages = getMessages(locale);
   const selectedTemplate = analysisTemplates.find((template) => template.id === workspace.selectedTemplateId) ?? null;
+  const summary = selectedTemplate
+    ? buildCodingSummary(workspace.samples, workspace.codingRows, selectedTemplate, workspace.selectedSampleId)
+    : null;
   const generatedAt = new Date();
+  const projectTitle = workspace.projectMetadata.projectTitle.trim() || messages.exportReport.projectTitle;
+  const projectInformationLines = [
+    {
+      label: messages.projectMetadata.projectTitle,
+      value: workspace.projectMetadata.projectTitle.trim()
+    },
+    {
+      label: messages.exportReport.researchQuestion,
+      value: workspace.projectMetadata.researchQuestion.trim()
+    },
+    {
+      label: messages.exportReport.researcherName,
+      value: workspace.projectMetadata.researcherName.trim()
+    },
+    {
+      label: messages.exportReport.courseContext,
+      value: workspace.projectMetadata.courseContext.trim()
+    },
+    {
+      label: messages.exportReport.datasetDescription,
+      value: workspace.projectMetadata.datasetDescription.trim()
+    }
+  ].filter((item) => item.value);
   const lines: string[] = [
-    `# ${messages.exportReport.projectTitle}`,
+    `# ${projectTitle}`,
     "",
-    `- ${locale === "zh-CN" ? "项目标题" : "Project title"}: ${messages.exportReport.projectTitle}`,
+    `- ${messages.projectMetadata.projectTitle}: ${projectTitle}`,
     `- ${messages.exportReport.generatedDate}: ${formatLocaleDate(generatedAt, locale)}`,
-    `- ${messages.exportReport.selectedTemplate}: ${selectedTemplate ? getLocalizedText(selectedTemplate.name, locale) : messages.common.noTemplateSelected}`,
-    `- ${messages.exportReport.numberOfSamples}: ${workspace.samples.length}`,
     "",
-    `## ${messages.exportReport.methodologyNote}`,
+    `## ${messages.exportReport.projectInformation}`,
     "",
-    messages.exportReport.methodologyBody,
-    "",
-    `> ${messages.exportReport.aiDisclaimer}`,
-    "",
-    `## ${messages.exportReport.sampleCodingSummary}`,
-    ""
+    ...projectInformationLines.map((item) => `- ${item.label}: ${item.value}`),
+    ...(projectInformationLines.length ? [""] : [messages.projectMetadata.noProjectInformationYet, ""])
   ];
+
+  lines.push(`## ${messages.exportReport.selectedTemplate}`);
+  lines.push("");
+  lines.push(
+    `- ${messages.exportReport.selectedTemplate}: ${
+      selectedTemplate ? getLocalizedText(selectedTemplate.name, locale) : messages.common.noTemplateSelected
+    }`
+  );
+
+  if (selectedTemplate) {
+    lines.push(`- ${messages.exportReport.templateDescription}: ${getLocalizedText(selectedTemplate.shortDescription, locale)}`);
+  }
+
+  lines.push("");
+  lines.push(`## ${messages.exportReport.methodologyNote}`);
+  lines.push("");
+  lines.push(messages.exportReport.methodologyBody);
+
+  if (workspace.projectMetadata.methodNote.trim()) {
+    lines.push("");
+    lines.push(`**${messages.exportReport.methodNote}**: ${workspace.projectMetadata.methodNote.trim()}`);
+  }
+
+  lines.push("");
+  lines.push(`## ${messages.exportReport.codingOverview}`);
+  lines.push("");
+  lines.push(`- ${messages.codingSummary.totalSamples}: ${summary?.totalSamples ?? workspace.samples.length}`);
+  lines.push(`- ${messages.codingSummary.codedSamples}: ${summary?.codedSamples ?? 0}`);
+  lines.push(`- ${messages.codingSummary.uncodedSamples}: ${summary?.uncodedSamples ?? workspace.samples.length}`);
+  lines.push(`- ${messages.codingSummary.completion}: ${summary ? `${summary.completionPercent}%` : "0%"}`);
+  lines.push("");
+  lines.push(`## ${messages.exportReport.fieldDistributionSummary}`);
+  lines.push("");
+
+  if (!summary) {
+    lines.push(messages.exportReport.noTemplate);
+    lines.push("");
+  } else if (!summary.fieldSummaries.length) {
+    lines.push(messages.exportReport.noFieldSummary);
+    lines.push("");
+  } else {
+    for (const fieldSummary of summary.fieldSummaries) {
+      lines.push(`### ${getLocalizedText(fieldSummary.field.label, locale)}`);
+      lines.push("");
+
+      if (fieldSummary.type === "single-select" || fieldSummary.type === "multi-select") {
+        for (const option of fieldSummary.options) {
+          const optionLabel =
+            getLocalizedText(
+              fieldSummary.field.options?.find((item) => item.value === option.value)?.label,
+              locale
+            ) ?? option.value;
+          lines.push(`- ${optionLabel}: ${option.count}`);
+        }
+      }
+
+      if (fieldSummary.type === "boolean") {
+        lines.push(`- ${messages.exportReport.trueLabel}: ${fieldSummary.trueCount}`);
+        lines.push(`- ${messages.exportReport.falseLabel}: ${fieldSummary.falseCount}`);
+      }
+
+      if (fieldSummary.type === "text") {
+        lines.push(
+          `- ${messages.codingSummary.textFieldsCompleted}: ${fieldSummary.filledCount} / ${summary.totalSamples}`
+        );
+      }
+
+      if (fieldSummary.type === "number") {
+        if (fieldSummary.count === 0) {
+          lines.push(`- ${messages.codingSummary.noCodedValuesYet}`);
+        } else {
+          lines.push(`- ${messages.exportReport.count}: ${fieldSummary.count}`);
+          lines.push(`- ${messages.codingSummary.min}: ${fieldSummary.min}`);
+          lines.push(`- ${messages.codingSummary.max}: ${fieldSummary.max}`);
+          lines.push(`- ${messages.codingSummary.average}: ${fieldSummary.average?.toFixed(2)}`);
+        }
+      }
+
+      lines.push("");
+    }
+  }
+
+  lines.push(`> ${messages.exportReport.aiDisclaimer}`);
+  lines.push("");
+  lines.push(`> ${messages.exportReport.researchLimitationNote}`);
+  lines.push("");
+  lines.push(`## ${messages.exportReport.sampleCodingSummary}`);
+  lines.push("");
 
   if (!workspace.samples.length) {
     lines.push(messages.exportReport.noSamples);

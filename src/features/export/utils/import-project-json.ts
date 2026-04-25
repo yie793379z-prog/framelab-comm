@@ -1,4 +1,5 @@
 import { analysisTemplates } from "@/features/templates/data/templates";
+import { emptyProjectMetadata, sanitizeProjectMetadata } from "@/features/project/utils/project-metadata";
 import type { CodingFieldValue, CodingRow } from "@/types/coding";
 import type { SampleMetadata, SampleRecord } from "@/types/sample";
 import type { WorkspaceState } from "@/types/workspace";
@@ -16,7 +17,10 @@ export type LoadProjectErrorKey =
 type LoadProjectResult =
   | {
       success: true;
-      data: Pick<WorkspaceState, "samples" | "selectedTemplateId" | "selectedSampleId" | "codingRows">;
+      data: Pick<
+        WorkspaceState,
+        "samples" | "selectedTemplateId" | "selectedSampleId" | "codingRows" | "projectMetadata"
+      >;
     }
   | {
       success: false;
@@ -198,11 +202,19 @@ export function importProjectJson(rawInput: string): LoadProjectResult {
   }
 
   const codingRows = sanitizeCodingRows(parsed.codingResults);
+  const projectMetadata = sanitizeProjectMetadata(parsed.projectMetadata);
 
   if (!codingRows) {
     return {
       success: false,
       errorKey: "invalidCodingResults"
+    };
+  }
+
+  if (!projectMetadata) {
+    return {
+      success: false,
+      errorKey: "invalidRoot"
     };
   }
 
@@ -256,7 +268,8 @@ export function importProjectJson(rawInput: string): LoadProjectResult {
       samples,
       selectedTemplateId,
       selectedSampleId: samples[0]?.id ?? null,
-      codingRows
+      codingRows,
+      projectMetadata: projectMetadata ?? emptyProjectMetadata
     }
   };
 }

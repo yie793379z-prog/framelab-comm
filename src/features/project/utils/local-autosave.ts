@@ -1,4 +1,5 @@
 import { analysisTemplates } from "@/features/templates/data/templates";
+import { emptyProjectMetadata, hasProjectMetadataValue, sanitizeProjectMetadata } from "@/features/project/utils/project-metadata";
 import type { CodingFieldValue, CodingRow } from "@/types/coding";
 import type { SampleMetadata, SampleRecord } from "@/types/sample";
 import type { PersistedWorkspaceState, WorkspaceState } from "@/types/workspace";
@@ -155,13 +156,19 @@ function sanitizeCodingRows(input: unknown): CodingRow[] | null {
   return rows;
 }
 
-export function hasMeaningfulWorkspaceData(state: Pick<WorkspaceState, "importText" | "samples" | "selectedTemplateId" | "selectedSampleId" | "codingRows">) {
+export function hasMeaningfulWorkspaceData(
+  state: Pick<
+    WorkspaceState,
+    "importText" | "samples" | "selectedTemplateId" | "selectedSampleId" | "codingRows" | "projectMetadata"
+  >
+) {
   return (
     state.importText.trim().length > 0 ||
     state.samples.length > 0 ||
     state.codingRows.length > 0 ||
     state.selectedTemplateId !== null ||
-    state.selectedSampleId !== null
+    state.selectedSampleId !== null ||
+    hasProjectMetadataValue(state.projectMetadata)
   );
 }
 
@@ -174,7 +181,8 @@ export function createWorkspaceAutosaveSnapshot(state: WorkspaceState): Workspac
       samples: state.samples,
       selectedTemplateId: state.selectedTemplateId,
       selectedSampleId: state.selectedSampleId,
-      codingRows: state.codingRows
+      codingRows: state.codingRows,
+      projectMetadata: state.projectMetadata
     }
   };
 }
@@ -206,6 +214,7 @@ export function parseWorkspaceAutosave(rawInput: string): WorkspaceAutosaveResul
   }
 
   const importText = typeof parsed.workspace.importText === "string" ? parsed.workspace.importText : "";
+  const projectMetadata = sanitizeProjectMetadata(parsed.workspace.projectMetadata);
   const validTemplateIds = new Set(analysisTemplates.map((template) => template.id));
   const validSampleIds = new Set(samples.map((sample) => sample.id));
   const rawSelectedTemplateId = parsed.workspace.selectedTemplateId;
@@ -216,6 +225,10 @@ export function parseWorkspaceAutosave(rawInput: string): WorkspaceAutosaveResul
   }
 
   if (rawSelectedSampleId !== null && rawSelectedSampleId !== undefined && typeof rawSelectedSampleId !== "string") {
+    return { success: false };
+  }
+
+  if (!projectMetadata) {
     return { success: false };
   }
 
@@ -239,7 +252,8 @@ export function parseWorkspaceAutosave(rawInput: string): WorkspaceAutosaveResul
     samples,
     selectedTemplateId,
     selectedSampleId,
-    codingRows
+    codingRows,
+    projectMetadata: projectMetadata ?? emptyProjectMetadata
   };
 
   if (!hasMeaningfulWorkspaceData(workspace)) {

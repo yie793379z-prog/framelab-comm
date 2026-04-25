@@ -9,6 +9,7 @@ import { CodingPreview } from "@/features/coding/components/coding-preview";
 import { ExportPanel } from "@/features/export/components/export-panel";
 import { useWorkspace } from "@/features/coding/state/workspace-context";
 import { LocalAutosaveBanner } from "@/features/project/components/local-autosave-banner";
+import { ProjectMetadataPanel } from "@/features/project/components/project-metadata-panel";
 import { CodingSummaryPanel } from "@/features/summary/components/coding-summary-panel";
 import { analysisTemplates } from "@/features/templates/data/templates";
 import { useLanguage } from "@/i18n/context";
@@ -109,6 +110,7 @@ export function WorkspaceFlow() {
           title={messages.workspace.step6Title}
           description={messages.workspace.step6Description}
         />
+        <ProjectMetadataPanel />
         <ExportPanel />
       </div>
     </div>

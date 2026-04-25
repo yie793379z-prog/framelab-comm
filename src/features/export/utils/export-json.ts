@@ -11,9 +11,10 @@ const PROJECT_TITLES = {
 
 function buildExportMetadata(workspace: WorkspaceState, format: ExportFormat, locale: Locale): ExportMetadata {
   const selectedTemplate = analysisTemplates.find((template) => template.id === workspace.selectedTemplateId);
+  const projectTitle = workspace.projectMetadata.projectTitle.trim() || PROJECT_TITLES[locale];
 
   return {
-    projectTitle: PROJECT_TITLES[locale],
+    projectTitle,
     generatedAt: new Date().toISOString(),
     sampleCount: workspace.samples.length,
     selectedTemplateId: workspace.selectedTemplateId,
@@ -28,6 +29,7 @@ export function buildJsonExport(workspace: WorkspaceState, locale: Locale) {
 
   return JSON.stringify(
     {
+      projectMetadata: workspace.projectMetadata,
       samples: workspace.samples,
       selectedTemplate: selectedTemplate ? localizeTemplate(selectedTemplate, locale) : null,
       codingResults: workspace.codingRows,
