@@ -1,9 +1,12 @@
 # Docs
 
-English-first index:
+Start with the root-level beginner guides:
 
-- [getting-started.md](./getting-started.md)
-- [getting-started.zh-CN.md](./getting-started.zh-CN.md)
+- [GETTING_STARTED.zh-CN.md](../GETTING_STARTED.zh-CN.md)
+- [GETTING_STARTED.md](../GETTING_STARTED.md)
+
+Supporting docs:
+
 - [methodology.md](./methodology.md)
 - [social-media-datasets.md](./social-media-datasets.md)
 - [social-media-datasets.zh-CN.md](./social-media-datasets.zh-CN.md)

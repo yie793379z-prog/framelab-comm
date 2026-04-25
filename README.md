@@ -2,6 +2,10 @@
 
 English | [简体中文](./README.zh-CN.md)
 
+Start here: [GETTING_STARTED.md](./GETTING_STARTED.md)
+
+新手从这里开始：[GETTING_STARTED.zh-CN.md](./GETTING_STARTED.zh-CN.md)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 CI badge placeholder:
@@ -70,8 +74,8 @@ To keep coding data stable, FrameLab does not yet allow changes to field keys, f
 
 ## Beginner Guides
 
-- [Beginner guide (English)](./docs/getting-started.md)
-- [零基础使用指南（简体中文）](./docs/getting-started.zh-CN.md)
+- [Beginner guide (English)](./GETTING_STARTED.md)
+- [零基础使用指南（简体中文）](./GETTING_STARTED.zh-CN.md)
 - [Social media dataset guide](./docs/social-media-datasets.md)
 - [社交媒体数据导入指南](./docs/social-media-datasets.zh-CN.md)
 - [Project inspirations](./docs/inspirations.md)
@@ -184,8 +188,8 @@ Open [http://localhost:3000](http://localhost:3000).
 
 If you are not comfortable with developer terminology, use the beginner guide instead:
 
-- [docs/getting-started.md](./docs/getting-started.md)
-- [docs/getting-started.zh-CN.md](./docs/getting-started.zh-CN.md)
+- [GETTING_STARTED.md](./GETTING_STARTED.md)
+- [GETTING_STARTED.zh-CN.md](./GETTING_STARTED.zh-CN.md)
 
 ### Optional Real AI Mode
 
