@@ -8,6 +8,10 @@ export const appNavigation = [
     href: "/workspace"
   },
   {
+    labelKey: "aiSetup",
+    href: "/ai-setup"
+  },
+  {
     labelKey: "demo",
     href: "/demo"
   }

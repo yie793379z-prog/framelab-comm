@@ -10,6 +10,10 @@ Try the guided demo after running locally: [http://localhost:3000/demo](http://l
 
 查看交互式演示（本地启动后打开）：[http://localhost:3000/demo](http://localhost:3000/demo)
 
+See AI provider setup after running locally: [http://localhost:3000/ai-setup](http://localhost:3000/ai-setup)
+
+查看真实 AI 配置方法（本地启动后打开）：[http://localhost:3000/ai-setup](http://localhost:3000/ai-setup)
+
 Deployment guide: [docs/deployment.md](./docs/deployment.md)
 
 中文部署说明：[docs/deployment.zh-CN.md](./docs/deployment.zh-CN.md)
@@ -85,6 +89,7 @@ To keep coding data stable, FrameLab does not yet allow changes to field keys, f
 - [Beginner guide (English)](./GETTING_STARTED.md)
 - [零基础使用指南（简体中文）](./GETTING_STARTED.zh-CN.md)
 - [Guided demo (no API key required)](http://localhost:3000/demo)
+- [AI setup page (after running locally)](http://localhost:3000/ai-setup)
 - [Deployment guide](./docs/deployment.md)
 - [Social media dataset guide](./docs/social-media-datasets.md)
 - [社交媒体数据导入指南](./docs/social-media-datasets.zh-CN.md)
@@ -101,6 +106,7 @@ Recommended hosted demo behavior:
 - keep `AI_PROVIDER=mock`
 - do not require OpenAI or Gemini API keys
 - keep the guided demo and workspace usable without real AI
+- expose `/ai-setup` so visitors can see how real AI is configured on local or private deployments
 
 If you want real AI on a private deployment, configure your own provider keys server-side. See [docs/deployment.md](./docs/deployment.md).
 
@@ -219,6 +225,8 @@ If you are not comfortable with developer terminology, use the beginner guide in
 FrameLab defaults to local mock suggestions. Real AI is optional.
 
 For a public hosted demo, mock mode is recommended by default.
+
+For an in-app explanation page, open [http://localhost:3000/ai-setup](http://localhost:3000/ai-setup) after running locally.
 
 To enable provider-based real AI suggestions, create a local `.env.local` file and set:
 

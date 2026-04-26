@@ -28,6 +28,9 @@ export default function HomePage() {
             <Link href="/workspace" className="button-primary">
               {messages.landing.openWorkspace}
             </Link>
+            <Link href="/ai-setup" className="button-secondary">
+              {messages.landing.configureRealAi}
+            </Link>
             <Link href="/demo" className="button-secondary">
               {messages.landing.tryGuidedDemo}
             </Link>

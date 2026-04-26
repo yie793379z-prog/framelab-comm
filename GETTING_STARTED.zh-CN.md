@@ -21,6 +21,12 @@
 
 这个演示页不需要 API Key，也不会调用真实 AI。
 
+如果你想先弄清楚“为什么公开 demo 里看不到 Gemini / OpenAI 配置”，也可以在本地启动后打开：
+
+- [http://localhost:3000/ai-setup](http://localhost:3000/ai-setup)
+
+这个页面会直接解释 mock 模式、真实 AI 模式，以及本地 / 自部署如何配置环境变量。
+
 ## 一、FrameLab 是什么？
 
 你可以把 FrameLab 理解成：
@@ -477,6 +483,10 @@ FrameLab 会优先识别这些文本列名：
 - 不需要 API key
 - 更适合先熟悉流程
 
+如果你现在就想看“真实 AI 到底怎么配置”，直接打开：
+
+- [http://localhost:3000/ai-setup](http://localhost:3000/ai-setup)
+
 ### 如果你启用了真实 AI
 
 你要知道：
@@ -495,6 +505,10 @@ FrameLab 会优先识别这些文本列名：
 3. 你的已编辑字段不会被覆盖
 4. 可以稍后重试
 5. 也可以暂时切回 mock 模式
+
+如果你不确定怎样切换到 Gemini 或 OpenAI，也可以直接打开：
+
+- [http://localhost:3000/ai-setup](http://localhost:3000/ai-setup)
 
 ## 十七、批量建议怎么用才稳妥？
 

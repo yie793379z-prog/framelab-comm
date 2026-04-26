@@ -12,6 +12,12 @@ If you want a quick visual walkthrough before running the full workflow, start t
 
 The guided demo does not require API keys and does not call a real AI provider.
 
+If you want to understand why the public demo does not show Gemini or OpenAI setup directly in the webpage, also open:
+
+- [http://localhost:3000/ai-setup](http://localhost:3000/ai-setup)
+
+That page explains mock mode, real AI mode, and how to configure environment variables locally or on your own deployment.
+
 ## What FrameLab Is
 
 FrameLab is a lightweight, local-first coding workspace for communication and media studies coursework and early research projects.
@@ -103,6 +109,7 @@ If you want English:
 - AI suggestions are editable starting points, not final academic judgments.
 - Do not upload sensitive private data to real AI providers.
 - If Gemini or another real provider fails, FrameLab usually falls back to mock suggestions.
+- If you want the in-app setup explanation, open [http://localhost:3000/ai-setup](http://localhost:3000/ai-setup) after running locally.
 
 ## More Help
 

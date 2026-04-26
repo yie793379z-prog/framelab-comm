@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { EmptyState } from "@/components/shared/empty-state";
 import { fetchSuggestionStatus, requestSuggestions } from "@/features/ai/request-suggestions";
@@ -302,6 +303,14 @@ export function CodingForm() {
                 : messages.codingForm.realPrivacyNote}
             </p>
             <p className="text-sm leading-7 text-muted">{suggestionStatus.message}</p>
+            {suggestionStatus.provider === "mock" ? (
+              <div className="rounded-[1rem] border border-accent/20 bg-white/70 px-4 py-3">
+                <p className="text-sm leading-7 text-ink">{messages.codingForm.publicDemoMockNote}</p>
+                <Link href="/ai-setup" className="mt-2 inline-flex text-sm font-medium text-accent underline-offset-4 hover:underline">
+                  {messages.codingForm.configureRealAi}
+                </Link>
+              </div>
+            ) : null}
           </div>
           <button
             type="button"

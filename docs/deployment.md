@@ -2,6 +2,8 @@
 
 This guide explains how to deploy FrameLab to Vercel as a safe public demo or a private AI-enabled deployment.
 
+FrameLab also includes an in-app explanation page at `/ai-setup`. On a public deployment, keep that route available so visitors can understand why the hosted demo stays in mock mode and how real AI can be enabled on local or private deployments.
+
 ## Recommended Public Demo Mode
 
 For a public Vercel demo, keep FrameLab in mock mode:
@@ -65,6 +67,7 @@ Notes:
 - sample text is sent to the configured provider in real AI mode
 - provider usage may cost money
 - public demo deployments should usually stay in mock mode
+- after deployment, visitors can open `/ai-setup` to read the same setup guidance inside the web app
 
 ## Secret Safety
 
@@ -96,6 +99,8 @@ You can redeploy by:
 
 - clicking `Redeploy` in the Vercel dashboard
 - or pushing a new commit
+
+The `/ai-setup` page will reflect the current configured mode after the new deployment is live.
 
 ## Default Build Commands
 

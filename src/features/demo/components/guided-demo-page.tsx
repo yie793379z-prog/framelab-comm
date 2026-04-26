@@ -608,6 +608,9 @@ export function GuidedDemoPage() {
           <Link href="/workspace" className="button-primary">
             {messages.demoPage.openWorkspace}
           </Link>
+          <Link href="/ai-setup" className="button-secondary">
+            {messages.demoPage.configureRealAi}
+          </Link>
           <Link href="/" className="button-secondary">
             {locale === "zh-CN" ? "返回首页" : "Back to home"}
           </Link>

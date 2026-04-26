@@ -3,6 +3,7 @@ export const appDictionary = {
     nav: {
       home: "Home",
       workspace: "Workspace",
+      aiSetup: "AI setup",
       demo: "Demo",
       languageLabel: "Language"
     },
@@ -31,6 +32,7 @@ export const appDictionary = {
       description:
         "Import text samples, choose a communication-oriented template, review initial coding structure, and export classroom-ready outputs without the overhead of a large qualitative suite.",
       openWorkspace: "Open workspace",
+      configureRealAi: "Configure real AI",
       tryGuidedDemo: "Try guided demo",
       demoNoApiKeys: "No API key required for the demo",
       viewTemplates: "View templates",
@@ -195,6 +197,9 @@ export const appDictionary = {
       mockPrivacyNote: "Text stays local in the browser.",
       realPrivacyNote: "Selected sample text is sent to the configured AI provider.",
       mockModeMessage: "Using mock suggestions. Text stays local unless you enable real AI on the server.",
+      publicDemoMockNote:
+        "This public demo uses mock suggestions. To use real AI, run locally or self-host with your own API key.",
+      configureRealAi: "Configure real AI",
       openAiModeMessage: "Using OpenAI-backed suggestions from the configured server provider.",
       geminiModeMessage: "Using Gemini-backed suggestions from the configured server provider.",
       openAiAppliedMessage: "OpenAI suggestions applied.",
@@ -407,6 +412,7 @@ export const appDictionary = {
       previousStep: "Previous",
       nextStep: "Next",
       openWorkspace: "Open the real workspace",
+      configureRealAi: "Configure real AI",
       safetyTitle: "Honest demo notes",
       guidedNote: "This is a guided demo with hard-coded example content.",
       aiIllustrative: "Any AI suggestions shown here are illustrative only.",
@@ -419,6 +425,7 @@ export const appDictionary = {
     nav: {
       home: "首页",
       workspace: "工作区",
+      aiSetup: "AI 配置",
       demo: "演示",
       languageLabel: "语言"
     },
@@ -447,6 +454,7 @@ export const appDictionary = {
       description:
         "导入文本样本、选择传播研究模板、查看初步编码结构，并导出适合课堂或论文准备的结果，不必承担大型定性研究软件的复杂度。",
       openWorkspace: "打开工作区",
+      configureRealAi: "查看真实 AI 配置方法",
       tryGuidedDemo: "查看交互式演示",
       demoNoApiKeys: "演示页不需要 API Key",
       viewTemplates: "查看模板",
@@ -599,6 +607,8 @@ export const appDictionary = {
       mockPrivacyNote: "文本保留在本地浏览器中。",
       realPrivacyNote: "当前选中的样本文本会发送到已配置的 AI 提供方。",
       mockModeMessage: "当前使用模拟建议。除非你在服务器端启用真实 AI，否则文本会保留在本地。",
+      publicDemoMockNote: "当前公开演示使用模拟建议。如需真实 AI，请本地运行或自部署后配置自己的 API Key。",
+      configureRealAi: "查看真实 AI 配置方法",
       openAiModeMessage: "当前使用服务器端已配置的 OpenAI 建议。",
       geminiModeMessage: "当前使用服务器端已配置的 Gemini 建议。",
       openAiAppliedMessage: "OpenAI 建议已应用。",
@@ -800,6 +810,7 @@ export const appDictionary = {
       previousStep: "上一步",
       nextStep: "下一步",
       openWorkspace: "打开真实工作区",
+      configureRealAi: "查看真实 AI 配置方法",
       safetyTitle: "演示说明",
       guidedNote: "这是一个使用固定示例内容的引导式演示。",
       aiIllustrative: "这里展示的 AI 建议只是示意，不代表真实分析结果。",
