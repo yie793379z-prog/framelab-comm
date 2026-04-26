@@ -3,12 +3,15 @@ import { emptyProjectMetadata } from "@/features/project/utils/project-metadata"
 import {
   createCustomProjectCodebook,
   emptyProjectCodebooks,
+  resetProjectCodebookToBuiltIn,
+  upsertGeneratedFieldIntoProjectCodebook,
   updateLocalizedTextValue
 } from "@/features/templates/utils/project-codebooks";
 import type { CodingFieldValue } from "@/types/coding";
 import type { ProjectMetadata } from "@/types/project";
 import type { SampleRecord } from "@/types/sample";
 import type { Locale } from "@/i18n/types";
+import type { TemplateField } from "@/types/template";
 import type { PersistedWorkspaceState, WorkspaceState } from "@/types/workspace";
 
 type WorkspaceAction =
@@ -62,6 +65,13 @@ type WorkspaceAction =
         optionValue: string;
         locale: Locale;
         value: string;
+      };
+    }
+  | {
+      type: "APPLY_GENERATED_CODEBOOK_FIELD";
+      payload: {
+        templateId: string;
+        field: TemplateField;
       };
     }
   | { type: "SELECT_TEMPLATE"; payload: string }
@@ -372,10 +382,7 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
         return state;
       }
 
-      const customCodebook = createCustomProjectCodebook(
-        action.payload.templateId,
-        state.customProjectCodebooks
-      );
+      const customCodebook = createCustomProjectCodebook(action.payload.templateId);
 
       if (!customCodebook) {
         return state;
@@ -392,16 +399,41 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
     }
 
     case "RESET_CUSTOM_CODEBOOK": {
-      if (!state.customProjectCodebooks[action.payload.templateId]) {
+      const currentCustomCodebook = state.customProjectCodebooks[action.payload.templateId];
+
+      if (!currentCustomCodebook) {
         return state;
       }
 
-      const nextCodebooks = { ...state.customProjectCodebooks };
-      delete nextCodebooks[action.payload.templateId];
+      const hasGeneratedFields = currentCustomCodebook.fields.some(
+        (field) => field.generated?.source === "ai-codebook-builder"
+      );
+
+      if (!hasGeneratedFields) {
+        const nextCodebooks = { ...state.customProjectCodebooks };
+        delete nextCodebooks[action.payload.templateId];
+
+        return {
+          ...state,
+          customProjectCodebooks: nextCodebooks
+        };
+      }
+
+      const resetCodebook = resetProjectCodebookToBuiltIn(
+        action.payload.templateId,
+        state.customProjectCodebooks
+      );
+
+      if (!resetCodebook) {
+        return state;
+      }
 
       return {
         ...state,
-        customProjectCodebooks: nextCodebooks
+        customProjectCodebooks: {
+          ...state.customProjectCodebooks,
+          [action.payload.templateId]: resetCodebook
+        }
       };
     }
 
@@ -413,6 +445,28 @@ export function workspaceReducer(state: WorkspaceState, action: WorkspaceAction)
 
     case "UPDATE_CUSTOM_CODEBOOK_OPTION_LABEL":
       return updateCustomCodebookOptionLabel(state, action.payload);
+
+    case "APPLY_GENERATED_CODEBOOK_FIELD": {
+      const existingTemplate =
+        state.customProjectCodebooks[action.payload.templateId] ??
+        createCustomProjectCodebook(action.payload.templateId);
+
+      if (!existingTemplate) {
+        return state;
+      }
+
+      return {
+        ...state,
+        customProjectCodebooks: {
+          ...state.customProjectCodebooks,
+          [action.payload.templateId]: upsertGeneratedFieldIntoProjectCodebook(
+            existingTemplate,
+            action.payload.field
+          )
+        },
+        selectedTemplateId: action.payload.templateId
+      };
+    }
 
     case "SELECT_TEMPLATE":
       return {

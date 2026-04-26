@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getGeminiSuggestions } from "@/features/ai/providers/gemini-provider";
 import { getMockSuggestions } from "@/features/ai/providers/mock-provider";
 import { getOpenAiSuggestions } from "@/features/ai/providers/openai-provider";
+import { getConfiguredProvider, getProviderModel, getProviderStatus, hasProviderKey } from "@/features/ai/provider-config";
 import { analysisTemplates } from "@/features/templates/data/templates";
 import { sanitizeProjectCodebookAgainstBase } from "@/features/templates/utils/project-codebooks";
 import { getMessages } from "@/i18n/utils";
@@ -21,82 +22,8 @@ function parseLocale(value: unknown): Locale {
   return value === "zh-CN" ? "zh-CN" : "en";
 }
 
-function getConfiguredProvider(): SuggestionProvider {
-  const explicitProvider = process.env.AI_PROVIDER?.trim();
-
-  if (explicitProvider === "mock" || explicitProvider === "openai" || explicitProvider === "gemini") {
-    return explicitProvider;
-  }
-
-  if (process.env.AI_SUGGESTION_MODE === "real") {
-    return "openai";
-  }
-
-  return "mock";
-}
-
-function getProviderModel(provider: SuggestionProvider) {
-  if (provider === "openai") {
-    return process.env.OPENAI_MODEL?.trim() || "gpt-4.1-mini";
-  }
-
-  if (provider === "gemini") {
-    return process.env.GEMINI_MODEL?.trim() || "gemini-2.5-flash";
-  }
-
-  return "mock-local";
-}
-
-function hasProviderKey(provider: SuggestionProvider) {
-  if (provider === "openai") {
-    return Boolean(process.env.OPENAI_API_KEY?.trim());
-  }
-
-  if (provider === "gemini") {
-    return Boolean(process.env.GEMINI_API_KEY?.trim());
-  }
-
-  return true;
-}
-
 function isEmptyCodingValue(value: CodingFieldValue | undefined) {
   return value === null || value === undefined || value === "" || (Array.isArray(value) && value.length === 0);
-}
-
-function getProviderStatus(locale: Locale): SuggestionStatus {
-  const messages = getMessages(locale);
-  const configuredProvider = getConfiguredProvider();
-
-  if (configuredProvider === "mock") {
-    return {
-      mode: "mock",
-      provider: "mock",
-      fallbackUsed: false,
-      message: messages.codingForm.mockModeMessage
-    };
-  }
-
-  if (hasProviderKey(configuredProvider)) {
-    return {
-      mode: "real",
-      provider: configuredProvider,
-      fallbackUsed: false,
-      message:
-        configuredProvider === "gemini"
-          ? messages.codingForm.geminiModeMessage
-          : messages.codingForm.openAiModeMessage
-    };
-  }
-
-  return {
-    mode: "mock",
-    provider: "mock",
-    fallbackUsed: true,
-    message:
-      configuredProvider === "gemini"
-        ? messages.codingForm.geminiMissingKeyMessage
-        : messages.codingForm.openAiMissingKeyMessage
-  };
 }
 
 function logSuggestionDebug(metadata: {

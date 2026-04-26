@@ -2,6 +2,7 @@ import { analysisTemplates } from "@/features/templates/data/templates";
 import type { Locale, LocalizedText } from "@/i18n/types";
 import type {
   AnalysisTemplate,
+  CodebookDiscoveryGoal,
   ProjectCodebook,
   ProjectCodebookMap,
   TemplateField,
@@ -9,6 +10,7 @@ import type {
 } from "@/types/template";
 
 export const emptyProjectCodebooks: ProjectCodebookMap = {};
+const emptyLocalizedText = { en: "", "zh-CN": "" } as const;
 
 function cloneLocalizedText(text: LocalizedText): LocalizedText {
   return {
@@ -31,7 +33,8 @@ function cloneField(field: TemplateField): TemplateField {
     label: cloneLocalizedText(field.label),
     description: cloneLocalizedText(field.description),
     placeholder: field.placeholder ? cloneLocalizedText(field.placeholder) : undefined,
-    options: field.options?.map((option) => cloneOption(option))
+    options: field.options?.map((option) => cloneOption(option)),
+    generated: field.generated ? { ...field.generated } : undefined
   };
 }
 
@@ -49,14 +52,114 @@ function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === "object" && value !== null && !Array.isArray(value);
 }
 
-function sanitizeLocalizedTextAgainstBase(input: unknown, base: LocalizedText): LocalizedText {
+function sanitizeLocalizedText(input: unknown, fallback: LocalizedText = emptyLocalizedText): LocalizedText {
   if (!isRecord(input)) {
-    return cloneLocalizedText(base);
+    return cloneLocalizedText(fallback);
   }
 
+  const en = typeof input.en === "string" ? input.en : fallback.en;
+  const zhCn = typeof input["zh-CN"] === "string" ? input["zh-CN"] : fallback["zh-CN"];
+
+  if (en.trim() || zhCn.trim()) {
+    return {
+      en: en.trim() ? en : zhCn,
+      "zh-CN": zhCn.trim() ? zhCn : en
+    };
+  }
+
+  return cloneLocalizedText(fallback);
+}
+
+function sanitizeLocalizedTextAgainstBase(input: unknown, base: LocalizedText): LocalizedText {
+  return sanitizeLocalizedText(input, base);
+}
+
+function isGeneratedDiscoveryGoal(value: unknown): value is CodebookDiscoveryGoal {
+  return (
+    value === "problem_definitions" ||
+    value === "suggested_remedies" ||
+    value === "frames" ||
+    value === "actors" ||
+    value === "discourse_themes" ||
+    value === "custom"
+  );
+}
+
+function sanitizeGeneratedFieldOption(input: unknown): TemplateFieldOption | null {
+  if (!isRecord(input) || typeof input.value !== "string" || !input.value.trim()) {
+    return null;
+  }
+
+  const label = sanitizeLocalizedText(input.label, {
+    en: input.value,
+    "zh-CN": input.value
+  });
+  const description = sanitizeLocalizedText(input.description);
+
   return {
-    en: typeof input.en === "string" ? input.en : base.en,
-    "zh-CN": typeof input["zh-CN"] === "string" ? input["zh-CN"] : base["zh-CN"]
+    value: input.value,
+    label,
+    description: description.en.trim() || description["zh-CN"].trim() ? description : undefined
+  };
+}
+
+function sanitizeGeneratedField(input: unknown): TemplateField | null {
+  if (!isRecord(input) || typeof input.id !== "string" || !input.id.trim()) {
+    return null;
+  }
+
+  if (input.type !== "single-select" && input.type !== "multi-select") {
+    return null;
+  }
+
+  if (!isRecord(input.generated) || input.generated.source !== "ai-codebook-builder") {
+    return null;
+  }
+
+  if (!isGeneratedDiscoveryGoal(input.generated.discoveryGoal)) {
+    return null;
+  }
+
+  const optionsInput = Array.isArray(input.options) ? input.options : [];
+  const options: TemplateFieldOption[] = [];
+  const seenOptionValues = new Set<string>();
+
+  for (const option of optionsInput) {
+    const sanitizedOption = sanitizeGeneratedFieldOption(option);
+
+    if (!sanitizedOption || seenOptionValues.has(sanitizedOption.value)) {
+      continue;
+    }
+
+    seenOptionValues.add(sanitizedOption.value);
+    options.push(sanitizedOption);
+  }
+
+  if (!options.length) {
+    return null;
+  }
+
+  const label = sanitizeLocalizedText(input.label, {
+    en: input.id,
+    "zh-CN": input.id
+  });
+  const description = sanitizeLocalizedText(input.description, {
+    en: "Data-driven categories generated from the imported samples. Review before use.",
+    "zh-CN": "根据导入样本归纳出的数据驱动分类。使用前请人工复核。"
+  });
+  const placeholder = sanitizeLocalizedText(input.placeholder);
+
+  return {
+    id: input.id,
+    type: input.type,
+    label,
+    description,
+    placeholder: placeholder.en.trim() || placeholder["zh-CN"].trim() ? placeholder : undefined,
+    options,
+    generated: {
+      source: "ai-codebook-builder",
+      discoveryGoal: input.generated.discoveryGoal
+    }
   };
 }
 
@@ -126,13 +229,39 @@ export function sanitizeProjectCodebookAgainstBase(
     baseTemplate.researchUseCase
   );
 
-  const inputFields = Array.isArray(input.fields) ? input.fields : null;
+  const inputFields = Array.isArray(input.fields) ? input.fields : [];
+  const inputFieldById = new Map<string, unknown>();
 
-  if (inputFields && inputFields.length === baseTemplate.fields.length) {
-    nextTemplate.fields = baseTemplate.fields.map((baseField, fieldIndex) =>
-      sanitizeFieldAgainstBase(inputFields[fieldIndex], baseField)
-    );
+  for (const candidateField of inputFields) {
+    if (isRecord(candidateField) && typeof candidateField.id === "string") {
+      inputFieldById.set(candidateField.id, candidateField);
+    }
   }
+
+  const sanitizedBaseFields = baseTemplate.fields.map((baseField) =>
+    sanitizeFieldAgainstBase(inputFieldById.get(baseField.id), baseField)
+  );
+
+  const baseFieldIds = new Set(baseTemplate.fields.map((field) => field.id));
+  const generatedFields: TemplateField[] = [];
+  const seenGeneratedFieldIds = new Set<string>();
+
+  for (const candidateField of inputFields) {
+    if (!isRecord(candidateField) || typeof candidateField.id !== "string" || baseFieldIds.has(candidateField.id)) {
+      continue;
+    }
+
+    const sanitizedGeneratedField = sanitizeGeneratedField(candidateField);
+
+    if (!sanitizedGeneratedField || seenGeneratedFieldIds.has(sanitizedGeneratedField.id)) {
+      continue;
+    }
+
+    seenGeneratedFieldIds.add(sanitizedGeneratedField.id);
+    generatedFields.push(sanitizedGeneratedField);
+  }
+
+  nextTemplate.fields = [...sanitizedBaseFields, ...generatedFields];
 
   return nextTemplate;
 }
@@ -191,8 +320,7 @@ export function hasCustomProjectCodebook(
 }
 
 export function createCustomProjectCodebook(
-  templateId: string,
-  customProjectCodebooks: ProjectCodebookMap
+  templateId: string
 ) {
   const sourceTemplate = getBuiltInTemplateById(templateId);
 
@@ -207,5 +335,77 @@ export function updateLocalizedTextValue(
   return {
     ...currentValue,
     [locale]: nextValue
+  };
+}
+
+function mergeGeneratedField(existingField: TemplateField, incomingField: TemplateField): TemplateField {
+  const existingOptions = existingField.options ?? [];
+  const incomingOptions = incomingField.options ?? [];
+  const mergedOptions = [...existingOptions];
+  const seenValues = new Set(existingOptions.map((option) => option.value));
+
+  for (const option of incomingOptions) {
+    if (seenValues.has(option.value)) {
+      continue;
+    }
+
+    seenValues.add(option.value);
+    mergedOptions.push(cloneOption(option));
+  }
+
+  return {
+    ...existingField,
+    options: mergedOptions
+  };
+}
+
+export function upsertGeneratedFieldIntoProjectCodebook(
+  template: ProjectCodebook,
+  generatedField: TemplateField
+): ProjectCodebook {
+  const existingField = template.fields.find((field) => field.id === generatedField.id);
+
+  if (!existingField) {
+    return {
+      ...template,
+      fields: [...template.fields, cloneField(generatedField)]
+    };
+  }
+
+  return {
+    ...template,
+    fields: template.fields.map((field) => {
+      if (field.id !== generatedField.id) {
+        return field;
+      }
+
+      return mergeGeneratedField(field, generatedField);
+    })
+  };
+}
+
+export function resetProjectCodebookToBuiltIn(
+  templateId: string,
+  customProjectCodebooks: ProjectCodebookMap
+) {
+  const builtInTemplate = createCustomProjectCodebook(templateId);
+
+  if (!builtInTemplate) {
+    return null;
+  }
+
+  const currentProjectCodebook = customProjectCodebooks[templateId];
+
+  if (!currentProjectCodebook) {
+    return builtInTemplate;
+  }
+
+  const generatedFields = currentProjectCodebook.fields
+    .filter((field) => field.generated?.source === "ai-codebook-builder")
+    .map((field) => cloneField(field));
+
+  return {
+    ...builtInTemplate,
+    fields: [...builtInTemplate.fields, ...generatedFields]
   };
 }

@@ -3,6 +3,7 @@ export const appDictionary = {
     nav: {
       home: "Home",
       workspace: "Workspace",
+      demo: "Demo",
       languageLabel: "Language"
     },
     common: {
@@ -30,6 +31,8 @@ export const appDictionary = {
       description:
         "Import text samples, choose a communication-oriented template, review initial coding structure, and export classroom-ready outputs without the overhead of a large qualitative suite.",
       openWorkspace: "Open workspace",
+      tryGuidedDemo: "Try guided demo",
+      demoNoApiKeys: "No API key required for the demo",
       viewTemplates: "View templates",
       flowTitle: "MVP flow",
       flowImportTitle: "1. Import text samples",
@@ -391,12 +394,32 @@ export const appDictionary = {
       fieldTypeText: "Text",
       fieldTypeNumber: "Number",
       fieldTypeBoolean: "Boolean"
+    },
+    demoPage: {
+      badge: "Guided demo",
+      title: "See FrameLab through a concrete interface walkthrough",
+      description:
+        "This page shows a realistic WeChat article analysis workflow using static demo content. Nothing is uploaded, and no AI provider is called here.",
+      noApiKeys: "No API keys required",
+      scenarioLabel: "Scenario",
+      researchTaskLabel: "Research task",
+      whatThisDemoShows: "What this demo shows",
+      previousStep: "Previous",
+      nextStep: "Next",
+      openWorkspace: "Open the real workspace",
+      safetyTitle: "Honest demo notes",
+      guidedNote: "This is a guided demo with hard-coded example content.",
+      aiIllustrative: "Any AI suggestions shown here are illustrative only.",
+      providerNote: "Real AI suggestions still require your own configured provider.",
+      scrapingNote: "FrameLab does not scrape WeChat or Weibo for you.",
+      imageNote: "FrameLab does not automatically understand image content unless you add image text manually."
     }
   },
   "zh-CN": {
     nav: {
       home: "首页",
       workspace: "工作区",
+      demo: "演示",
       languageLabel: "语言"
     },
     common: {
@@ -424,6 +447,8 @@ export const appDictionary = {
       description:
         "导入文本样本、选择传播研究模板、查看初步编码结构，并导出适合课堂或论文准备的结果，不必承担大型定性研究软件的复杂度。",
       openWorkspace: "打开工作区",
+      tryGuidedDemo: "查看交互式演示",
+      demoNoApiKeys: "演示页不需要 API Key",
       viewTemplates: "查看模板",
       flowTitle: "MVP 流程",
       flowImportTitle: "1. 导入文本样本",
@@ -762,6 +787,25 @@ export const appDictionary = {
       fieldTypeText: "文本",
       fieldTypeNumber: "数值",
       fieldTypeBoolean: "布尔值"
+    },
+    demoPage: {
+      badge: "引导式演示",
+      title: "用一个具体界面演示，快速理解 FrameLab 怎么工作",
+      description:
+        "这个页面用静态示例内容演示如何分析一篇关于高校生成式 AI 使用规范的微信公众号文章。这里不会上传数据，也不会调用真实 AI。",
+      noApiKeys: "演示页不需要 API Key",
+      scenarioLabel: "场景",
+      researchTaskLabel: "研究任务",
+      whatThisDemoShows: "这个演示会展示什么",
+      previousStep: "上一步",
+      nextStep: "下一步",
+      openWorkspace: "打开真实工作区",
+      safetyTitle: "演示说明",
+      guidedNote: "这是一个使用固定示例内容的引导式演示。",
+      aiIllustrative: "这里展示的 AI 建议只是示意，不代表真实分析结果。",
+      providerNote: "如果你想用真实 AI 建议，仍然需要自行配置提供方。",
+      scrapingNote: "FrameLab 不会替你抓取微信公众号或微博内容。",
+      imageNote: "FrameLab 不会自动理解图片内容，除非你把图片文字手动加入文本。"
     }
   }
 } as const;

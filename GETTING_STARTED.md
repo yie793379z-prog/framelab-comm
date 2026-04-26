@@ -6,6 +6,12 @@ This is the root-level beginner guide for first-time users.
 
 If you are a non-technical communication, journalism, or media studies student, start here instead of trying to infer the workflow from the codebase.
 
+If you want a quick visual walkthrough before running the full workflow, start the app locally and open:
+
+- [http://localhost:3000/demo](http://localhost:3000/demo)
+
+The guided demo does not require API keys and does not call a real AI provider.
+
 ## What FrameLab Is
 
 FrameLab is a lightweight, local-first coding workspace for communication and media studies coursework and early research projects.

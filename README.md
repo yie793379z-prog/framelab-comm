@@ -6,6 +6,10 @@ Start here: [GETTING_STARTED.md](./GETTING_STARTED.md)
 
 新手从这里开始：[GETTING_STARTED.zh-CN.md](./GETTING_STARTED.zh-CN.md)
 
+Try the guided demo after running locally: [http://localhost:3000/demo](http://localhost:3000/demo)
+
+查看交互式演示（本地启动后打开）：[http://localhost:3000/demo](http://localhost:3000/demo)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 CI badge placeholder:
@@ -76,6 +80,7 @@ To keep coding data stable, FrameLab does not yet allow changes to field keys, f
 
 - [Beginner guide (English)](./GETTING_STARTED.md)
 - [零基础使用指南（简体中文）](./GETTING_STARTED.zh-CN.md)
+- [Guided demo (no API key required)](http://localhost:3000/demo)
 - [Social media dataset guide](./docs/social-media-datasets.md)
 - [社交媒体数据导入指南](./docs/social-media-datasets.zh-CN.md)
 - [Project inspirations](./docs/inspirations.md)

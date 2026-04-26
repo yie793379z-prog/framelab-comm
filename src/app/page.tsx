@@ -28,10 +28,14 @@ export default function HomePage() {
             <Link href="/workspace" className="button-primary">
               {messages.landing.openWorkspace}
             </Link>
+            <Link href="/demo" className="button-secondary">
+              {messages.landing.tryGuidedDemo}
+            </Link>
             <a href="#templates" className="button-secondary">
               {messages.landing.viewTemplates}
             </a>
           </div>
+          <p className="text-sm leading-7 text-muted">{messages.landing.demoNoApiKeys}</p>
         </div>
 
         <div className="surface-panel space-y-4 p-6">
