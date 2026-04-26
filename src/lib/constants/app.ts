@@ -1,3 +1,5 @@
+export const publicDemoUrl = "https://framelab-comm.vercel.app";
+
 export const appNavigation = [
   {
     labelKey: "home",

@@ -6,13 +6,17 @@ Start here: [GETTING_STARTED.md](./GETTING_STARTED.md)
 
 新手从这里开始：[GETTING_STARTED.zh-CN.md](./GETTING_STARTED.zh-CN.md)
 
+Online demo: [https://framelab-comm.vercel.app](https://framelab-comm.vercel.app)
+
+Guided demo: [https://framelab-comm.vercel.app/demo](https://framelab-comm.vercel.app/demo)
+
+Workspace: [https://framelab-comm.vercel.app/workspace](https://framelab-comm.vercel.app/workspace)
+
+AI setup: [https://framelab-comm.vercel.app/ai-setup](https://framelab-comm.vercel.app/ai-setup)
+
 Try the guided demo after running locally: [http://localhost:3000/demo](http://localhost:3000/demo)
 
-查看交互式演示（本地启动后打开）：[http://localhost:3000/demo](http://localhost:3000/demo)
-
 See AI provider setup after running locally: [http://localhost:3000/ai-setup](http://localhost:3000/ai-setup)
-
-查看真实 AI 配置方法（本地启动后打开）：[http://localhost:3000/ai-setup](http://localhost:3000/ai-setup)
 
 Deployment guide: [docs/deployment.md](./docs/deployment.md)
 
@@ -88,8 +92,10 @@ To keep coding data stable, FrameLab does not yet allow changes to field keys, f
 
 - [Beginner guide (English)](./GETTING_STARTED.md)
 - [零基础使用指南（简体中文）](./GETTING_STARTED.zh-CN.md)
-- [Guided demo (no API key required)](http://localhost:3000/demo)
-- [AI setup page (after running locally)](http://localhost:3000/ai-setup)
+- [Online demo](https://framelab-comm.vercel.app)
+- [Guided demo (no API key required)](https://framelab-comm.vercel.app/demo)
+- [Workspace](https://framelab-comm.vercel.app/workspace)
+- [AI setup page](https://framelab-comm.vercel.app/ai-setup)
 - [Deployment guide](./docs/deployment.md)
 - [Social media dataset guide](./docs/social-media-datasets.md)
 - [社交媒体数据导入指南](./docs/social-media-datasets.zh-CN.md)
@@ -98,7 +104,7 @@ To keep coding data stable, FrameLab does not yet allow changes to field keys, f
 
 ## Online Demo
 
-Hosted public demo URL: `TBD`
+Hosted public demo URL: [https://framelab-comm.vercel.app](https://framelab-comm.vercel.app)
 
 Recommended hosted demo behavior:
 
@@ -109,6 +115,20 @@ Recommended hosted demo behavior:
 - expose `/ai-setup` so visitors can see how real AI is configured on local or private deployments
 
 If you want real AI on a private deployment, configure your own provider keys server-side. See [docs/deployment.md](./docs/deployment.md).
+
+Quick public links:
+
+- [Homepage](https://framelab-comm.vercel.app)
+- [Guided demo](https://framelab-comm.vercel.app/demo)
+- [Workspace](https://framelab-comm.vercel.app/workspace)
+- [AI setup](https://framelab-comm.vercel.app/ai-setup)
+
+## Before You Use Real AI
+
+- The public demo uses mock mode by default.
+- Real AI requires your own server-side provider keys in a local or self-hosted deployment.
+- Do not send sensitive or private material to a real AI provider without review.
+- OpenAI and Gemini usage may cost money.
 
 ## Real Workflow Examples
 
@@ -137,6 +157,8 @@ Place release screenshots here:
 - `public/screenshots/workspace-en.png`
 - `public/screenshots/workspace-zh.png`
 - `public/screenshots/export-panel.png`
+
+If real screenshots are not added yet, keep these placeholders as placeholders. The `/demo` page uses interface mockups, not real product screenshots.
 
 Use [docs/demo-script.md](./docs/demo-script.md) as the capture checklist.
 

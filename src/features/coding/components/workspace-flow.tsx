@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { TextImportPanel } from "@/features/import/components/text-import-panel";
 import { SampleList } from "@/features/import/components/sample-list";
@@ -31,6 +32,13 @@ export function WorkspaceFlow() {
         <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted">{messages.workspace.eyebrow}</p>
         <h1 className="text-4xl font-semibold tracking-tight text-ink md:text-[2.8rem]">{messages.workspace.title}</h1>
         <p className="max-w-3xl text-base leading-8 text-muted">{messages.workspace.description}</p>
+        <div className="rounded-[1.25rem] border border-accent/25 bg-accent/10 p-4">
+          <p className="text-sm font-semibold text-ink">{messages.workspace.publicDemoNoticeTitle}</p>
+          <p className="mt-2 text-sm leading-7 text-muted">{messages.workspace.publicDemoNoticeBody}</p>
+          <Link href="/ai-setup" className="mt-2 inline-flex text-sm font-medium text-accent underline-offset-4 hover:underline">
+            {messages.workspace.publicDemoNoticeLink}
+          </Link>
+        </div>
         {autosave.lastSavedAt && (
           <p className="text-sm leading-7 text-muted">
             {formatMessage(messages.workspace.lastSavedLocally, {
