@@ -28,10 +28,6 @@ export default function HomePage() {
       body: messages.landing.whoItIsForBody
     },
     {
-      title: messages.landing.tryNowTitle,
-      body: messages.landing.tryNowBody
-    },
-    {
       title: messages.landing.notDoTitle,
       body: messages.landing.notDoBody
     }
@@ -40,25 +36,20 @@ export default function HomePage() {
   const beginnerGuideUrl = locale === "zh-CN" ? repoGettingStartedZhUrl : repoGettingStartedEnUrl;
 
   return (
-    <PageShell className="space-y-16 py-16">
-      <section className="surface-card grid gap-10 rounded-[2rem] p-8 md:grid-cols-[1.3fr_0.9fr] md:p-12">
-        <div className="space-y-6">
+    <PageShell className="space-y-14 py-14 md:space-y-16 md:py-16">
+      <section className="surface-card grid gap-8 rounded-[2rem] p-8 md:grid-cols-[1.18fr_0.82fr] md:p-10">
+        <div className="space-y-5">
           <div className="inline-flex rounded-full border border-accent/20 bg-accent/10 px-3 py-1 text-sm font-medium text-accent">
             {messages.landing.badge}
           </div>
-          <div className="space-y-4">
-            <h1 className="max-w-3xl text-4xl font-semibold tracking-tight md:text-6xl">
+          <div className="space-y-3">
+            <h1 className="max-w-2xl text-3xl font-semibold tracking-tight md:text-5xl">
               {messages.landing.title}
             </h1>
-            <p className="max-w-2xl text-lg leading-8 text-muted">
+            <p className="max-w-2xl text-base leading-8 text-muted md:text-lg">
               {messages.landing.description}
             </p>
-            <p className="text-sm font-medium text-ink">
-              {messages.landing.onlineDemo}:{" "}
-              <a href={publicDemoUrl} target="_blank" rel="noreferrer" className="underline-offset-4 hover:underline">
-                {publicDemoUrl}
-              </a>
-            </p>
+            <p className="text-sm leading-7 text-muted">{messages.landing.supportLine}</p>
           </div>
           <div className="flex flex-wrap gap-4">
             <Link href="/workspace" className="button-primary">
@@ -71,6 +62,11 @@ export default function HomePage() {
               {messages.landing.beginnerGuide}
             </a>
           </div>
+          <div className="space-y-2 text-sm leading-7 text-muted">
+            <a href={publicDemoUrl} target="_blank" rel="noreferrer" className="inline-flex font-medium text-ink underline-offset-4 hover:underline">
+              {messages.landing.onlineDemo}
+            </a>
+          </div>
           <p className="text-sm leading-7 text-muted">
             {messages.landing.demoNoApiKeys}{" "}
             <Link href="/ai-setup" className="font-medium text-ink underline-offset-4 hover:underline">
@@ -79,12 +75,12 @@ export default function HomePage() {
           </p>
         </div>
 
-        <div className="surface-panel space-y-4 p-6">
+        <div className="surface-panel space-y-4 p-5 md:p-6">
           <p className="text-sm font-semibold uppercase tracking-[0.2em] text-muted">{messages.landing.orientationTitle}</p>
-          <div className="grid gap-4">
+          <div className="space-y-3">
             {orientationCards.map((card) => (
               <div key={card.title} className="surface-card rounded-2xl p-4 shadow-none">
-                <span className="mb-2 block text-base font-semibold text-ink">{card.title}</span>
+                <span className="mb-1 block text-base font-semibold text-ink">{card.title}</span>
                 <p className="text-sm leading-7 text-muted">{card.body}</p>
               </div>
             ))}
@@ -103,11 +99,11 @@ export default function HomePage() {
 
         <ol className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           {quickSteps.map((step, index) => (
-            <li key={step} className="surface-card rounded-[1.5rem] p-5">
+            <li key={step} className="surface-card rounded-[1.25rem] p-4">
               <p className="text-sm font-semibold uppercase tracking-[0.18em] text-muted">
                 {index + 1}
               </p>
-              <p className="mt-3 text-base font-semibold text-ink">{step}</p>
+              <p className="mt-2 text-base font-semibold text-ink">{step}</p>
             </li>
           ))}
         </ol>
