@@ -10,6 +10,10 @@ Try the guided demo after running locally: [http://localhost:3000/demo](http://l
 
 查看交互式演示（本地启动后打开）：[http://localhost:3000/demo](http://localhost:3000/demo)
 
+Deployment guide: [docs/deployment.md](./docs/deployment.md)
+
+中文部署说明：[docs/deployment.zh-CN.md](./docs/deployment.zh-CN.md)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 CI badge placeholder:
@@ -81,10 +85,24 @@ To keep coding data stable, FrameLab does not yet allow changes to field keys, f
 - [Beginner guide (English)](./GETTING_STARTED.md)
 - [零基础使用指南（简体中文）](./GETTING_STARTED.zh-CN.md)
 - [Guided demo (no API key required)](http://localhost:3000/demo)
+- [Deployment guide](./docs/deployment.md)
 - [Social media dataset guide](./docs/social-media-datasets.md)
 - [社交媒体数据导入指南](./docs/social-media-datasets.zh-CN.md)
 - [Project inspirations](./docs/inspirations.md)
 - [产品灵感与定位](./docs/inspirations.zh-CN.md)
+
+## Online Demo
+
+Hosted public demo URL: `TBD`
+
+Recommended hosted demo behavior:
+
+- deploy to Vercel
+- keep `AI_PROVIDER=mock`
+- do not require OpenAI or Gemini API keys
+- keep the guided demo and workspace usable without real AI
+
+If you want real AI on a private deployment, configure your own provider keys server-side. See [docs/deployment.md](./docs/deployment.md).
 
 ## Real Workflow Examples
 
@@ -199,6 +217,8 @@ If you are not comfortable with developer terminology, use the beginner guide in
 ### Optional Real AI Mode
 
 FrameLab defaults to local mock suggestions. Real AI is optional.
+
+For a public hosted demo, mock mode is recommended by default.
 
 To enable provider-based real AI suggestions, create a local `.env.local` file and set:
 

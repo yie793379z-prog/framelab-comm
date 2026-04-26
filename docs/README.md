@@ -12,6 +12,8 @@ Supporting docs:
 - [social-media-datasets.zh-CN.md](./social-media-datasets.zh-CN.md)
 - [inspirations.md](./inspirations.md)
 - [inspirations.zh-CN.md](./inspirations.zh-CN.md)
+- [deployment.md](./deployment.md)
+- [deployment.zh-CN.md](./deployment.zh-CN.md)
 - [roadmap.md](./roadmap.md)
 - [research-disclaimer.md](./research-disclaimer.md)
 
