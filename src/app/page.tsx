@@ -5,10 +5,10 @@ import { PageShell } from "@/components/layout/page-shell";
 import { TemplateSummaryCard } from "@/components/shared/template-summary-card";
 import { analysisTemplates } from "@/features/templates/data/templates";
 import { useLanguage } from "@/i18n/context";
-import { publicDemoUrl } from "@/lib/constants/app";
+import { publicDemoUrl, repoGettingStartedEnUrl, repoGettingStartedZhUrl } from "@/lib/constants/app";
 
 export default function HomePage() {
-  const { messages } = useLanguage();
+  const { locale, messages } = useLanguage();
   const quickSteps = [
     messages.landing.quickStep1,
     messages.landing.quickStep2,
@@ -37,6 +37,8 @@ export default function HomePage() {
     }
   ];
 
+  const beginnerGuideUrl = locale === "zh-CN" ? repoGettingStartedZhUrl : repoGettingStartedEnUrl;
+
   return (
     <PageShell className="space-y-16 py-16">
       <section className="surface-card grid gap-10 rounded-[2rem] p-8 md:grid-cols-[1.3fr_0.9fr] md:p-12">
@@ -51,27 +53,29 @@ export default function HomePage() {
             <p className="max-w-2xl text-lg leading-8 text-muted">
               {messages.landing.description}
             </p>
+            <p className="text-sm font-medium text-ink">
+              {messages.landing.onlineDemo}:{" "}
+              <a href={publicDemoUrl} target="_blank" rel="noreferrer" className="underline-offset-4 hover:underline">
+                {publicDemoUrl}
+              </a>
+            </p>
           </div>
           <div className="flex flex-wrap gap-4">
-            <a href={publicDemoUrl} className="button-secondary" target="_blank" rel="noreferrer">
-              {messages.landing.onlineDemo}
-            </a>
             <Link href="/workspace" className="button-primary">
               {messages.landing.openWorkspace}
-            </Link>
-            <Link href="/ai-setup" className="button-secondary">
-              {messages.landing.configureRealAi}
             </Link>
             <Link href="/demo" className="button-secondary">
               {messages.landing.tryGuidedDemo}
             </Link>
-            <a href="#templates" className="button-secondary">
-              {messages.landing.viewTemplates}
+            <a href={beginnerGuideUrl} className="button-secondary" target="_blank" rel="noreferrer">
+              {messages.landing.beginnerGuide}
             </a>
           </div>
-          <p className="text-sm leading-7 text-muted">{messages.landing.demoNoApiKeys}</p>
           <p className="text-sm leading-7 text-muted">
-            {publicDemoUrl}
+            {messages.landing.demoNoApiKeys}{" "}
+            <Link href="/ai-setup" className="font-medium text-ink underline-offset-4 hover:underline">
+              {messages.landing.configureRealAi}
+            </Link>
           </p>
         </div>
 
